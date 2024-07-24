@@ -1,55 +1,53 @@
-﻿name: .NET Build and Test
+﻿name: Build, Test and Deploy
 
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - main
   pull_request:
-    branches: [ "main" ]
+    branches:
+      - main
 
 jobs:
-
-  build:
-
-    strategy:
-      matrix:
-        configuration: [Debug, Release]
-
+  build-and-deploy:
     runs-on: windows-latest
 
     env:
-      Solution_Name: WoodArtCons.sln  
+      Solution_Name: WoodArtCons.sln
       Server_Project_Path: WoodArtCons.Server
       Client_Project_Path: WoodArtCons
 
     steps:
-    - name: Checkout
+    - name: Checkout repository
       uses: actions/checkout@v4
       with:
         fetch-depth: 0
 
-    # Install the .NET SDK
     - name: Setup .NET SDK
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 8.0.x
 
-    # Restore dependencies
     - name: Restore dependencies
       run: dotnet restore ${{ env.Solution_Name }}
 
-    # Build the solution
     - name: Build solution
-      run: dotnet build ${{ env.Solution_Name }} --configuration ${{ matrix.configuration }}
+      run: dotnet build ${{ env.Solution_Name }} --configuration Release
 
-    # Run tests
     - name: Run tests
-      run: dotnet test ${{ env.Solution_Name }} --configuration ${{ matrix.configuration }}
+      run: dotnet test ${{ env.Solution_Name }} --configuration Release
 
-    # Publish artifacts (if needed)
-    - name: Publish artifacts
-      run: |
-        dotnet publish ${{ env.Server_Project_Path }} --configuration ${{ matrix.configuration }} --output ./publish/Server
-        dotnet publish ${{ env.Client_Project_Path }} --configuration ${{ matrix.configuration }} --output ./publish/Client
+    - name: Publish Server
+      run: dotnet publish ${{ env.Server_Project_Path }} --configuration Release --output ./publish/Server
+
+    - name: Publish Client
+      run: dotnet publish ${{ env.Client_Project_Path }} --configuration Release --output ./publish/Client
+
+    - name: Deploy to GitHub Pages
+      uses: actions/deploy-pages@v4
+      with:
+        artifact_name: github-pages
+        github_token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v3
