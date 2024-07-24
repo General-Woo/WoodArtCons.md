@@ -1,0 +1,655 @@
+﻿@page "/admin"
+
+@using Microsoft.AspNetCore.Components.Authorization
+@using WoodArtCons.Interfaces
+@using WoodArtCons.Shared.DataTransferObjects
+@inject IJSRuntime JSRuntime
+@inject IAuthService authService
+@inject NavigationManager _navigationManager 
+@inject IFileUploadService fileUploadService
+@inject ICategoryManagerService categoryManager
+@inject AuthenticationStateProvider AuthStateProvider
+@inject ICategoryProductManagerService categoryProduct
+
+@if (isloading)
+{
+    <MudProgressCircular Color="Color.Secondary" Style="height:100px; width:100px; position:fixed; top:40%; left:50%;" Indeterminate="true" />
+}
+else
+{
+    <div class="page-item">
+        <AuthorizeView Policy="Admin">
+            <Authorized>
+                <div class="d-flex justify-content-center">
+                    <h1 style="color:black;">@pageName</h1>
+                </div>
+                <MudButton Variant="Variant.Filled" Color="Color.Secondary" Style="position:absolute; top:70px; right:24px;" OnClick="LogOut">@logOut</MudButton>
+                @if(categories != null){
+
+                    <!-- Catalog & Galery tabs -->
+
+                    <MudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true" PanelClass="pa-6" Outlined="true">
+                        <div class="d-flex justify-end flex-grow-1 gap-4 mb-3">
+                            <MudButton StartIcon="@Icons.Material.Filled.Add" Variant="Variant.Filled" Color="Color.Success" Class="ml-auto" OnClick="() => OpenCreateCategoryDialog()">Create New Category</MudButton>
+                        </div>
+
+                        <!-- Catalog tab -->
+
+                        <MudTabPanel Text="@catalog">
+                            <MudTable Items="@catalogCategories" Context="rowContext1" Hover="true" Breakpoint="Breakpoint.Sm" LoadingProgressColor="Color.Info">
+                                <HeaderContent>
+                                    <MudTh>Id</MudTh>
+                                    <MudTh>Name Ro</MudTh>
+                                    <MudTh>Name Ru</MudTh>
+                                    <MudTh>Name En</MudTh>
+                                    <MudTh>Image</MudTh>
+                                    <MudTh>Actions</MudTh>
+                                </HeaderContent>
+                                <RowTemplate>
+                                    <MudTd DataLabel="Id"><MudButton Style="text-transform: none;" OnClick="() => Activate(rowContext1.Id)">@rowContext1.Id</MudButton></MudTd>
+                                    <MudTd DataLabel="Name Ro">@rowContext1.NameRo</MudTd>
+                                    <MudTd DataLabel="Name Ru">@rowContext1.NameRu</MudTd>
+                                    <MudTd DataLabel="Name En">@rowContext1.NameEn</MudTd>
+                                    <MudTd DataLabel="Image">@rowContext1.ImageSrc</MudTd>
+                                    <MudTh>
+                                        <MudButton Variant="Variant.Filled" OnClick="() => OpenDialog(rowContext1)" Color="Color.Success">Edit</MudButton>
+                                        <MudButton Variant="Variant.Filled" OnClick="()=>Delete(rowContext1.Id)" Color="Color.Error">Delete</MudButton>
+                                    </MudTh>
+                                </RowTemplate>
+                            </MudTable>
+                        </MudTabPanel>
+
+                        <!-- Galery tab -->
+
+                        <MudTabPanel Text="@galery">
+                            <MudTable Items="@galeryCategories" Context="rowContext2" Hover="true" Breakpoint="Breakpoint.Sm" LoadingProgressColor="Color.Info">
+                                <HeaderContent>
+                                    <MudTh>Id</MudTh>
+                                    <MudTh>Name Ro</MudTh>
+                                    <MudTh>Name Ru</MudTh>
+                                    <MudTh>Name En</MudTh>
+                                    <MudTh>Image </MudTh>
+                                    <MudTh>Actions</MudTh>
+                                </HeaderContent>
+                                <RowTemplate>
+                                    <MudTd DataLabel="Id"><MudButton Style="text-transform: none;" OnClick="() => Activate(rowContext2.Id)">@rowContext2.Id</MudButton></MudTd>
+                                    <MudTd DataLabel="Name Ro">@rowContext2.NameRo</MudTd>
+                                    <MudTd DataLabel="Name Ru">@rowContext2.NameRu</MudTd>
+                                    <MudTd DataLabel="Name En">@rowContext2.NameEn</MudTd>
+                                    <MudTd DataLabel="Image">@rowContext2.ImageSrc</MudTd>
+                                    <MudTh>
+                                        <MudButton Variant="Variant.Filled" OnClick="() => OpenDialog(rowContext2)" Color="Color.Success">Edit</MudButton>
+                                        <MudButton Variant="Variant.Filled" OnClick="() => Delete(rowContext2.Id)" Color="Color.Error">Delete</MudButton>
+                                    </MudTh>
+                                </RowTemplate>
+                            </MudTable>
+                        </MudTabPanel>
+                    </MudTabs>
+
+                    <MudDivider Class="my-2" />
+
+                    <!-- Category products tab -->
+
+                    <MudTabs Elevation="4" Rounded="true" Color="@Color.Secondary" @ref="tabs">
+                        <div class="d-flex justify-end flex-grow-1 gap-4 mb-3">
+                            <MudButton StartIcon="@Icons.Material.Filled.Add" Variant="Variant.Filled" Color="Color.Success" Class="ml-auto mt-2" OnClick="() => OpenCreateProductDialog()">Create New Product</MudButton> @*  Change this function *@
+                        </div>
+                        @foreach (var category in categories)
+                        {
+                            <MudTabPanel Style="text-transform: none;" Text="@category.Id" ID="@category.Id">
+                                <MudTable Items="@GetProductsByCategory(category.Id)" Context="rowContext3" Hover="true" Breakpoint="Breakpoint.Sm" LoadingProgressColor="Color.Info">
+                                    <HeaderContent>
+                                        <MudTh><MudButton OnClick="@(() => SortBy(nameof(CategoryProductModelDto.Id)))">Id</MudButton></MudTh>
+                                        <MudTh><MudButton OnClick="@(() => SortBy(nameof(CategoryProductModelDto.CategoryId)))">Category Id</MudButton></MudTh>
+                                        <MudTh><MudButton OnClick="@(() => SortBy(nameof(CategoryProductModelDto.NameRo)))">Name Ro</MudButton></MudTh>
+                                        <MudTh><MudButton OnClick="@(() => SortBy(nameof(CategoryProductModelDto.NameRu)))">Name Ru</MudButton></MudTh>
+                                        <MudTh><MudButton OnClick="@(() => SortBy(nameof(CategoryProductModelDto.NameEn)))">Name En</MudButton></MudTh>
+                                        <MudTh>Dimensiuni</MudTh>
+                                        <MudTh>Actions</MudTh>
+                                    </HeaderContent>
+                                    <RowTemplate>
+                                        <MudTd Style="text-transform: none;">@rowContext3.Id</MudTd>
+                                        <MudTd DataLabel="Category Id">@rowContext3.CategoryId</MudTd>
+                                        <MudTd DataLabel="Name Ro">@rowContext3.NameRo</MudTd>
+                                        <MudTd DataLabel="Name Ru">@rowContext3.NameRu</MudTd>
+                                        <MudTd DataLabel="Name En">@rowContext3.NameEn</MudTd>
+                                        <MudTd DataLabel="Dimensiuni">
+                                            @((rowContext3.Lenght != 0 && rowContext3.Lenght != null) ? $"{rowContext3.Lenght} {@LengthMeters} " : "nu are lungime"),
+                                            @((rowContext3.Width != 0 && rowContext3.Width != null) ? $"{rowContext3.Width} {@WidthMeters} " : "nu are lățime"),
+                                            @((rowContext3.Height != 0 && rowContext3.Height != null) ? $"{rowContext3.Height} {@HeightMeters} " : "nu are înălțime")
+                                        </MudTd>
+
+                                        <MudTh>
+                                            <MudButton Variant="Variant.Filled" OnClick="() => OpenEditProductDialog(rowContext3)" Color="Color.Success">Edit</MudButton>
+                                            <MudButton Variant="Variant.Filled" OnClick="() => Delete(rowContext3.Id)" Color="Color.Error">Delete</MudButton>
+                                        </MudTh>
+                                    </RowTemplate>
+                                </MudTable>
+                            </MudTabPanel>
+                        }
+                    </MudTabs> 
+                }
+                
+            </Authorized>
+            <NotAuthorized>
+                <p>You are not authorized to view this page.</p>
+            </NotAuthorized>
+        </AuthorizeView>
+    </div>
+
+    <!-- Edit Category Dialog (done) -->
+
+    <MudDialog IsVisible="IsDialogOpen" Options="dialogOptions">
+        <TitleContent>
+            <b style="font-size: 20px;">Edit Category</b>
+        </TitleContent>
+        <DialogContent>
+            <EditForm Model="categoryToEdit" OnValidSubmit="Submit">
+                <DataAnnotationsValidator />
+                <MudGrid>
+                    <MudItem xs="12">
+                        <MudTextField @bind-Value="categoryToEdit.Id" Label="Id" Variant="Variant.Filled" />
+                    </MudItem>
+                    <MudItem xs="12">
+                        <MudTextField @bind-Value="categoryToEdit.NameRo" Label="Name Ro" Variant="Variant.Filled" />
+                    </MudItem>
+                    <MudItem xs="12">
+                        <MudTextField @bind-Value="categoryToEdit.NameRu" Label="Name Ru" Variant="Variant.Filled" />
+                    </MudItem>
+                    <MudItem xs="12">
+                        <MudTextField @bind-Value="categoryToEdit.NameEn" Label="Name En" Variant="Variant.Filled" />
+                    </MudItem>
+                    <MudItem xs="12">
+                        <MudTextField @bind-Value="categoryToEdit.ImageSrc" Label="Image Source" Variant="Variant.Filled" />
+                    </MudItem> 
+                    <MudImage Style="margin-left:12px;" Height="200" Width="200" ObjectPosition="ObjectPosition.Center" Src="@categoryToEdit.ImageSrc" />
+                    <MudItem xs="12">
+                        <MudSelect T="bool" @bind-Value="categoryToEdit.IsForGalery" Label="For Galery" Variant="Variant.Filled" AnchorOrigin="Origin.BottomCenter">
+                            <MudSelectItem T="bool" Value="true" />
+                            <MudSelectItem T="bool" Value="false" />
+                        </MudSelect>
+                    </MudItem>
+                    <MudDivider DividerType="DividerType.Middle" Class="my-6" />
+                </MudGrid>
+            </EditForm>
+
+        </DialogContent>
+        <DialogActions>
+            <MudButton Variant="Variant.Outlined" OnClick="Cancel">Cancel</MudButton>
+            <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="Submit">Edit</MudButton>
+        </DialogActions>
+    </MudDialog>
+
+    <!-- Add Category Dialog (done) -->
+
+    <MudDialog IsVisible="IsAddDialogOpen" Options="dialogOptions">
+        <TitleContent>
+            <b style="font-size: 20px;">Add Category</b>
+        </TitleContent>
+        <DialogContent>
+            <EditForm Model="categoryToAdd" OnValidSubmit="SubmitAdd">
+                <DataAnnotationsValidator />
+                <MudGrid>
+                    <MudItem xs="12">
+                        <MudTextField @bind-Value="categoryToAdd.Id" Label="Id" Variant="Variant.Filled" />
+                    </MudItem>
+                    <MudItem xs="12">
+                        <MudTextField @bind-Value="categoryToAdd.NameRo" Label="Name Ro" Variant="Variant.Filled" />
+                    </MudItem>
+                    <MudItem xs="12">
+                        <MudTextField @bind-Value="categoryToAdd.NameRu" Label="Name Ru" Variant="Variant.Filled" />
+                    </MudItem>
+                    <MudItem xs="12">
+                        <MudTextField @bind-Value="categoryToAdd.NameEn" Label="Name En" Variant="Variant.Filled" />
+                    </MudItem>
+                    <MudItem xs="12">
+                        @* <MudTextField @bind-Value="categoryToAdd.ImageSrc" Label="Image Source" Variant="Variant.Filled" /> *@
+                        <MudButton HtmlTag="label"
+                                   Variant="Variant.Outlined"
+                                   Color="Color.Success"
+                                   StartIcon="@Icons.Material.Filled.CloudUpload"
+                                   for="fileInput">
+                            Upload files
+                        </MudButton>
+                        <InputFile id="fileInput" OnChange="HandleFileSelection" hidden multiple />
+                    </MudItem>
+                    <MudImage Style="margin-left:12px;" Height="200" Width="200" ObjectPosition="ObjectPosition.Center" Src="@categoryToAdd.ImageSrc" />
+                    <MudItem xs="12">
+                        <MudSelect T="bool" @bind-Value="categoryToAdd.IsForGalery" Label="For Galery" Variant="Variant.Filled" AnchorOrigin="Origin.BottomCenter">
+                            <MudSelectItem T="bool" Value="true" />
+                            <MudSelectItem T="bool" Value="false" />
+                        </MudSelect>
+                    </MudItem>
+                    <MudDivider DividerType="DividerType.Middle" Class="my-6" />
+                </MudGrid>
+            </EditForm>
+
+        </DialogContent>
+        <DialogActions>
+            <MudButton Variant="Variant.Outlined" OnClick="CancelAdd">Cancel</MudButton>
+            <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="SubmitAdd">Add</MudButton>
+        </DialogActions>
+    </MudDialog>
+
+    <!-- Edit Product Dialog -->
+
+    <MudDialog IsVisible="IsEditProductDialogOpen" Options="dialogOptions">
+        <TitleContent>
+            <b style="font-size: 20px;">Edit Product</b>
+        </TitleContent>
+        <DialogContent>
+            <EditForm Model="productToEdit" OnValidSubmit="Submit">
+                <DataAnnotationsValidator />
+                
+                @if (categoryForProductToEdit?.IsForGalery == true) {
+                    <MudItem xs="12">
+                        <MudTextField @bind-Value="productToEdit.CategoryId" Label="CategoryId" Variant="Variant.Filled" />
+                    </MudItem>
+                    <MudItem xs="12">
+                        <MudTextField @bind-Value="productToEdit.Id" Label="Id" Variant="Variant.Filled" />
+                    </MudItem>
+                    <MudItem xs="12">
+                        <MudTextField @bind-Value="productToEdit.NameRo" Label="NameRo" Variant="Variant.Filled" />
+                    </MudItem>
+                    <MudItem xs="12">
+                        <MudTextField @bind-Value="productToEdit.NameRu" Label="NameRu" Variant="Variant.Filled" />
+                    </MudItem>
+                    <MudItem xs="12">
+                        <MudTextField @bind-Value="productToEdit.NameEn" Label="NameEn" Variant="Variant.Filled" />
+                    </MudItem>
+                    <MudItem xs="12">
+                        <MudTextField @bind-Value="productToEdit.ImageSrc" Label="Sursa Imaginii" Variant="Variant.Filled" />
+                    </MudItem>
+                    <MudItem xs="12">
+                        <MudTextField @bind-Value="productToEdit.Price" Label="Pret" Variant="Variant.Filled" />
+                    </MudItem>
+                    @foreach (var photo in productToEdit.ListImagesSrc)
+                    {
+                        <MudImage Style="margin-left:12px; margin-top :12px;" Height="200" Width="200" ObjectPosition="ObjectPosition.Center" Src="@photo" />
+                    }
+                    
+                }
+                else
+                {
+                    <MudItem xs="12">
+                        <MudTextField @bind-Value="productToEdit.CategoryId" Label="CategoryId" Variant="Variant.Filled" />
+                    </MudItem>
+                    <MudItem xs="12">
+                        <MudTextField @bind-Value="productToEdit.Id" Label="Id" Variant="Variant.Filled" />
+                    </MudItem>
+                    <MudItem xs="12">
+                        <MudTextField @bind-Value="productToEdit.NameRo" Label="NameRo" Variant="Variant.Filled" />
+                    </MudItem>
+                    <MudItem xs="12">
+                        <MudTextField @bind-Value="productToEdit.NameRu" Label="NameRu" Variant="Variant.Filled" />
+                    </MudItem>
+                    <MudItem xs="12">
+                        <MudTextField @bind-Value="productToEdit.NameEn" Label="NameEn" Variant="Variant.Filled" />
+                    </MudItem>
+                    <MudItem xs="12">
+                        <MudTextField @bind-Value="productToEdit.ImageSrc" Label="Image Source" Variant="Variant.Filled" />
+                    </MudItem>
+                }
+            </EditForm>
+
+        </DialogContent>
+        <DialogActions>
+            <MudButton Variant="Variant.Outlined" OnClick="CancelEditProduct">Cancel</MudButton>
+            <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="Submit">Edit</MudButton>
+        </DialogActions>
+    </MudDialog>
+
+    <!-- Add Product Dialog -->
+
+    <MudDialog IsVisible="IsAddProductDialogOpen" Options="dialogOptions">
+        <TitleContent>
+            <b style="font-size: 20px;">Add Product</b>
+        </TitleContent>
+        <DialogContent>
+            <EditForm Model="categoryToAdd" OnValidSubmit="SubmitAdd">
+                <DataAnnotationsValidator />
+                <MudGrid>
+                    <MudItem xs="12">
+                        <MudTextField @bind-Value="categoryToAdd.Id" Label="Id" Variant="Variant.Filled" />
+                    </MudItem>
+                    <MudItem xs="12">
+                        <MudTextField @bind-Value="categoryToAdd.NameRo" Label="Name Ro" Variant="Variant.Filled" />
+                    </MudItem>
+                    <MudItem xs="12">
+                        <MudTextField @bind-Value="categoryToAdd.NameRu" Label="Name Ru" Variant="Variant.Filled" />
+                    </MudItem>
+                    <MudItem xs="12">
+                        <MudTextField @bind-Value="categoryToAdd.NameEn" Label="Name En" Variant="Variant.Filled" />
+                    </MudItem>
+                    <MudItem xs="12">
+                        @* <MudTextField @bind-Value="categoryToAdd.ImageSrc" Label="Image Source" Variant="Variant.Filled" /> *@
+                        <MudButton HtmlTag="label"
+                                   Variant="Variant.Outlined"
+                                   Color="Color.Success"
+                                   StartIcon="@Icons.Material.Filled.CloudUpload"
+                                   for="fileInput">
+                            Upload files
+                        </MudButton>
+                        <InputFile id="fileInput" OnChange="HandleFileSelection" hidden multiple />
+                    </MudItem>
+                    <MudImage Style="margin-left:12px;" Height="200" Width="200" ObjectPosition="ObjectPosition.Center" Src="@categoryToAdd.ImageSrc" />
+                    <MudItem xs="12">
+                        <MudSelect T="bool" @bind-Value="categoryToAdd.IsForGalery" Label="For Galery" Variant="Variant.Filled" AnchorOrigin="Origin.BottomCenter">
+                            <MudSelectItem T="bool" Value="true" />
+                            <MudSelectItem T="bool" Value="false" />
+                        </MudSelect>
+                    </MudItem>
+                    <MudDivider DividerType="DividerType.Middle" Class="my-6" />
+                </MudGrid>
+            </EditForm>
+
+        </DialogContent>
+        <DialogActions>
+            <MudButton Variant="Variant.Outlined" OnClick="CancelAddProduct">Cancel</MudButton>
+            <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="SubmitAdd">Add</MudButton>
+        </DialogActions>
+    </MudDialog>
+}
+
+@code {
+    private Dictionary<string, List<CategoryProductModelDto>> categoryProducts = new();
+    private Dictionary<string, bool> sortAscending = new();
+    private IEnumerable<CategoryModelDto>? catalogCategories;
+    private IEnumerable<CategoryModelDto>? galeryCategories;
+    private List<CategoryModelDto>? categories;
+    private string uploadedImagePath;
+    private bool _isFirstRender = true;
+    private bool isloading = true;
+    private string pageName;
+    private string logOut;
+    private string culture;
+    private string catalog;
+    private string galery;
+    private string LengthMeters;
+    private string WidthMeters;
+    private string HeightMeters;
+
+    private bool IsDialogOpen { get; set; } = false;
+    private bool IsAddDialogOpen { get; set; } = false;
+    private bool IsEditProductDialogOpen { get; set; } = false;
+    private bool IsAddProductDialogOpen { get; set; } = false;
+    void Cancel() => IsDialogOpen = false;
+    void CancelAdd() => IsAddDialogOpen = false;
+    void CancelEditProduct() => IsEditProductDialogOpen = false;
+    void CancelAddProduct() => IsAddProductDialogOpen = false;
+    private DialogOptions dialogOptions = new() { DisableBackdropClick = true };
+    private CategoryModelDto categoryToEdit = new CategoryModelDto();
+    private CategoryModelDto categoryToAdd = new CategoryModelDto();
+    private CategoryModelDto categoryForProductToEdit = new CategoryModelDto();
+    private CategoryProductModelDto productToEdit = new CategoryProductModelDto();
+    private CategoryProductModelDto productToAdd = new CategoryProductModelDto();
+
+    MudTabs tabs;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            isloading = true;
+            await LoadData();
+            _isFirstRender = false;
+            isloading = false;
+            StateHasChanged();
+        }
+    }
+
+    private async Task LoadData()
+    {
+        if (AuthStateProvider is CustomAuthStateProvider customAuthStateProvider)
+        {
+            await customAuthStateProvider.GetAuthenticationStateAsync();
+        }
+
+        var token = await JSRuntime.InvokeAsync<string>("getToken");
+        if (string.IsNullOrEmpty(token))
+        {
+            _navigationManager.NavigateTo("/login", true);
+        }
+
+        culture = await JSRuntime.InvokeAsync<string>("getLanguage");
+        categories = await categoryManager.GetAllCategories();
+        catalogCategories = categories.Where(u => u.IsForGalery != true);
+        galeryCategories = categories.Where(u => u.IsForGalery == true);
+        foreach (var category in categories)
+        {
+            categoryProducts[category.Id] = await GetProductsByCategoryID(category.Id);
+        }
+
+        pageName = culture switch
+        {
+            "ru-RU" => "Страница Администратора",
+            "en-US" => "Administration Page",
+            "ro-RO" => "Pagina De Administrare",
+        };
+
+        logOut = culture switch
+        {
+            "ru-RU" => "Выход",
+            "en-US" => "LogOut",
+            "ro-RO" => "LogOut",
+        };
+
+        catalog = culture switch
+        {
+            "ru-RU" => "Каталог",
+            "en-US" => "Catalog",
+            "ro-RO" => "Catalog",
+        };
+
+        galery = culture switch
+        {
+            "ru-RU" => "Галерея",
+            "en-US" => "Gallery",
+            "ro-RO" => "Galerie"
+        };
+
+        LengthMeters = culture switch
+        {
+            "ru-RU" => "Дм",
+            "ro-RO" => "Lm",
+            "en-US" => "Lm",
+        };
+
+        WidthMeters = culture switch
+        {
+            "ru-RU" => "Шм",
+            "ro-RO" => "lm",
+            "en-US" => "Wm",
+        };
+
+        HeightMeters = culture switch
+        {
+            "ru-RU" => "Вм",
+            "ro-RO" => "Hm",
+            "en-US" => "Hm",
+        };
+    }
+
+    private List<CategoryProductModelDto> GetProductsByCategory(string categoryId)
+    {
+        return categoryProducts.TryGetValue(categoryId, out var products) ? products : new List<CategoryProductModelDto>();
+    }
+
+    private async Task<List<CategoryProductModelDto>> GetProductsByCategoryID(string categoryId)
+    {
+        var products = await categoryProduct.GetProductsByCategoryId(categoryId);
+        return products;
+    }
+
+    private void SortBy(string columnName)
+    {
+        // Toggle sort order for the column
+        if (!sortAscending.ContainsKey(columnName))
+        {
+            sortAscending[columnName] = true;
+        }
+        else
+        {
+            sortAscending[columnName] = !sortAscending[columnName];
+        }
+
+        // Sort products based on the selected column and order
+        foreach (var category in categories)
+        {
+            var products = categoryProducts[category.Id];
+            switch (columnName)
+            {
+                case "Id":
+                    products = sortAscending[columnName] ? products.OrderBy(p => p.Id).ToList() : products.OrderByDescending(p => p.Id).ToList();
+                    break;
+                case "CategoryId":
+                    products = sortAscending[columnName] ? products.OrderBy(p => p.CategoryId).ToList() : products.OrderByDescending(p => p.CategoryId).ToList();
+                    break;
+                case "NameRo":
+                    products = sortAscending[columnName] ? products.OrderBy(p => p.NameRo).ToList() : products.OrderByDescending(p => p.NameRo).ToList();
+                    break;
+                case "NameRu":
+                    products = sortAscending[columnName] ? products.OrderBy(p => p.NameRu).ToList() : products.OrderByDescending(p => p.NameRu).ToList();
+                    break;
+                case "NameEn":
+                    products = sortAscending[columnName] ? products.OrderBy(p => p.NameEn).ToList() : products.OrderByDescending(p => p.NameEn).ToList();
+                    break;
+                case "Dimensiuni":
+                    products = sortAscending[columnName] ? products.OrderBy(p => p.Lenght).ThenBy(p => p.Width).ThenBy(p => p.Height).ToList() : products.OrderByDescending(p => p.Lenght).ThenByDescending(p => p.Width).ThenByDescending(p => p.Height).ToList();
+                    break;
+            }
+            categoryProducts[category.Id] = products;
+        }
+        StateHasChanged();
+    }
+
+    void Activate(string panel)
+    {
+        tabs.ActivatePanel(panel);
+    }
+
+    private async Task HandleFileSelection(InputFileChangeEventArgs e)
+    {
+        var files = e.GetMultipleFiles();
+
+        foreach (var file in files)
+        {
+            using (var content = new MultipartFormDataContent())
+            {
+                var streamContent = new StreamContent(file.OpenReadStream());
+                streamContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(file.ContentType);
+                content.Add(streamContent, "file", file.Name);
+                uploadedImagePath = "/Images/Categories/" + file.Name;
+                categoryToAdd.ImageSrc = uploadedImagePath;
+                await fileUploadService.UploadFile(content);
+            }
+        }
+    }
+
+    private void OpenDialog(CategoryModelDto category)
+    {
+        string catalogUrl = "/catalog/";
+        string galeryUrl = "/galery/";
+
+        categoryToEdit = new CategoryModelDto
+            {
+                Id = category.Id,
+                NameRo = category.NameRo,
+                NameRu = category.NameRu,
+                NameEn = category.NameEn,
+                ImageSrc = category.ImageSrc,
+                IsForGalery = category.IsForGalery
+            };
+
+        if (category.IsForGalery == true)
+        {
+            categoryToEdit.Link = galeryUrl + category.Id;
+        }
+        else
+        {
+            categoryToEdit.Link = catalogUrl + category.Id;
+        }
+
+        IsDialogOpen = true;
+    }
+
+    private async void Submit()
+    {
+        var editResult = await categoryManager.EditCategory(categoryToEdit);
+
+        if (editResult != null)
+        {
+            IsDialogOpen = false;
+        }
+        else
+        {
+            IsDialogOpen = true;
+        }
+
+        await InvokeAsync(() => StateHasChanged());
+        await OnAfterRenderAsync(true);
+    }
+
+    private async Task Delete(string id)
+    {
+        await categoryManager.DeleteCategory(id);
+        await OnAfterRenderAsync(true);
+    }
+
+    private void OpenCreateCategoryDialog()
+    {
+        IsAddDialogOpen = true;
+    }
+
+    private async void OpenEditProductDialog(CategoryProductModelDto product)
+    {
+        categoryForProductToEdit = await categoryManager.GetCategoryById(product.CategoryId);
+        productToEdit = new CategoryProductModelDto
+            {
+                Id = product.Id,
+                CategoryId = product.CategoryId,
+                NameRo = product.NameRo,
+                NameRu = product.NameRu,
+                NameEn = product.NameEn,
+                ImageSrc = product.ImageSrc,
+                ListImagesSrc = product.ListImagesSrc,
+                Price = product.Price
+            };
+
+        IsEditProductDialogOpen = true;
+    }
+
+    private void OpenCreateProductDialog()
+    {
+        IsAddProductDialogOpen = true;
+    }
+
+    private async void SubmitAdd()
+    {
+        string catalogUrl = "/catalog/";
+        string galeryUrl = "/galery/";
+        if (categoryToAdd.IsForGalery == true)
+        {
+            categoryToAdd.Link = galeryUrl + categoryToAdd.Id;
+        }
+        else
+        {
+            categoryToAdd.Link = catalogUrl + categoryToAdd.Id;
+        }
+        categoryToAdd.ImageSrc = uploadedImagePath;
+        var addResult = await categoryManager.AddCategory(categoryToAdd);
+
+        categoryToAdd = new CategoryModelDto();
+        IsAddDialogOpen = false;
+
+        await InvokeAsync(() => StateHasChanged());
+        await OnAfterRenderAsync(true);
+    }
+
+    private async Task LogOut()
+    {
+        await authService.Logout();
+        StateHasChanged();
+        _navigationManager.NavigateTo("/login", true);
+    }
+}

@@ -1,0 +1,109 @@
+﻿@page "/galery/{categoryId}/{productId}"
+
+@using WoodArtCons.Interfaces
+@using WoodArtCons.Shared.DataTransferObjects
+@inject ICategoryManagerService category
+@inject ICategoryProductManagerService categoryProduct
+@inject IJSRuntime JSRuntime
+
+@if (isLoading)
+{
+    <MudProgressCircular Color="Color.Secondary" Style="height:100px; width:100px; position:fixed; top:40%; left:50%;" Indeterminate="true" />
+}
+else
+{
+    @if (culture != null)
+    {
+        <div class="page-item">
+            <div class="d-flex justify-content-center">
+                <h1 style="overflow-wrap:break-word; word-wrap: break-word; max-width:100%">@productName</h1>
+            </div>
+
+            <MudItem Class="pc-description-view">
+                <MudCard Elevation="0" Outlined="false" Class="w-100 d-flex flex-wrap flex-row gap-2 justify-center">
+                    <MudCard Elevation="0" Outlined="false" Style="max-width:1126px" Class="w-100 d-flex flex-wrap flex-row gap-4 justify-center">
+                        <MudCard Elevation="0" Outlined="false" Class="w-100">
+                            <MudText Typo="Typo.h4">@Price: @product.Price</MudText><br />
+                            <MudCarousel Class="mud-width-full" Style="height:550px;" ShowArrows="true" ShowBullets="true" EnableSwipeGesture="true" AutoCycle="false" TData="object">
+                                @foreach (var imageSrc in product.ListImagesSrc)
+                                {
+                                    <MudCarouselItem>
+                                        <div class="d-flex w-100 h-100">
+                                            <MudImage Class="mx-auto my-auto" Src="@imageSrc" Style="height:100%; width: auto;" />
+                                        </div>
+                                    </MudCarouselItem>
+                                }
+                            </MudCarousel>
+                        </MudCard>
+                    </MudCard>
+                </MudCard>
+            </MudItem>
+
+            <MudItem Class="mobile-description-view">
+                <MudCard Elevation="0" Outlined="false" Class="w-100 d-flex flex-wrap flex-column gap-2 justify-center">
+                    <MudPaper Elevation="0" Outlined="false" Width="100%">
+                        <MudCard Elevation="0" Outlined="false" Class="w-100 d-flex-column align-content-center justify-center">
+                            <MudText Typo="Typo.h4">@Price: @product.Price</MudText><br />
+                            <MudCarousel Class="mud-width-full" Style="height:550px;" ShowArrows="true" ShowBullets="true" EnableSwipeGesture="true" AutoCycle="false" TData="object">
+                                @foreach (var imageSrc in product.ListImagesSrc)
+                                {
+                                    <MudCarouselItem>
+                                        <div class="d-flex">
+                                            <MudImage Class="mx-auto my-auto" Src="@imageSrc" Style="height:550px; width: auto;" />
+                                        </div>
+                                    </MudCarouselItem>
+                                }
+                            </MudCarousel>
+                        </MudCard>
+                    </MudPaper>
+                </MudCard>
+            </MudItem>
+        </div>
+    }
+}
+
+@code {
+    [Parameter]
+    public string categoryId { get; set; }
+    [Parameter]
+    public string productId { get; set; }
+
+    private bool isLoading;
+    private string culture;
+    private CategoryModelDto productCateg;
+    private CategoryProductModelDto product;
+
+    private string productName;
+    private string Price;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            isLoading = true;
+            await LoadData();
+            isLoading = false;
+            StateHasChanged(); // Trigger a re-render
+        }
+    }
+
+    private async Task LoadData()
+    {
+        culture = await JSRuntime.InvokeAsync<string>("getLanguage");
+        productCateg = await category.GetCategoryById(categoryId);
+        product = await categoryProduct.GetProductById(productId);
+        productName = culture switch
+        {
+            "ru-RU" => product.NameRu,
+            "en-US" => product.NameEn,
+            "ro-RO" => product.NameRo
+        };
+
+        Price = culture switch
+        {
+            "ru-RU" => "Цена начинается с",
+            "ro-RO" => "Prețul incepe de la",
+            "en-US" => "The price starts at",
+        };
+    }
+}

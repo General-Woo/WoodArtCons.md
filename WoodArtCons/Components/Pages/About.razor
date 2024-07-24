@@ -1,0 +1,120 @@
+﻿@page "/about"
+
+@using System.Globalization
+@inject IJSRuntime JSRuntime
+
+<div style="z-index:-1; position:fixed; width:100vw; left: 0; top: 0; height:100vh;background-image: url('/Images/contacts.jpg'); background-size: cover; background-repeat: no-repeat; min-width:300px; min-height:100px;"></div>
+
+@if (isloading)
+{
+    <MudProgressCircular Color="Color.Secondary" Style="height:100px; width:100px; position:fixed; top:40%; left:50%;" Indeterminate="true" />
+}
+else
+{
+    @if (culture != null) {
+        var aboutPageName = culture switch { "ru-RU" => "О нас", "en-US" => "About Us", "ro-RO" => "Despre noi" 
+    };
+
+        <main id="main" class="clearfix custom-nonscrolable-vertical" style="width:100%; left: 0; top: 0; position:absolute;">
+        <div class="fusion-row" style="max-width:100%;">
+            <section id="content" class="full-width">
+                <div id="post-705" class="post-705 page type-page status-publish hentry">
+                    <div class="post-content">
+                        <div class="fusion-fullwidth fullwidth-box fusion-builder-row-1 fusion-parallax-fixed hundred-percent-fullwidth non-hundred-percent-height-scrolling lazyloaded" style="background-color: rgba(255, 255, 255, 0); background-position: center center; background-repeat: no-repeat; padding: 0px; margin-bottom: 0px; margin-top: 0px; border-width: 0px; border-color: rgb(234, 233, 233); border-style: solid; background-size: cover; background-attachment: fixed; background-image: url(&quot;https://woodartllc.net/wp-content/uploads/2019/07/landscape-hi-res-1.jpg&quot;);"
+                            data-bg="https://woodartllc.net/wp-content/uploads/2019/07/landscape-hi-res-1.jpg">
+                            <div class="fusion-builder-row fusion-row">
+                                <div class="fusion-layout-column fusion_builder_column fusion-builder-column-0 fusion_builder_column_1_1 1_1 fusion-one-full fusion-column-first fusion-column-last fusion-animated" style="margin-top: 0px; margin-bottom: 0px; visibility: visible; animation-duration: 1s;"
+                                    data-animationtype="fadeIn" data-animationduration="1.0" data-animationoffset="bottom-in-view">
+                                    <div class="fusion-column-wrapper fusion-flex-column-wrapper-legacy" style="background-position:left top;background-repeat:no-repeat;-webkit-background-size:cover;-moz-background-size:cover;-o-background-size:cover;background-size:cover;background-color:rgba(83,61,42,0.8);padding: 11% 0px 11% 0px;">
+                                        <div class="fusion-column-content-centered">
+                                            <div class="fusion-column-content">
+                                                <div class="fusion-title title fusion-title-1 fusion-sep-none fusion-title-center fusion-title-text fusion-title-size-one" style="font-size:60px;margin-top:0px;margin-right:0px;margin-bottom:31px;margin-left:0px;">
+                                                    <h1 class="title-heading-center fusion-responsive-typography-calculated" style="margin:0;font-size:1em;color:#ffffff;--fontSize:60;line-height:1;">
+                                                        <p style="text-align: center;">
+                                                            <span style="color: #ffffff;">ABOUT WOODART LLC</span>
+                                                        </p>
+                                                    </h1>
+                                                </div>
+                                                <div class="fusion-title title fusion-title-2 fusion-sep-none fusion-title-center fusion-title-text fusion-title-size-three" style="font-size:26px;margin-top:0px;margin-right:0px;margin-bottom:0px;margin-left:0px;">
+                                                    <h3 class="title-heading-center fusion-responsive-typography-calculated" style="margin:0;font-size:1em;color:#ffffff;--fontSize:26;line-height:1.23;">
+                                                        <p style="text-align: center;">
+                                                            <span style="color: #ffffff;">
+                                                                FAMILY OWNED AND OPERATED PRODUCER OF<br> QUALITY CUSTOM CABINETRY IN LANCASTER COUNTY, PA
+                                                            </span>
+                                                        </p>
+                                                    </h3>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="fusion-clearfix"></div>
+                                    </div>
+                                </div>
+                                <div class="fusion-layout-column fusion_builder_column fusion-builder-column-1 fusion_builder_column_1_1 1_1 fusion-one-full fusion-column-first fusion-column-last" style="margin-top:0px;margin-bottom:0px;">
+                                    <div class="fusion-column-wrapper fusion-flex-column-wrapper-legacy" style="background-position:left top;background-repeat:no-repeat;-webkit-background-size:cover;-moz-background-size:cover;-o-background-size:cover;background-size:cover;border-bottom:10px solid #ffffff;padding: 0px 0px 0px 0px;">
+                                        <div class="fusion-clearfix"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="pc-view" style="width:100%; height:50%; background-color: #eaeaea;background-position: center center;background-repeat: no-repeat;padding-top:0px;padding-right:0px;padding-bottom:0px;padding-left:0px;margin-bottom: 0px;margin-top: 0px;border-width: 0px 0px 0px 0px;border-color:#eae9e9;border-style:solid;">
+                            <div class="d-flex" style="width:100%; height:100%;">
+                                <div class="fusion-layout-column fusion_builder_column fusion-builder-column-2 fusion_builder_column_1_4 1_4 fusion-one-fourth fusion-column-first fusion-no-small-visibility" style="width:25%;width:calc(25% - ( ( 4% ) * 0.25 ) );margin-right: 4%;margin-top:0px;margin-bottom:0px;">
+                                    <div class="fusion-column-wrapper fusion-flex-column-wrapper-legacy fusion-empty-column-bg-image lazyloaded" style="background-position: left top; background-repeat: no-repeat; background-size: cover; border-right: 10px solid rgb(255, 255, 255); padding: 0px; background-image: url(&quot;https://woodartllc.net/wp-content/uploads/2019/07/WA-web-portfolio-210.jpg&quot;); min-height: 454.703px; height: auto;" data-bg-url="https://woodartllc.net/wp-content/uploads/2019/07/WA-web-portfolio-210.jpg" data-bg="https://woodartllc.net/wp-content/uploads/2019/07/WA-web-portfolio-210.jpg">
+                                        <img decoding="async" style="width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0;" class="fusion-empty-dims-img-placeholder fusion-no-large-visibility" src="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%27715%27%20height%3D%271080%27%20viewBox%3D%270%200%20715%201080%27%3E%3Crect%20width%3D%27715%27%20height%3D%271080%27%20fill-opacity%3D%220%22%2F%3E%3C%2Fsvg%3E">
+                                        <div class="fusion-clearfix"></div>
+                                    </div>
+                                </div>
+                                <div class="fusion-layout-column fusion_builder_column fusion-builder-column-3 fusion_builder_column_3_4 3_4 fusion-three-fourth fusion-column-last" style="width:75%;width:calc(75% - ( ( 4% ) * 0.75 ) );margin-top:0px;margin-bottom:0px;">
+                                    <div class="fusion-column-wrapper fusion-flex-column-wrapper-legacy" style="background-position: left top; background-repeat: no-repeat; background-size: cover; padding: 6% 2% 5%; min-height: 454.703px; height: auto;">
+                                        <div class="fusion-text fusion-text-1">
+                                            <p style="text-align: left;">WoodArt, LLC provides quality custom cabinetry for many applications throughout your home.</p>
+                                            <p style="text-align: left;">We opened our family business in 2004 after seven years of hands-on experience working alongside skilled craftsmen and cabinet finishers. Our mission is to provide complete customer satisfaction, and we achieve this through acute attention to detail. We stay abreast of the latest trends and provide quality products with your budget in mind.</p>
+                                            <p>WoodArt, LLC is family-owned and operated by the Stoltzfus family. WoodArt, LLC was founded by Dave and Anna Mae Stoltzfus who get the privilege of working alongside several of their children (and even some of their parents) who are deeply involved in the business. We strive to provide each customer our undivided attention and listen closely to his or her needs and wants to help them achieve the quality custom cabinetry solution of their dreams.</p>
+                                            <p><strong>We’d love to meet you.</strong> Call us today at <a href="tel:+16109130605">(610) 913-0605</a>.</p>
+                                        </div>
+                                        <div class="fusion-clearfix"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="mobile-view" style="width:100%; height:50%; background-color: #eaeaea;background-position: center center;background-repeat: no-repeat;padding-top:0px;padding-right:0px;padding-bottom:0px;padding-left:0px;margin-bottom: 0px;margin-top: 0px;border-width: 0px 0px 0px 0px;border-color:#eae9e9;border-style:solid;">
+                            <div class="d-flex" style="width:100%; height:100%;">
+                                <div class="fusion-layout-column fusion_builder_column fusion-builder-column-3 fusion_builder_column_3_4 3_4 fusion-three-fourth fusion-column-last" style="width:100%; margin-top:0px;margin-bottom:0px;">
+                                    <div class="fusion-column-wrapper fusion-flex-column-wrapper-legacy" style="background-position: left top; background-repeat: no-repeat; background-size: cover; padding: 6% 2% 5%; min-height: 454.703px; height: auto;">
+                                        <div class="fusion-text fusion-text-1">
+                                            <p style="text-align: left;">WoodArt, LLC provides quality custom cabinetry for many applications throughout your home.</p>
+                                            <p style="text-align: left;">We opened our family business in 2004 after seven years of hands-on experience working alongside skilled craftsmen and cabinet finishers. Our mission is to provide complete customer satisfaction, and we achieve this through acute attention to detail. We stay abreast of the latest trends and provide quality products with your budget in mind.</p>
+                                            <p>WoodArt, LLC is family-owned and operated by the Stoltzfus family. WoodArt, LLC was founded by Dave and Anna Mae Stoltzfus who get the privilege of working alongside several of their children (and even some of their parents) who are deeply involved in the business. We strive to provide each customer our undivided attention and listen closely to his or her needs and wants to help them achieve the quality custom cabinetry solution of their dreams.</p>
+                                            <p><strong>We’d love to meet you.</strong> Call us today at <a href="tel:+16109130605">(610) 913-0605</a>.</p>
+                                        </div>
+                                        <div class="fusion-clearfix"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>  
+            </section>
+        </div>
+    </main>
+    }
+}
+
+@code {
+    private bool isloading = true;
+    private string culture;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            isloading = true;
+            culture = await JSRuntime.InvokeAsync<string>("getLanguage");
+            isloading = false;
+            StateHasChanged();
+        }
+    }
+}

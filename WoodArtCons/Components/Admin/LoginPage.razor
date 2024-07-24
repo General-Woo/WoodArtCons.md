@@ -1,0 +1,82 @@
+﻿@page "/login"
+
+@using Microsoft.AspNetCore.Components.Authorization;
+@using WoodArtCons.Interfaces
+@using WoodArtCons.Shared.DataTransferObjects
+
+@inject IJSRuntime JSRuntime
+@inject IAuthService authService
+@inject NavigationManager navigationManager
+@inject AuthenticationStateProvider authenticationStateProvider
+
+<MudContainer Class="d-flex align-center flex-grow-1 gap-4" Style="height: 100%" MaxWidth="MaxWidth.ExtraExtraLarge">
+    <MudStack Class="relative" Style="margin: 0 auto">
+        <MudImage Src="/Images/WoodArtCons_Logo.png" Height="500" Width="500" Elevation="0" Class="rounded-lg" ObjectFit="ObjectFit.ScaleDown" />
+        <div class="text-danger">
+            <span>@errorMessage</span>
+        </div>
+        <EditForm Model="user" Context="usercontext" OnValidSubmit="HandleLogin">
+            <DataAnnotationsValidator />
+            <MudGrid>
+                <MudItem xs="12">
+                    <MudTextField @bind-Value="user.Email" Label="Email" Variant="Variant.Outlined" />
+                </MudItem>
+                <MudItem xs="12">
+                    <MudTextField @bind-Value="user.Password" Label="Parola" Variant="Variant.Outlined" InputType="InputType.Password" />
+                </MudItem>
+            </MudGrid>
+            <div class="d-flex align-right justify-space-between">
+                @if (isLoggingIn)
+                {
+                    <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Style="text-align: right" Class="mt-5">
+                        <MudProgressCircular Color="Color.Default" Size="Size.Small" Indeterminate="true" />
+                        &nbsp;
+                        Login...
+                    </MudButton>
+                }
+                else
+                {
+                    <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Style="text-align: right" Class="mt-5">Login</MudButton>
+                }
+            </div>
+        </EditForm>
+    </MudStack>
+</MudContainer>
+
+@code {
+    private UserLoginDto user = new UserLoginDto();
+    private bool isLoggingIn = false;
+    private string errorMessage = string.Empty;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var authState = await ((CustomAuthStateProvider)authenticationStateProvider).GetAuthenticationStateAsync();
+            var isAuthenticated = authState.User?.Identity?.IsAuthenticated == true;
+            if (isAuthenticated)
+            {
+                navigationManager.NavigateTo("/admin");
+            }
+            StateHasChanged();
+        }
+    }
+
+    private async Task HandleLogin()
+    {
+        isLoggingIn = true;
+        var result = await authService.Login(user);
+        if (result.IsSuccessfull)
+        {
+            errorMessage = string.Empty;
+            await ((CustomAuthStateProvider)authenticationStateProvider).GetAuthenticationStateAsync();
+            navigationManager.NavigateTo("/admin", true);
+            StateHasChanged();
+        }
+        else
+        {
+            errorMessage = result.ResponseMessage;
+        }
+        isLoggingIn = false;
+    }
+}

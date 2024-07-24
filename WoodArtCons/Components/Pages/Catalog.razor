@@ -1,0 +1,81 @@
+﻿@page "/catalog"
+
+@using System.Globalization
+@using WoodArtCons.Interfaces
+@using WoodArtCons.Shared.DataTransferObjects
+@inject ICategoryManagerService categoryManager
+@inject IJSRuntime JSRuntime
+
+<div style="z-index:-1; position:fixed; width:100vw; left: 0; top: 0; height:100vh;background-image: url('/Images/contacts.jpg'); background-size: cover; background-repeat: no-repeat; min-width:300px; min-height:100px;"></div>
+
+@if (isLoading)
+{
+    <MudProgressCircular Color="Color.Secondary" Style="height:100px; width:100px; position:fixed; top:40%; left:50%;" Indeterminate="true" />
+}
+else
+{
+<div class="page-item">
+    <div class="d-flex justify-content-center">
+        <h1 style="color:white;">@pageName</h1>
+    </div>
+    <MudCard Elevation="0" Outlined="false" Style="background-color: transparent;" Class="w-100 d-flex flex-wrap flex-row gap-16 justify-center">
+        <MudCard Elevation="0" Outlined="false" Style="max-width:1126px; background-color: transparent;" Class="w-100 d-flex flex-wrap flex-row gap-16 justify-center">
+            @if(categories != null){
+            @foreach (var category in categories)
+            {
+                @if (!category.IsForGalery)
+                {
+                    <MudLink Href="@category.Link" Underline="Underline.None">
+                        <MudPaper Class="pa-4 d-flex flex-column containerHover">
+                            <MudImage Height="200" Width="200" ObjectPosition="ObjectPosition.Center" Src="@category.ImageSrc" />
+                            <br />
+                                @if (category != null)
+                                {
+                                    var categoryName = culture switch
+                                    {
+                                        "ru-RU" => category.NameRu,
+                                        "en-US" => category.NameEn,
+                                        "ro-RO" => category.NameRo
+                                    };
+                                    <MudText Typo="Typo.h6" Align="Align.Center">@categoryName</MudText>
+                                }
+                        </MudPaper>
+                    </MudLink>
+                    }
+                }
+            }
+        </MudCard>
+    </MudCard>
+</div>
+}
+
+@code {
+    private List<CategoryModelDto>? categories;
+    private string culture;
+    private bool isLoading = true;
+    private string pageName;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            isLoading = true;
+            await LoadData();
+            isLoading = false;
+            StateHasChanged(); // Trigger a re-render
+        }
+
+    }
+
+    private async Task LoadData()
+    {
+        culture = await JSRuntime.InvokeAsync<string>("getLanguage");
+        categories = await categoryManager.GetAllCategories();
+        pageName = culture switch
+        {
+            "ru-RU" => "Каталог",
+            "en-US" => "Catalog",
+            "ro-RO" => "Catalog",
+        };
+    }
+}

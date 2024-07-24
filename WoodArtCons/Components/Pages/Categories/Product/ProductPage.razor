@@ -1,0 +1,205 @@
+﻿@page "/catalog/{categoryId}/{productId}"
+
+@using WoodArtCons.Interfaces
+@using WoodArtCons.Shared.DataTransferObjects
+@inject ICategoryManagerService category
+@inject ICategoryProductManagerService categoryProduct
+@inject IJSRuntime JSRuntime
+
+@if (isLoading)
+{
+    <MudProgressCircular Color="Color.Secondary" Style="height:100px; width:100px; position:fixed; top:40%; left:50%;" Indeterminate="true" />
+}
+else
+{
+    @if (culture != null)
+    {
+        <div class="page-item">
+            <div class="d-flex justify-content-center">
+                <h1 style="overflow-wrap:break-word; word-wrap: break-word; max-width:100%">@productName</h1>
+            </div>
+        
+            <MudItem Class="pc-description-view">
+                <MudCard Elevation="0" Outlined="false" Class="w-100 d-flex flex-wrap flex-row gap-2 justify-center">
+                    <MudCard Elevation="0" Outlined="false" Style="max-width:1126px" Class="w-100 d-flex flex-wrap flex-row gap-4 justify-center">
+                        <MudPaper Elevation="0" Outlined="false" Width="48%">
+                            <MudCard Elevation="0" Outlined="false" Class="w-100">
+                                <MudImage Elevation="23" ObjectPosition="ObjectPosition.Center" Src="@product.ImageSrc" Style="max-width: 550px; height: auto; max-height:550px; width:100%; border-radius:25px" />
+                            </MudCard>
+                        </MudPaper>
+                        <MudPaper Elevation="0" Outlined="false" Width="48%" >
+                            <MudCard Elevation="0" Outlined="false" Class="p-5 w-100 h-100">
+                                <MudText Typo="Typo.h4">@Price: @product.Price</MudText><br/>
+                                <MudText style="overflow-wrap:break-word; word-wrap: break-word; max-width:100%"><b>@Model</b>: @productName</MudText>
+                                <MudText style="overflow-wrap:break-word; word-wrap: break-word; max-width:100%"><b>@Category</b>: @productCategory</MudText>
+                                <MudText style="overflow-wrap:break-word; word-wrap: break-word; max-width:100%"><b>@Description</b>: @productDescription</MudText>
+                                <MudText style="overflow-wrap:break-word; word-wrap: break-word; max-width:100%"><b>@Dimensions</b>: @product.Lenght  @LengthMeters, @product.Width  @WidthMeters, @product.Height @HeightMeters </MudText>
+                                <MudText style="overflow-wrap:break-word; word-wrap: break-word; max-width:100%"><b>@Material</b>: @productMaterial</MudText>
+                                <MudText Typo="Typo.h5" style="overflow-wrap:break-word; word-wrap: break-word; max-width:100%">@DiscountText</MudText>
+                            </MudCard>
+                        </MudPaper>
+                    </MudCard>
+                </MudCard>
+            </MudItem>
+    
+            <MudItem Class="mobile-description-view">
+                <MudCard Elevation="0" Outlined="false" Class="w-100 d-flex flex-wrap flex-column gap-2 justify-center">
+                    <MudPaper Elevation="0" Outlined="false" Width="100%">
+                        <MudCard Elevation="0" Outlined="false" Class="w-100 d-flex align-content-center justify-center">
+                            <MudImage Elevation="23" ObjectPosition="ObjectPosition.Center" Src="@product.ImageSrc" Style="max-width: 550px; height: auto; max-height:550px; width:100%; border-radius:25px" />
+                        </MudCard>
+                    </MudPaper>
+                    <MudPaper Elevation="0" Outlined="false" Width="100%" >
+                        <MudCard Elevation="0" Outlined="false" Class="p-5 w-100 h-100">
+                            <MudText Typo="Typo.h4">@Price: @product.Price</MudText><br/>
+                            <MudText style="overflow-wrap:break-word; word-wrap: break-word; max-width:100%"><b>@Model</b>: @productName</MudText>
+                            <MudText style="overflow-wrap:break-word; word-wrap: break-word; max-width:100%"><b>@Category</b>: @productCategory</MudText>
+                            <MudText style="overflow-wrap:break-word; word-wrap: break-word; max-width:100%"><b>@Description</b>: @productDescription</MudText>
+                            <MudText style="overflow-wrap:break-word; word-wrap: break-word; max-width:100%"><b>@Dimensions</b>: @product.Lenght  @LengthMeters, @product.Width  @WidthMeters, @product.Height @HeightMeters </MudText>
+                            <MudText style="overflow-wrap:break-word; word-wrap: break-word; max-width:100%"><b>@Material</b>: @productMaterial</MudText>
+                            <MudText Typo="Typo.h5" style="overflow-wrap:break-word; word-wrap: break-word; max-width:100%">@DiscountText</MudText>
+                        </MudCard>
+                    </MudPaper>
+                </MudCard>
+            </MudItem>
+        </div>
+    }
+}
+
+@code {
+    [Parameter]
+    public string categoryId { get; set; }
+    [Parameter]
+    public string productId { get; set; }
+
+    private bool isLoading;
+    private CategoryModelDto productCateg;
+    private string productCategory;
+    private string culture;
+    private CategoryProductModelDto product;
+    private string productName;
+    private string productDescription;
+    private string productMaterial;
+    private string Price;
+    private string Model;
+    private string Category;
+    private string Dimensions;
+    private string Material;
+    private string Description;
+    private string LengthMeters;
+    private string WidthMeters;
+    private string HeightMeters;
+    private string DiscountText;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            isLoading = true;
+            await LoadData();
+            isLoading = false;
+            StateHasChanged(); // Trigger a re-render
+        }
+    }
+
+    private async Task LoadData()
+    {
+        culture = await JSRuntime.InvokeAsync<string>("getLanguage");
+        productCateg = await category.GetCategoryById(categoryId);
+        product = await categoryProduct.GetProductById(productId);
+        productCategory = culture switch
+        {
+            "ru-RU" => productCateg.NameRu,
+            "en-US" => productCateg.NameEn,
+            "ro-RO" => productCateg.NameRo
+        };
+        productName = culture switch
+        {
+            "ru-RU" => product.NameRu,
+            "en-US" => product.NameEn,
+            "ro-RO" => product.NameRo
+        };
+        productDescription = culture switch
+        {
+            "ru-RU" => product.DescriptionRu,
+            "en-US" => product.DescriptionEn,
+            "ro-RO" => product.DescriptionRo
+        };
+        productMaterial = culture switch
+        {
+            "ru-RU" => product.MaterialRu,
+            "en-US" => product.MaterialEn,
+            "ro-RO" => product.MaterialRo
+        };
+
+        Price = culture switch
+        {
+            "ru-RU" => "Цена",
+            "ro-RO" => "Preț",
+            "en-US" => "Price",
+        };
+
+        Model = culture switch
+        {
+            "ru-RU" => "Модель",
+            "ro-RO" => "Model",
+            "en-US" => "Model",
+        };
+
+        Category = culture switch
+        {
+            "ru-RU" => "Категория",
+            "ro-RO" => "Categorie",
+            "en-US" => "Category",
+        };
+
+        Dimensions = culture switch
+        {
+            "ru-RU" => "Размеры",
+            "ro-RO" => "Dimensiuni",
+            "en-US" => "Dimensions",
+        };
+
+        Material = culture switch
+        {
+            "ru-RU" => "Материал",
+            "ro-RO" => "Material",
+            "en-US" => "Material",
+        };
+
+        Description = culture switch
+        {
+            "ru-RU" => "Описание",
+            "ro-RO" => "Descriere",
+            "en-US" => "Description",
+        };
+
+        LengthMeters = culture switch
+        {
+            "ru-RU" => "Дм",
+            "ro-RO" => "Lm",
+            "en-US" => "Lm",
+        };
+
+        WidthMeters = culture switch
+        {
+            "ru-RU" => "Шм",
+            "ro-RO" => "lm",
+            "en-US" => "Wm",
+        };
+
+        HeightMeters = culture switch
+        {
+            "ru-RU" => "Вм",
+            "ro-RO" => "Hm",
+            "en-US" => "Hm",
+        };
+
+        DiscountText = culture switch
+        {
+            "ru-RU" => "Мы предлагаем скидку в зависимости от количества!",
+            "ro-RO" => "Oferim discount în funcție de cantitate!",
+            "en-US" => "We offer a discount depending on the quantity!",
+        };
+    }
+}

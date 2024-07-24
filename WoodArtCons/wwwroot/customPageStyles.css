@@ -1,0 +1,19 @@
+﻿@media (max-width: 599px) {
+    .custom-order-xs-1 {
+        order: 1 !important;
+    }
+
+    .custom-order-xs-2 {
+        order: 2 !important;
+    }
+}
+
+@media (min-width: 600px) {
+    .custom-order-sm-1 {
+        order: 1 !important;
+    }
+
+    .custom-order-sm-2 {
+        order: 2 !important;
+    }
+}

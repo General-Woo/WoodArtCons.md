@@ -1,0 +1,98 @@
+﻿@page "/"
+@using System.Globalization
+@inject IJSRuntime JSRuntime
+@inject NavigationManager _navigationManager
+
+<div style="z-index:-1; position:fixed; width:100vw; left: 0; top: 0; height:100vh;background-image: url('/Images/contacts.jpg'); background-size: cover; background-repeat: no-repeat; min-width:300px; min-height:100px;"></div>
+
+@if (isloading)
+{
+    <MudProgressCircular Color="Color.Secondary" Style="height:100px; width:100px; position:fixed; top:40%; left:50%;" Indeterminate="true" />
+}
+else
+{
+    @if (culture != null) {
+        var homePageWelcome  = culture switch { "ru-RU" => "Добро пожаловать в", "en-US" => "Welcome to", "ro-RO" => "Bun venit la" };
+        var homePageSubtitle = culture switch { "ru-RU" => "Ваш эксперт по качественным деревянным изделиям!", "en-US" => "Your expert in quality wood products!", "ro-RO" => "Expertul tău în Produse din Lemn de Calitate!" };
+        var paragraph1 = culture switch { 
+            "ru-RU" => "В WoodArtCons мы превращаем древесину в выдающиеся творения, которые обогащают помещения и жизни наших клиентов. От элегантных скунсов и сдержанных урн до игривых скряг, деревенских беседок и даже прочных деревянных домов-мы предлагаем широкий выбор продуктов, изготовленных с мастерством и вниманием к деталям.",
+            "en-US" => "At WoodArtCons, we transform wood into special creations that enrich the spaces and lives of our customers. From elegant chairs and discreet urns, to playful scrubs, rustic gazebos and even sustainable wooden houses, we offer a wide range of products made with craftsmanship and attention to detail.", 
+            "ro-RO" => "La WoodArtCons, transformam lemnul în create deosebite care îmbogatesc spatiile si vietile clientilor nostri. De la scune elegante și urne discrete, până la scrâncioburi jucăușe, foișoare rustice și chiar case durabile din lemn, oferim o gamă variată de produse realizate cu măiestrie și atenție la detalii."
+        };
+        var paragraph2 = culture switch { 
+            "ru-RU" => "Мы используем только высококачественную древесину, тщательно обработанную нашей командой преданных ремесленников. Каждый продукт, который мы производим, отражает нашу страсть к дереву и стремление предоставить нашим клиентам прочные и красивые предметы.",
+            "en-US" => "We use only high quality wood, carefully processed by our team of dedicated artisans. Each product we make reflects our passion for wood and our desire to offer our customers durable and beautiful objects.",
+            "ro-RO" => "Folosim doar lemn de calitate superioară, prelucrat cu grijă de echipa noastră de artizani dedicați. Fiecare produs pe care îl realizăm reflectă pasiunea noastră pentru lemn și dorința de a oferi clienților noștri obiecte durabile și frumoase."
+        };
+        var paragraph3 = culture switch { 
+            "ru-RU" => "Откройте для себя мир аутентичного дерева и позвольте себе вдохновиться нашей разнообразной коллекцией. Ищете ли вы мебель для дома, уникальный декоративный элемент или прочную конструкцию, в WoodArtCons вы найдете индивидуальные решения, отвечающие всем вашим требованиям.",
+            "en-US" => "Discover the world of authentic wood and let yourself be inspired by our varied collection. Whether you are looking for Home Furnishings, a unique decorative element or a sustainable construction, at WoodArtCons you will find customized solutions that meet all your requirements.",
+            "ro-RO" => "Descoperă lumea lemnului autentic și lasă-te inspirat de colecția noastră variată. Indiferent dacă ești în căutarea unui mobilier pentru casă, a unui element decorativ unic sau a unei construcții durabile, la WoodArtCons vei găsi soluții personalizate care să îți îndeplinească toate cerințele."
+        };
+    <div class="page-item">
+        <div class="d-flex justify-content-center align-content-center">
+            <h1 style="color:White">@homePageWelcome <strong>WoodArtCons</strong></h1>
+        </div>
+        <div class="d-flex justify-content-center align-content-center">
+            <h5 style="color:White">@homePageSubtitle</h5>
+        </div>
+        <MudCard Elevation="0" Outlined="false" Style="background-color:transparent;" Class="w-100 d-flex flex-wrap flex-row gap-16 justify-center">
+            <MudCard Elevation="0" Outlined="false" Style="max-width:1126px; background-color:transparent;" Class="w-100 d-flex flex-wrap flex-row gap-16 justify-center">
+                <MudGrid>
+                    <MudItem xs="12" sm="6" Class="custom-mud-item">
+                        <MudPaper Class="d-flex align-center justify-center mud-width-full py-8 px-8">
+                            @paragraph1
+                        </MudPaper>
+                    </MudItem>
+                    <MudItem xs="12" sm="6" Class="custom-mud-item">
+                        <MudPaper Class="d-flex align-center justify-center mud-width-full">
+                            <MudImage Src="/Images/contacts2.jpg"  Class="rounded-lg custom-image-size" />
+                        </MudPaper>
+                    </MudItem>
+                </MudGrid>
+                <MudGrid>
+                    <MudItem xs="12" sm="6" Class="custom-mud-item custom-order-xs-2 custom-order-sm-1">
+                        <MudPaper Class="d-flex align-center justify-center mud-width-full">
+                            <MudImage Src="/Images/contacts2.jpg" Class="rounded-lg custom-image-size" />
+                        </MudPaper>
+                    </MudItem>
+                    <MudItem xs="12" sm="6" Class="custom-mud-item custom-order-xs-1 custom-order-sm-2">
+                        <MudPaper Class="d-flex align-center justify-center mud-width-full py-8 px-8">
+                            @paragraph2
+                        </MudPaper>
+                    </MudItem>
+                </MudGrid>
+                <MudGrid>
+                    <MudItem xs="12" sm="6" Class="custom-mud-item">
+                        <MudPaper Class="d-flex align-center justify-center mud-width-full py-8 px-8">
+                            @paragraph3
+                        </MudPaper>
+                    </MudItem>
+                    <MudItem xs="12" sm="6" Class="custom-mud-item">
+                        <MudPaper Class="d-flex align-center justify-center mud-width-full">
+                            <MudImage Src="/Images/contacts2.jpg" Class="rounded-lg custom-image-size" />
+                        </MudPaper>
+                    </MudItem>
+                </MudGrid>
+            </MudCard>
+        </MudCard>
+    </div>
+    }
+}
+
+
+@code {
+    private bool isloading;
+    private string culture;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            isloading = true;
+            culture = await JSRuntime.InvokeAsync<string>("getLanguage");
+            isloading = false;
+            StateHasChanged();
+        }
+    }
+}

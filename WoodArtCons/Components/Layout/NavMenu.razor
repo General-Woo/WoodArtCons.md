@@ -1,0 +1,134 @@
+﻿@using System.Globalization
+@inject NavigationManager _navigationManager 
+@inject IJSRuntime JSRuntime
+
+@if (isloading)
+{
+
+}
+else
+{
+<MudAppBar Style="background-color:#f7f7f7; border-bottom:1px solid #d6d5d5;">
+    <MudGrid Justify="Justify.SpaceBetween">
+        <MudItem Style="flex-wrap:nowrap">
+            <div>
+                <img style=" width: 56px; height: 56px;" src="/Images/WoodArtCons_Logo.png" alt="Logo" />
+                <a class="navbar-brand" style="text-decoration:none; color:black; font-family: Inter, sans-serif; font-size:clamp(0.875rem, 0.875rem + ((1vw - 0.2rem) * 0.542), 1.2rem); font-style: normal; font-weight: 600;" href="/">WoodArtCons</a>
+            </div>
+        </MudItem>
+            @if (culture != null){
+                        var homePageTitle    = culture switch { "ru-RU" => "Главная страница", "en-US" => "Home",     "ro-RO" => "Acasă"        };
+                        var catalogPageTitle = culture switch { "ru-RU" => "Каталог",          "en-US" => "Catalog",  "ro-RO" => "Catalog"      };
+                        var galeryPageTitle  = culture switch { "ru-RU" => "Галерея",          "en-US" => "Gallery",  "ro-RO" => "Galerie"      };
+                        var aboutPageTitle   = culture switch { "ru-RU" => "О нас",            "en-US" => "About Us", "ro-RO" => "Despre noi"   };
+                        var contactsPageTitle= culture switch { "ru-RU" => "Контакты",         "en-US" => "Contacts", "ro-RO" => "Contacte"     };
+                        var language         = culture switch { "ru-RU" => "Язык",             "en-US" => "Language", "ro-RO" => "Limba"        };
+                        var romanian         = culture switch { "ru-RU" => "Румынский",        "en-US" => "Romanian", "ro-RO" => "Română"       };
+                        var russian          = culture switch { "ru-RU" => "Русский",          "en-US" => "Russian",  "ro-RO" => "Rusă"         };
+                        var english          = culture switch { "ru-RU" => "Английский",       "en-US" => "English",  "ro-RO" => "Engleză"      };
+                        var admin            = culture switch { "ru-RU" => "Админ",            "en-US" => "Admin",    "ro-RO" => "Admin"        };
+                <MudItem Class="my-auto pc-view">
+                    <AuthorizeView>
+                        <Authorized>
+                            <MudButton Href="/admin">@admin</MudButton>
+                        </Authorized>
+                    </AuthorizeView>
+                    <MudButton Href="/">@homePageTitle</MudButton>
+                    <MudButton Href="/catalog">@catalogPageTitle</MudButton>
+                    <MudButton Href="/galery">@galeryPageTitle</MudButton>
+                    <MudButton Href="/about">@aboutPageTitle</MudButton>
+                    <MudButton Href="/contacts">@contactsPageTitle</MudButton>
+                    <MudMenu FullWidth="true" Class="custom-mud-menu-button" AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopRight" Color="Color.Secondary" Label='@language' Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.KeyboardArrowDown" IconColor="Color.Secondary">
+                        <MudButton Style="justify-content: flex-start;" Class="w-100" OnClick='() => SetLanguage("ro-RO")'>@romanian</MudButton><br />
+                        <MudButton Style="justify-content: flex-start;" Class="w-100" OnClick='() => SetLanguage("ru-RU")'>@russian</MudButton><br />
+                        <MudButton Style="justify-content: flex-start;" Class="w-100" OnClick='() => SetLanguage("en-US")'>@english</MudButton><br />
+                    </MudMenu>
+                </MudItem>
+            }
+        <MudItem Class="my-auto mobile-view">
+            <MudIconButton OnClick="@(e => ToggleOverlay(true))" Icon="@Icons.Material.Filled.Menu" Color="Color.Dark" />
+            @if (isVisible)
+            {
+                @if (culture != null) {
+                        var homePageTitle     = culture switch { "ru-RU" => "Главная страница", "en-US" => "Home",      "ro-RO" => "Acasă"      };
+                        var catalogPageTitle  = culture switch { "ru-RU" => "Каталог",          "en-US" => "Catalog",   "ro-RO" => "Catalog"    };
+                        var galeryPageTitle   = culture switch { "ru-RU" => "Галерея",          "en-US" => "Gallery",   "ro-RO" => "Galerie"    };
+                        var aboutPageTitle    = culture switch { "ru-RU" => "О нас",            "en-US" => "About Us",  "ro-RO" => "Despre noi" };
+                        var contactsPageTitle = culture switch { "ru-RU" => "Контакты",         "en-US" => "Contacts",  "ro-RO" => "Contacte"   };
+                        var language          = culture switch { "ru-RU" => "Язык",             "en-US" => "Language",  "ro-RO" => "Limba"      };
+                        var romanian          = culture switch { "ru-RU" => "Румынский",        "en-US" => "Romanian",  "ro-RO" => "Română"     };
+                        var russian           = culture switch { "ru-RU" => "Русский",          "en-US" => "Russian",   "ro-RO" => "Rusă"       };
+                        var english           = culture switch { "ru-RU" => "Английский",       "en-US" => "English",   "ro-RO" => "Engleză"    };
+                        var admin             = culture switch { "ru-RU" => "Админ",            "en-US" => "Admin",     "ro-RO" => "Admin"      };
+                    <div style="position: fixed; top: 0; right: 0; bottom: 0; left: 0; z-index: auto; background-color:#f7f7f7;">
+                        <MudNavMenu>
+                            <div class="px-4">
+                                <img style=" width: 56px; height: 56px;" src="/Images/WoodArtCons_Logo.png" alt="Logo" />
+                                <a class="navbar-brand" style="text-decoration:none; color:black; font-family: Inter, sans-serif; font-size:clamp(0.875rem, 0.875rem + ((1vw - 0.2rem) * 0.542), 1.2rem); font-style: normal; font-weight: 600;" href="/">WoodArtCons</a>
+                            </div>
+                            <AuthorizeView>
+                                <Authorized>
+                                    <MudButton Class="w-100 pl-4" OnClick="@(e => ToggleOverlay(false))" Style="color:black; justify-content: flex-start;" Href="/admin">@admin</MudButton>
+                                </Authorized>
+                            </AuthorizeView>
+                            <MudDivider Class="my-2" />
+                            <MudButton Class="w-100 pl-4" OnClick="@(e => ToggleOverlay(false))" Style="color:black; justify-content: flex-start;" Href="/">@homePageTitle</MudButton> 
+                            <MudDivider />
+                            <MudButton Class="w-100 pl-4" OnClick="@(e => ToggleOverlay(false))" Style="color:black; justify-content: flex-start;" Href="/catalog">@catalogPageTitle</MudButton>
+                            <MudDivider />
+                            <MudButton Class="w-100 pl-4" OnClick="@(e => ToggleOverlay(false))" Style="color:black; justify-content: flex-start;" Href="/galery">@galeryPageTitle</MudButton>
+                            <MudDivider />
+                            <MudButton Class="w-100 pl-4" OnClick="@(e => ToggleOverlay(false))" Style="color:black; justify-content: flex-start;" Href="/about">@aboutPageTitle</MudButton>
+                            <MudDivider />
+                            <MudButton Class="w-100 pl-4" OnClick="@(e => ToggleOverlay(false))" Style="color:black; justify-content: flex-start;" Href="/contacts">@contactsPageTitle</MudButton>
+                            <MudDivider />
+                            <MudExpansionPanels>
+                                <MudExpansionPanel Text='@language'>
+                                    <MudButton Class="w-100 pl-4" Style="justify-content: flex-start;" OnClick='() => SetLanguage("ro-RO")'>@romanian</MudButton><br />
+                                    <MudButton Class="w-100 pl-4" Style="justify-content: flex-start;" OnClick='() => SetLanguage("ru-RU")'>@russian</MudButton><br />
+                                    <MudButton Class="w-100 pl-4" Style="justify-content: flex-start;" OnClick='() => SetLanguage("en-US")'>@english</MudButton><br />
+                                </MudExpansionPanel>
+                            </MudExpansionPanels>
+                        </MudNavMenu>
+                    </div>
+                };
+            }
+        </MudItem>
+    </MudGrid>
+</MudAppBar>
+}
+
+
+@code {
+    private bool isVisible = false;
+    private bool isloading;
+    private string culture;
+
+    void ToggleOverlay(bool val)
+    {
+        isVisible = val;
+        StateHasChanged();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            isloading = true;
+            culture = await JSRuntime.InvokeAsync<string>("getLanguage");
+            if (culture == null) {
+                await JSRuntime.InvokeVoidAsync("setLanguage", "ro-RO");
+                _navigationManager.NavigateTo(_navigationManager.Uri, forceLoad: true);
+            }
+            isloading = false;
+            StateHasChanged();
+        }
+        
+    }
+
+    async Task SetLanguage(string cultureCode)
+    {
+        await JSRuntime.InvokeVoidAsync("setLanguage", cultureCode);
+        _navigationManager.NavigateTo(_navigationManager.Uri, forceLoad: true);
+    }
+}
