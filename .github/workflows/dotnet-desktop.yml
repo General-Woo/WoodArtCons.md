@@ -14,12 +14,7 @@ permissions:
 
 jobs:
   build-and-deploy:
-    runs-on: windows-latest
-
-    env:
-      Solution_Name: WoodArtCons.sln
-      Server_Project_Path: WoodArtCons.Server
-      Client_Project_Path: WoodArtCons
+    runs-on: ubuntu-latest
 
     steps:
     - name: Checkout repository
@@ -33,19 +28,25 @@ jobs:
         dotnet-version: 8.0.x
 
     - name: Restore dependencies
-      run: dotnet restore ${{ env.Solution_Name }}
+      run: dotnet restore WoodArtCons.sln
 
     - name: Build solution
-      run: dotnet build ${{ env.Solution_Name }} --configuration Release
+      run: dotnet build WoodArtCons.sln --configuration Release
 
     - name: Run tests
-      run: dotnet test ${{ env.Solution_Name }} --configuration Release
+      run: dotnet test WoodArtCons.sln --configuration Release
 
     - name: Publish Server
-      run: dotnet publish ${{ env.Server_Project_Path }} --configuration Release --output ./publish/Server
+      run: dotnet publish WoodArtCons.Server --configuration Release --output ./publish/Server
 
     - name: Publish Client
-      run: dotnet publish ${{ env.Client_Project_Path }} --configuration Release --output ./publish/Client
+      run: dotnet publish WoodArtCons --configuration Release --output ./publish/Client
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: github-pages
+        path: ./publish
 
     - name: Deploy to GitHub Pages
       uses: actions/deploy-pages@v4
