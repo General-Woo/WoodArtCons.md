@@ -1,9 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using System.Configuration;
-using System.Data.SQLite;
-using System.Globalization;
 using WoodArtCons.Server.WoodArtCons.Persistence;
 using WoodArtCons.Server.WoodArtCons.Persistence.Initializers;
 
@@ -65,27 +62,6 @@ builder.Services.AddCors(options =>
         });
 });
 
-// Add custom services to the container.
-
-//builder.Services.AddTransient<AppDbContext>();
-
-//builder.Services.AddSingleton<Microsoft.Data.Sqlite.SqliteConnection>(serviceProvider =>
-//{
-//    try {
-//        //var connectionString = "Data Source=WoodArtCons.db"; // Configurarea stringului de conexiune
-//        var connectionString = $"Data Source={builder.Configuration.GetSection("ConnectionStrings:Connection").Value}"; 
-//        var connection = new Microsoft.Data.Sqlite.SqliteConnection(connectionString);
-//        connection.Open(); // Deschiderea conexiunii
-//        Console.WriteLine("Connected to the SQLite database!");
-//        return connection;
-//    }catch(Exception ex)
-//    {
-//        Console.WriteLine(ex.ToString());
-//        throw;
-//    }
-
-//});
-
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
     options.UseSqlite(builder.Configuration.GetConnectionString("WebApiDatabase"));
@@ -111,7 +87,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 app.UseCors("AllowAll");
 app.UseAuthorization();
 app.UseAuthorization();

@@ -5,6 +5,7 @@
 @using WoodArtCons.Shared.DataTransferObjects
 @inject IJSRuntime JSRuntime
 @inject IAuthService authService
+@inject IDialogService DialogService
 @inject NavigationManager _navigationManager 
 @inject IFileUploadService fileUploadService
 @inject ICategoryManagerService categoryManager
@@ -30,7 +31,7 @@ else
 
                     <MudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true" PanelClass="pa-6" Outlined="true">
                         <div class="d-flex justify-end flex-grow-1 gap-4 mb-3">
-                            <MudButton StartIcon="@Icons.Material.Filled.Add" Variant="Variant.Filled" Color="Color.Success" Class="ml-auto" OnClick="() => OpenCreateCategoryDialog()">Create New Category</MudButton>
+                            <MudButton StartIcon="@Icons.Material.Filled.Add" Variant="Variant.Filled" Color="Color.Success" Class="ml-auto" OnClick="() => OpenCreateCategoryDialog()">Adauga o categorie</MudButton>
                         </div>
 
                         <!-- Catalog tab -->
@@ -53,7 +54,7 @@ else
                                     <MudTd DataLabel="Image">@rowContext1.ImageSrc</MudTd>
                                     <MudTh>
                                         <MudButton Variant="Variant.Filled" OnClick="() => OpenDialog(rowContext1)" Color="Color.Success">Edit</MudButton>
-                                        <MudButton Variant="Variant.Filled" OnClick="()=>Delete(rowContext1.Id)" Color="Color.Error">Delete</MudButton>
+                                        <MudButton Variant="Variant.Filled" OnClick="()=>ConfirmCategoryDelete(rowContext1.Id)" Color="Color.Error">Delete</MudButton>
                                     </MudTh>
                                 </RowTemplate>
                             </MudTable>
@@ -79,7 +80,7 @@ else
                                     <MudTd DataLabel="Image">@rowContext2.ImageSrc</MudTd>
                                     <MudTh>
                                         <MudButton Variant="Variant.Filled" OnClick="() => OpenDialog(rowContext2)" Color="Color.Success">Edit</MudButton>
-                                        <MudButton Variant="Variant.Filled" OnClick="() => Delete(rowContext2.Id)" Color="Color.Error">Delete</MudButton>
+                                        <MudButton Variant="Variant.Filled" OnClick="() => ConfirmCategoryDelete(rowContext2.Id)" Color="Color.Error">Delete</MudButton>
                                     </MudTh>
                                 </RowTemplate>
                             </MudTable>
@@ -92,7 +93,7 @@ else
 
                     <MudTabs Elevation="4" Rounded="true" Color="@Color.Secondary" @ref="tabs">
                         <div class="d-flex justify-end flex-grow-1 gap-4 mb-3">
-                            <MudButton StartIcon="@Icons.Material.Filled.Add" Variant="Variant.Filled" Color="Color.Success" Class="ml-auto mt-2" OnClick="() => OpenCreateProductDialog()">Create New Product</MudButton> @*  Change this function *@
+                            <MudButton StartIcon="@Icons.Material.Filled.Add" Variant="Variant.Filled" Color="Color.Success" Class="ml-auto mt-2" OnClick="() => OpenCreateProductDialog()">Adauga un produs</MudButton> @*  Change this function *@
                         </div>
                         @foreach (var category in categories)
                         {
@@ -121,7 +122,7 @@ else
 
                                         <MudTh>
                                             <MudButton Variant="Variant.Filled" OnClick="() => OpenEditProductDialog(rowContext3)" Color="Color.Success">Edit</MudButton>
-                                            <MudButton Variant="Variant.Filled" OnClick="() => Delete(rowContext3.Id)" Color="Color.Error">Delete</MudButton>
+                                            <MudButton Variant="Variant.Filled" OnClick="() => ConfirmProductDelete(rowContext3.Id)" Color="Color.Error">Delete</MudButton>
                                         </MudTh>
                                     </RowTemplate>
                                 </MudTable>
@@ -233,12 +234,12 @@ else
 
     <!-- Edit Product Dialog -->
 
-    <MudDialog IsVisible="IsEditProductDialogOpen" Options="dialogOptions">
+    <MudDialog IsVisible="IsEditProductDialogOpen" Class="w-100" Options="dialogOptions">
         <TitleContent>
             <b style="font-size: 20px;">Edit Product</b>
         </TitleContent>
         <DialogContent>
-            <EditForm Model="productToEdit" OnValidSubmit="Submit">
+            <EditForm Model="productToEdit" OnValidSubmit="SubmitEditProduct">
                 <DataAnnotationsValidator />
                 
                 @if (categoryForProductToEdit?.IsForGalery == true) {
@@ -289,64 +290,147 @@ else
                     <MudItem xs="12">
                         <MudTextField @bind-Value="productToEdit.ImageSrc" Label="Image Source" Variant="Variant.Filled" />
                     </MudItem>
+                    <MudItem xs="12">
+                        <MudTextField @bind-Value="productToEdit.Lenght" Label="Lungime" Variant="Variant.Filled" />
+                    </MudItem>
+                    <MudItem xs="12">
+                        <MudTextField @bind-Value="productToEdit.Height" Label="Inaltime" Variant="Variant.Filled" />
+                    </MudItem>
+                    <MudItem xs="12">
+                        <MudTextField @bind-Value="productToEdit.Width" Label="Latime" Variant="Variant.Filled" />
+                    </MudItem>
+                    <MudItem xs="12">
+                        <MudTextField @bind-Value="productToEdit.DescriptionRo" Label="Descriere Ro" Variant="Variant.Filled" />
+                    </MudItem>
+                    <MudItem xs="12">
+                        <MudTextField @bind-Value="productToEdit.DescriptionRu" Label="Descriere Ru" Variant="Variant.Filled" />
+                    </MudItem>
+                    <MudItem xs="12">
+                        <MudTextField @bind-Value="productToEdit.DescriptionEn" Label="Descriere En" Variant="Variant.Filled" />
+                    </MudItem>
+                    <MudItem xs="12">
+                        <MudTextField @bind-Value="productToEdit.MaterialRo" Label="MaterialeRo" Variant="Variant.Filled" />
+                    </MudItem>
+                    <MudItem xs="12">
+                        <MudTextField @bind-Value="productToEdit.MaterialRu" Label="MaterialeRu" Variant="Variant.Filled" />
+                    </MudItem>
+                    <MudItem xs="12">
+                        <MudTextField @bind-Value="productToEdit.MaterialEn" Label="MaterialeEn" Variant="Variant.Filled" />
+                    </MudItem>
+                    <MudItem xs="12">
+                        <MudTextField @bind-Value="productToEdit.Price" Label="Pret" Variant="Variant.Filled" />
+                    </MudItem>
                 }
             </EditForm>
 
         </DialogContent>
         <DialogActions>
             <MudButton Variant="Variant.Outlined" OnClick="CancelEditProduct">Cancel</MudButton>
-            <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="Submit">Edit</MudButton>
+            <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="SubmitEditProduct">Edit</MudButton>
         </DialogActions>
     </MudDialog>
 
     <!-- Add Product Dialog -->
 
-    <MudDialog IsVisible="IsAddProductDialogOpen" Options="dialogOptions">
+    <MudDialog IsVisible="IsAddProductDialogOpen" Class="w-100" Options="dialogOptions">
         <TitleContent>
             <b style="font-size: 20px;">Add Product</b>
         </TitleContent>
         <DialogContent>
-            <EditForm Model="categoryToAdd" OnValidSubmit="SubmitAdd">
+            <EditForm Model="productToEdit" OnValidSubmit="SubmitEditProduct">
                 <DataAnnotationsValidator />
-                <MudGrid>
-                    <MudItem xs="12">
-                        <MudTextField @bind-Value="categoryToAdd.Id" Label="Id" Variant="Variant.Filled" />
-                    </MudItem>
-                    <MudItem xs="12">
-                        <MudTextField @bind-Value="categoryToAdd.NameRo" Label="Name Ro" Variant="Variant.Filled" />
-                    </MudItem>
-                    <MudItem xs="12">
-                        <MudTextField @bind-Value="categoryToAdd.NameRu" Label="Name Ru" Variant="Variant.Filled" />
-                    </MudItem>
-                    <MudItem xs="12">
-                        <MudTextField @bind-Value="categoryToAdd.NameEn" Label="Name En" Variant="Variant.Filled" />
-                    </MudItem>
-                    <MudItem xs="12">
-                        @* <MudTextField @bind-Value="categoryToAdd.ImageSrc" Label="Image Source" Variant="Variant.Filled" /> *@
-                        <MudButton HtmlTag="label"
-                                   Variant="Variant.Outlined"
-                                   Color="Color.Success"
-                                   StartIcon="@Icons.Material.Filled.CloudUpload"
-                                   for="fileInput">
-                            Upload files
-                        </MudButton>
-                        <InputFile id="fileInput" OnChange="HandleFileSelection" hidden multiple />
-                    </MudItem>
-                    <MudImage Style="margin-left:12px;" Height="200" Width="200" ObjectPosition="ObjectPosition.Center" Src="@categoryToAdd.ImageSrc" />
-                    <MudItem xs="12">
-                        <MudSelect T="bool" @bind-Value="categoryToAdd.IsForGalery" Label="For Galery" Variant="Variant.Filled" AnchorOrigin="Origin.BottomCenter">
-                            <MudSelectItem T="bool" Value="true" />
-                            <MudSelectItem T="bool" Value="false" />
-                        </MudSelect>
-                    </MudItem>
-                    <MudDivider DividerType="DividerType.Middle" Class="my-6" />
-                </MudGrid>
-            </EditForm>
 
+                <MudItem xs="12">
+                    <MudSelect T="string" Label="Select Category" @bind-Value="productToEdit.CategoryId" Variant="Variant.Filled" AnchorOrigin="Origin.BottomCenter">
+                        @foreach (var category in categories)
+                        {
+                            <MudSelectItem Value="@category.Id">@category.NameRo</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+
+
+                @if (categories.FirstOrDefault(c => c.Id == productToEdit.CategoryId)?.IsForGalery == true)
+                {
+                    @* Galery Content *@
+                    
+                    <MudItem xs="12">
+                        <MudTextField @bind-Value="productToEdit.Id" Label="Id" Variant="Variant.Filled" />
+                    </MudItem>
+                    <MudItem xs="12">
+                        <MudTextField @bind-Value="productToEdit.NameRo" Label="NameRo" Variant="Variant.Filled" />
+                    </MudItem>
+                    <MudItem xs="12">
+                        <MudTextField @bind-Value="productToEdit.NameRu" Label="NameRu" Variant="Variant.Filled" />
+                    </MudItem>
+                    <MudItem xs="12">
+                        <MudTextField @bind-Value="productToEdit.NameEn" Label="NameEn" Variant="Variant.Filled" />
+                    </MudItem>
+                    <MudItem xs="12">
+                        <MudTextField @bind-Value="productToEdit.ImageSrc" Label="Sursa Imaginii" Variant="Variant.Filled" />
+                    </MudItem>
+                    <MudItem xs="12">
+                        <MudTextField @bind-Value="productToEdit.Price" Label="Pret" Variant="Variant.Filled" />
+                    </MudItem>
+                    @* @foreach (var photo in productToEdit.ListImagesSrc)
+                    {
+                        <MudImage Style="margin-left:12px; margin-top :12px;" Height="200" Width="200" ObjectPosition="ObjectPosition.Center" Src="@photo" />
+                    } *@
+                }
+                else
+                {
+                    @* Non-Galery Content *@
+                    <MudItem xs="12">
+                        <MudTextField @bind-Value="productToEdit.Id" Label="Id" Variant="Variant.Filled" />
+                    </MudItem>
+                    <MudItem xs="12">
+                        <MudTextField @bind-Value="productToEdit.NameRo" Label="NameRo" Variant="Variant.Filled" />
+                    </MudItem>
+                    <MudItem xs="12">
+                        <MudTextField @bind-Value="productToEdit.NameRu" Label="NameRu" Variant="Variant.Filled" />
+                    </MudItem>
+                    <MudItem xs="12">
+                        <MudTextField @bind-Value="productToEdit.NameEn" Label="NameEn" Variant="Variant.Filled" />
+                    </MudItem>
+                    <MudItem xs="12">
+                        <MudTextField @bind-Value="productToEdit.ImageSrc" Label="Image Source" Variant="Variant.Filled" />
+                    </MudItem>
+                    <MudItem xs="12">
+                        <MudTextField @bind-Value="productToEdit.Lenght" Label="Lungime" Variant="Variant.Filled" />
+                    </MudItem>
+                    <MudItem xs="12">
+                        <MudTextField @bind-Value="productToEdit.Height" Label="Inaltime" Variant="Variant.Filled" />
+                    </MudItem>
+                    <MudItem xs="12">
+                        <MudTextField @bind-Value="productToEdit.Width" Label="Latime" Variant="Variant.Filled" />
+                    </MudItem>
+                    <MudItem xs="12">
+                        <MudTextField @bind-Value="productToEdit.DescriptionRo" Label="Descriere Ro" Variant="Variant.Filled" />
+                    </MudItem>
+                    <MudItem xs="12">
+                        <MudTextField @bind-Value="productToEdit.DescriptionRu" Label="Descriere Ru" Variant="Variant.Filled" />
+                    </MudItem>
+                    <MudItem xs="12">
+                        <MudTextField @bind-Value="productToEdit.DescriptionEn" Label="Descriere En" Variant="Variant.Filled" />
+                    </MudItem>
+                    <MudItem xs="12">
+                        <MudTextField @bind-Value="productToEdit.MaterialRo" Label="MaterialeRo" Variant="Variant.Filled" />
+                    </MudItem>
+                    <MudItem xs="12">
+                        <MudTextField @bind-Value="productToEdit.MaterialRu" Label="MaterialeRu" Variant="Variant.Filled" />
+                    </MudItem>
+                    <MudItem xs="12">
+                        <MudTextField @bind-Value="productToEdit.MaterialEn" Label="MaterialeEn" Variant="Variant.Filled" />
+                    </MudItem>
+                    <MudItem xs="12">
+                        <MudTextField @bind-Value="productToEdit.Price" Label="Pret" Variant="Variant.Filled" />
+                    </MudItem>
+                }
+            </EditForm>
         </DialogContent>
         <DialogActions>
             <MudButton Variant="Variant.Outlined" OnClick="CancelAddProduct">Cancel</MudButton>
-            <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="SubmitAdd">Add</MudButton>
+            <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="SubmitAddProduct">Add</MudButton>
         </DialogActions>
     </MudDialog>
 }
@@ -368,6 +452,7 @@ else
     private string LengthMeters;
     private string WidthMeters;
     private string HeightMeters;
+    // private bool showGaleryContent = false;
 
     private bool IsDialogOpen { get; set; } = false;
     private bool IsAddDialogOpen { get; set; } = false;
@@ -552,14 +637,14 @@ else
         string galeryUrl = "/galery/";
 
         categoryToEdit = new CategoryModelDto
-            {
-                Id = category.Id,
-                NameRo = category.NameRo,
-                NameRu = category.NameRu,
-                NameEn = category.NameEn,
-                ImageSrc = category.ImageSrc,
-                IsForGalery = category.IsForGalery
-            };
+        {
+            Id = category.Id,
+            NameRo = category.NameRo,
+            NameRu = category.NameRu,
+            NameEn = category.NameEn,
+            ImageSrc = category.ImageSrc,
+            IsForGalery = category.IsForGalery
+        };
 
         if (category.IsForGalery == true)
         {
@@ -586,6 +671,8 @@ else
             IsDialogOpen = true;
         }
 
+        categoryToEdit = new CategoryModelDto();
+
         await InvokeAsync(() => StateHasChanged());
         await OnAfterRenderAsync(true);
     }
@@ -596,13 +683,70 @@ else
         await OnAfterRenderAsync(true);
     }
 
+    private async Task ConfirmCategoryDelete(string id)
+    {
+        var parameters = new DialogParameters { ["ContentText"] = "Esti sigur ca vrei sa stergi aceasta categorie?" };
+        var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Small };
+
+        var dialog = DialogService.Show<ConfirmDialog>("Confirmare", parameters, options);
+        var result = await dialog.Result;
+
+        if (!result.Cancelled)
+        {
+            Delete(id);
+        }
+    }
+
+    private async Task DeleteProduct(string id)
+    {
+        await categoryProduct.DeleteProduct(id);
+        await OnAfterRenderAsync(true);
+    }
+    
+    private async Task ConfirmProductDelete(string id)
+    {
+        var parameters = new DialogParameters { ["ContentText"] = "Esti sigur ca vrei sa stergi acest produs?" };
+        var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Small };
+
+        var dialog = DialogService.Show<ConfirmDialog>("Confirmare", parameters, options);
+        var result = await dialog.Result;
+
+        if (!result.Cancelled)
+        {
+            DeleteProduct(id);
+        }
+    }
+
     private void OpenCreateCategoryDialog()
     {
         IsAddDialogOpen = true;
     }
 
+    private async void SubmitAdd()
+    {
+        string catalogUrl = "/catalog/";
+        string galeryUrl = "/galery/";
+        if (categoryToAdd.IsForGalery == true)
+        {
+            categoryToAdd.Link = galeryUrl + categoryToAdd.Id;
+        }
+        else
+        {
+            categoryToAdd.Link = catalogUrl + categoryToAdd.Id;
+        }
+        categoryToAdd.ImageSrc = uploadedImagePath;
+        var addResult = await categoryManager.AddCategory(categoryToAdd);
+
+        categoryToAdd = new CategoryModelDto();
+        IsAddDialogOpen = false;
+
+        await InvokeAsync(() => StateHasChanged());
+        await OnAfterRenderAsync(true);
+    }
+
     private async void OpenEditProductDialog(CategoryProductModelDto product)
     {
+        isloading = true;
         categoryForProductToEdit = await categoryManager.GetCategoryById(product.CategoryId);
         productToEdit = new CategoryProductModelDto
             {
@@ -613,10 +757,38 @@ else
                 NameEn = product.NameEn,
                 ImageSrc = product.ImageSrc,
                 ListImagesSrc = product.ListImagesSrc,
-                Price = product.Price
+                Lenght = product.Lenght,
+                Height = product.Height,
+                Width = product.Width,
+                DescriptionEn = product.DescriptionEn,
+                DescriptionRo = product.DescriptionRo,
+                DescriptionRu = product.DescriptionRu,
+                Price = product.Price,
             };
 
         IsEditProductDialogOpen = true;
+        isloading = false;
+        StateHasChanged();
+    }
+
+    private async void SubmitEditProduct()
+    {
+        var editResult = await categoryProduct.EditProduct(productToEdit);
+
+        if (editResult != null)
+        {
+            IsEditProductDialogOpen = false;
+        }
+        else
+        {
+            IsEditProductDialogOpen = true;
+        }
+
+        productToEdit = new CategoryProductModelDto();
+        categoryForProductToEdit = new CategoryModelDto();
+
+        await InvokeAsync(() => StateHasChanged());
+        await OnAfterRenderAsync(true);
     }
 
     private void OpenCreateProductDialog()
@@ -624,7 +796,7 @@ else
         IsAddProductDialogOpen = true;
     }
 
-    private async void SubmitAdd()
+    private async void SubmitAddProduct()
     {
         string catalogUrl = "/catalog/";
         string galeryUrl = "/galery/";

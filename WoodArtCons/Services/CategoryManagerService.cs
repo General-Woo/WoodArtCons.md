@@ -22,11 +22,11 @@ namespace WoodArtCons.Services
             var result = await _httpClient.PostAsJsonAsync("api/Category", request);
             if (result.IsSuccessStatusCode)
             {
-                _snackbar.Add("Item was successfully added!", Severity.Success);
+                _snackbar.Add("Categoria a fost adaugata cu succes!", Severity.Success);
                 return default;
             }
 
-            _snackbar.Add("There was an error...", Severity.Error);
+            _snackbar.Add("A aparut o eroare...", Severity.Error);
             return await result.Content.ReadFromJsonAsync<string>();
         }
 
@@ -35,11 +35,11 @@ namespace WoodArtCons.Services
             var result = await _httpClient.DeleteAsync($"api/Category/delete/{id}");
             if (result.IsSuccessStatusCode)
             {
-                _snackbar.Add("Item was successfully deteled!", Severity.Success);
+                _snackbar.Add("Categoria a fost stearsa cu succes!", Severity.Success);
                 return await result.Content.ReadFromJsonAsync<Unit>();
             }
 
-            _snackbar.Add("There was an error...", Severity.Error);
+            _snackbar.Add("A aparut o eroare...", Severity.Error);
             return await result.Content.ReadFromJsonAsync<Unit>();
         }
 
@@ -48,11 +48,11 @@ namespace WoodArtCons.Services
             var result = await _httpClient.PutAsJsonAsync("api/Category", categoryItem);
             if (result.IsSuccessStatusCode)
             {
-                _snackbar.Add("Item was successfully edited!", Severity.Success);
+                _snackbar.Add("Categoria a fost editata cu succes!", Severity.Success);
                 return await result.Content.ReadFromJsonAsync<Unit>();
             }
 
-            _snackbar.Add("There was an error...", Severity.Error);
+            _snackbar.Add("A aparut o eroare...", Severity.Error);
             return await result.Content.ReadFromJsonAsync<Unit>();
         }
 

@@ -9,7 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddSingleton(new HttpClient()
 {
-    BaseAddress = new Uri("https://localhost:5001/")
+    BaseAddress = new Uri("http://localhost:5001/")
 });
 
 // Add services to the container.
