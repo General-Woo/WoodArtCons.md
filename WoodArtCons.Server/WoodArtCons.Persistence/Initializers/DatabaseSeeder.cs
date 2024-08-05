@@ -21,11 +21,11 @@ namespace WoodArtCons.Server.WoodArtCons.Persistence.Initializers
                     var user = new User()
                     {
                         Email = "admin@admin.com",
-                        UserName = "Admin Template",
+                        UserName = "Admin",
                         Role = "Admin",
                     };
 
-                    string password = "qwe";
+                    string password = "c=nT-4M6Sy,P{5)3DU+pNB";
 
                     CreatePasswordHash(password, out byte[] passwordHash, out byte[] passwordSalt);
                     user.PasswordHash = passwordHash;
