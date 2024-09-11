@@ -3,7 +3,10 @@
 @using System.Globalization
 @inject IJSRuntime JSRuntime
 
-<div style="z-index:-1; position:fixed; width:100vw; left: 0; top: 0; height:100vh;background-image: url('/Images/contacts.jpg'); background-size: cover; background-repeat: no-repeat; min-width:300px; min-height:100px;"></div>
+
+
+@* <div style="z-index:-1; position:fixed; width:100vw; left: 0; top: 0; height:100vh;background-image: url('/Images/about.jpg'); background-size: cover; background-repeat: no-repeat; min-width:300px; min-height:100px;"></div>
+ *@
 
 @if (isloading)
 {
@@ -12,94 +15,148 @@
 else
 {
     @if (culture != null) {
-        var aboutPageName = culture switch { "ru-RU" => "О нас", "en-US" => "About Us", "ro-RO" => "Despre noi" 
-    };
+        var aboutPageName = culture switch { "ru-RU" => "О нас", "en-US" => "About Us", "ro-RO" => "Despre noi" };
+        var aboutPageSlogan1 = culture switch { 
+            "ru-RU" => "WoodArtCons - Мы превращаем дерево в устойчивое",
+            "en-US" => "WoodArtCons - We turn wood into sustainable art for",
+            "ro-RO" => "WoodArtCons - Transformăm lemnul în artă durabilă"
+        };
+
+        var aboutPageSlogan2 = culture switch
+        {
+            "ru-RU" => "искусство  для всех ваших нужд, от комфорта до элегантности.",
+            "en-US" => "all  your needs, from comfort to elegance.",
+            "ro-RO" => "pentru  toate nevoile tale, de la confort la eleganță."
+        };
+
+        var ourStory = culture switch
+        {
+            "ru-RU" => "Наша история началась с глубокой страсти к дереву и желания создавать уникальные продукты, которые приносят радость и полезность тем, кто их использует. В WoodArtCons мы гордимся прочными традициями деревообработки в сочетании с инновациями и современным дизайном.",
+            "en-US" => "Our story began with a deep passion for wood and the desire to create unique products that bring joy and utility to those who use them. At WoodArtCons, we pride ourselves on a solid woodworking tradition combined with innovation and modern design.",
+            "ro-RO" => "Povestea noastră a început cu o pasiune profundă pentru lemn și dorința de a crea produse unice care să aducă bucurie și utilitate celor care le folosesc. La WoodArtCons, ne mândrim cu o tradiție solidă în prelucrarea lemnului, combinată cu inovația și designul modern."
+        };
+
+        var ourMission = culture switch
+        {
+            "ru-RU" => "Наша миссия - предоставлять клиентам изделия из дерева высочайшего качества, изготовленные с осторожностью и мастерством. Каждая деталь, которую мы создаем, является результатом тщательного процесса выбора материалов и тщательной обработки, чтобы обеспечить особую долговечность и эстетику.",
+            "en-US" => "Our mission is to offer customers the highest quality wood products, made with care and craftsmanship. Each piece we create is the result of a careful material selection process and meticulous processing to ensure durability and outstanding aesthetics.",
+            "ro-RO" => "Misiunea noastră este să oferim clienților produse din lemn de cea mai înaltă calitate, realizate cu grijă și măiestrie. Fiecare piesă pe care o creăm este rezultatul unui proces atent de selecție a materialelor și de prelucrare meticuloasă, pentru a asigura durabilitate și estetică deosebită."
+        };
+
+        var ourTeam = culture switch
+        {
+            "ru-RU" => "Наша команда состоит из талантливых ремесленников и преданных своему делу профессионалов, которые работают вместе, чтобы превратить необработанное дерево в функциональные предметы искусства. Наши ценности основаны на уважении к природе, бескомпромиссном качестве и удовлетворенности наших клиентов.",
+            "en-US" => "Our team consists of talented artisans and dedicated professionals who work together to transform raw wood into functional art objects. Our values are based on respect for nature, uncompromising quality and the satisfaction of our customers.",
+            "ro-RO" => "Echipa noastră este formată din artizani talentați și profesioniști dedicați, care lucrează împreună pentru a transforma lemnul brut în obiecte de artă funcționale. Valorile noastre sunt bazate pe respect pentru natură, calitate fără compromisuri și satisfacția clienților noștri."
+        };
+
+        var ourWorkshop = culture switch
+        {
+            "ru-RU" => "В нашей мастерской традиция встречается с современными технологиями для создания разнообразных изделий: от уютной и стильной мебели до декоративных элементов и деревянного жилого строительства. Мы хотим, чтобы каждый клиент чувствовал, что он выбрал не только продукт, но и историю, часть природы, преобразованную с заботой и мастерством.",
+            "en-US" => "In our workshop, tradition meets modern technology to create various products: from comfortable and elegant furniture, to decorative elements and residential constructions made of wood. We want every customer to feel that they have chosen not just a product, but a story, a part of nature, transformed with care and skill.",
+            "ro-RO" => "În atelierul nostru, tradiția se întâlnește cu tehnologia modernă pentru a crea produse variate: de la mobilier confortabil și elegant, la elemente decorative și construcții rezidențiale din lemn. Ne dorim ca fiecare client să simtă că a ales nu doar un produs, ci o poveste, o parte din natură, transformată cu grijă și pricepere."
+        };
+
+        var ourInvitation = culture switch
+        {
+            "ru-RU" => "Мы приглашаем вас лучше узнать нас и открыть для себя наш ассортимент продукции, созданный со страстью и уважением к дереву. В WoodArtCons каждая вещь обещает качество и устойчивую красоту.",
+            "en-US" => "We invite you to get to know us better and discover our range of products, created with passion and respect for wood. At WoodArtCons, every piece is a promise of quality and lasting beauty.",
+            "ro-RO" => "Te invităm să ne cunoști mai bine și să descoperi gama noastră de produse, create cu pasiune și respect pentru lemn. La WoodArtCons, fiecare piesă este o promisiune de calitate și frumusețe durabilă."
+        };
 
         <main id="main" class="clearfix custom-nonscrolable-vertical" style="width:100%; left: 0; top: 0; position:absolute;">
-        <div class="fusion-row" style="max-width:100%;">
-            <section id="content" class="full-width">
-                <div id="post-705" class="post-705 page type-page status-publish hentry">
-                    <div class="post-content">
-                        <div class="fusion-fullwidth fullwidth-box fusion-builder-row-1 fusion-parallax-fixed hundred-percent-fullwidth non-hundred-percent-height-scrolling lazyloaded" style="background-color: rgba(255, 255, 255, 0); background-position: center center; background-repeat: no-repeat; padding: 0px; margin-bottom: 0px; margin-top: 0px; border-width: 0px; border-color: rgb(234, 233, 233); border-style: solid; background-size: cover; background-attachment: fixed; background-image: url(&quot;https://woodartllc.net/wp-content/uploads/2019/07/landscape-hi-res-1.jpg&quot;);"
-                            data-bg="https://woodartllc.net/wp-content/uploads/2019/07/landscape-hi-res-1.jpg">
-                            <div class="fusion-builder-row fusion-row">
-                                <div class="fusion-layout-column fusion_builder_column fusion-builder-column-0 fusion_builder_column_1_1 1_1 fusion-one-full fusion-column-first fusion-column-last fusion-animated" style="margin-top: 0px; margin-bottom: 0px; visibility: visible; animation-duration: 1s;"
-                                    data-animationtype="fadeIn" data-animationduration="1.0" data-animationoffset="bottom-in-view">
-                                    <div class="fusion-column-wrapper fusion-flex-column-wrapper-legacy" style="background-position:left top;background-repeat:no-repeat;-webkit-background-size:cover;-moz-background-size:cover;-o-background-size:cover;background-size:cover;background-color:rgba(83,61,42,0.8);padding: 11% 0px 11% 0px;">
-                                        <div class="fusion-column-content-centered">
-                                            <div class="fusion-column-content">
-                                                <div class="fusion-title title fusion-title-1 fusion-sep-none fusion-title-center fusion-title-text fusion-title-size-one" style="font-size:60px;margin-top:0px;margin-right:0px;margin-bottom:31px;margin-left:0px;">
-                                                    <h1 class="title-heading-center fusion-responsive-typography-calculated" style="margin:0;font-size:1em;color:#ffffff;--fontSize:60;line-height:1;">
-                                                        <p style="text-align: center;">
-                                                            <span style="color: #ffffff;">ABOUT WOODART LLC</span>
-                                                        </p>
-                                                    </h1>
-                                                </div>
-                                                <div class="fusion-title title fusion-title-2 fusion-sep-none fusion-title-center fusion-title-text fusion-title-size-three" style="font-size:26px;margin-top:0px;margin-right:0px;margin-bottom:0px;margin-left:0px;">
-                                                    <h3 class="title-heading-center fusion-responsive-typography-calculated" style="margin:0;font-size:1em;color:#ffffff;--fontSize:26;line-height:1.23;">
-                                                        <p style="text-align: center;">
-                                                            <span style="color: #ffffff;">
-                                                                FAMILY OWNED AND OPERATED PRODUCER OF<br> QUALITY CUSTOM CABINETRY IN LANCASTER COUNTY, PA
-                                                            </span>
-                                                        </p>
-                                                    </h3>
+            <div class="fusion-row" style="max-width:100%;">
+                <section id="content" class="full-width">
+                    <div id="post-705" class="post-705 page type-page status-publish hentry">
+                        <div class="post-content">
+                            <div class="fusion-fullwidth fullwidth-box fusion-builder-row-1 fusion-parallax-fixed hundred-percent-fullwidth non-hundred-percent-height-scrolling lazyloaded" style="background-color: rgba(255, 255, 255, 0); background-position: center center; background-repeat: no-repeat; padding: 0px; margin-bottom: 0px; margin-top: 0px; border-width: 0px; border-color: rgb(234, 233, 233); border-style: solid; background-size: cover; background-attachment: fixed; background-image: url('https://woodartllc.net/wp-content/uploads/2019/07/landscape-hi-res-1.jpg');"
+                                data-bg="https://woodartllc.net/wp-content/uploads/2019/07/landscape-hi-res-1.jpg">
+                                <div class="fusion-builder-row fusion-row">
+                                    <div class="fusion-layout-column fusion_builder_column fusion-builder-column-0 fusion_builder_column_1_1 1_1 fusion-one-full fusion-column-first fusion-column-last fusion-animated" style="margin-top: 0px; margin-bottom: 0px; visibility: visible; animation-duration: 1s;"
+                                        data-animationtype="fadeIn" data-animationduration="1.0" data-animationoffset="bottom-in-view">
+                                        <div class="fusion-column-wrapper fusion-flex-column-wrapper-legacy" style="background-position:left top;background-repeat:no-repeat;-webkit-background-size:cover;-moz-background-size:cover;-o-background-size:cover;background-size:cover;background-color:rgba(83,61,42,0.8);padding: 11% 0px 11% 0px;">
+                                            <div class="fusion-column-content-centered">
+                                                <div class="fusion-column-content">
+                                                    <div class="fusion-title title fusion-title-1 fusion-sep-none fusion-title-center fusion-title-text fusion-title-size-one" style="font-size:60px;margin-top:0px;margin-right:0px;margin-bottom:31px;margin-left:0px;">
+                                                        <h1 class="title-heading-center fusion-responsive-typography-calculated" style="margin:0;font-size:1em;color:#ffffff;--fontSize:60;line-height:1;">
+                                                            <p style="text-align: center;">
+
+                                                                <!-- Page Name -->
+
+                                                                @* <span style="color: #ffffff;">@aboutPageName</span> *@
+                                                                <MudText Typo="Typo.h2" Align="Align.Center"><b>@aboutPageName</b></MudText>
+                                                            </p>
+                                                        </h1>
+                                                    </div>
+                                                    <div class="fusion-title title fusion-title-2 fusion-sep-none fusion-title-center fusion-title-text fusion-title-size-three" style="font-size:26px;margin-top:0px;margin-right:0px;margin-bottom:0px;margin-left:0px;">
+                                                        <h3 class="title-heading-center fusion-responsive-typography-calculated" style="margin:0;font-size:1em;color:#ffffff;--fontSize:26;line-height:1.23;">
+                                                            <p style="text-align: center;">
+
+                                                                <!-- Description upon page name -->
+
+                                                                @* <span style="color: #ffffff;">FAMILY OWNED AND OPERATED PRODUCER OF<br> QUALITY CUSTOM CABINETRY IN LANCASTER COUNTY, PA</span> *@
+                                                                <MudText Typo="Typo.h4" Align="Align.Center">@aboutPageSlogan1 <br /> @aboutPageSlogan2 </MudText>
+                                                            </p>
+                                                        </h3>
+                                                    </div>
                                                 </div>
                                             </div>
+                                            <div class="fusion-clearfix"></div>
                                         </div>
-                                        <div class="fusion-clearfix"></div>
+                                    </div>
+                                    <div class="fusion-layout-column fusion_builder_column fusion-builder-column-1 fusion_builder_column_1_1 1_1 fusion-one-full fusion-column-first fusion-column-last" style="margin-top:0px;margin-bottom:0px;">
+                                        <div class="fusion-column-wrapper fusion-flex-column-wrapper-legacy" style="background-position:left top;background-repeat:no-repeat;-webkit-background-size:cover;-moz-background-size:cover;-o-background-size:cover;background-size:cover;border-bottom:10px solid #ffffff;padding: 0px 0px 0px 0px;">
+                                            <div class="fusion-clearfix"></div>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="fusion-layout-column fusion_builder_column fusion-builder-column-1 fusion_builder_column_1_1 1_1 fusion-one-full fusion-column-first fusion-column-last" style="margin-top:0px;margin-bottom:0px;">
-                                    <div class="fusion-column-wrapper fusion-flex-column-wrapper-legacy" style="background-position:left top;background-repeat:no-repeat;-webkit-background-size:cover;-moz-background-size:cover;-o-background-size:cover;background-size:cover;border-bottom:10px solid #ffffff;padding: 0px 0px 0px 0px;">
-                                        <div class="fusion-clearfix"></div>
+                            </div>
+
+                            <div class="pc-view" style="width:100%; height:50%; background-color: #eaeaea;background-position: center center;background-repeat: no-repeat;padding-top:0px;padding-right:0px;padding-bottom:0px;padding-left:0px;margin-bottom: 0px;margin-top: 0px;border-width: 0px 0px 0px 0px;border-color:#eae9e9;border-style:solid;">
+                                <div class="d-flex" style="width:100%; height:100%;">
+                                    <div class="fusion-layout-column fusion_builder_column fusion-builder-column-2 fusion_builder_column_1_4 1_4 fusion-one-fourth fusion-column-first fusion-no-small-visibility" style="width:25%;width:calc(25% - ( ( 4% ) * 0.25 ) );margin-right: 4%;margin-top:0px;margin-bottom:0px;">
+                                        <div class="fusion-column-wrapper fusion-flex-column-wrapper-legacy fusion-empty-column-bg-image lazyloaded" style="background-position: left top; background-repeat: no-repeat; background-size: cover; border-right: 10px solid rgb(255, 255, 255); padding: 0px; background-image: url(&quot;https://woodartllc.net/wp-content/uploads/2019/07/WA-web-portfolio-210.jpg&quot;); min-height: 454.703px; height: auto;" data-bg-url="https://woodartllc.net/wp-content/uploads/2019/07/WA-web-portfolio-210.jpg" data-bg="https://woodartllc.net/wp-content/uploads/2019/07/WA-web-portfolio-210.jpg">
+                                            <img decoding="async" style="width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0;" class="fusion-empty-dims-img-placeholder fusion-no-large-visibility" src="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%27715%27%20height%3D%271080%27%20viewBox%3D%270%200%20715%201080%27%3E%3Crect%20width%3D%27715%27%20height%3D%271080%27%20fill-opacity%3D%220%22%2F%3E%3C%2Fsvg%3E">
+                                            <div class="fusion-clearfix"></div>
+                                        </div>
+                                    </div>
+                                    <div class="fusion-layout-column fusion_builder_column fusion-builder-column-3 fusion_builder_column_3_4 3_4 fusion-three-fourth fusion-column-last" style="width:75%;width:calc(75% - ( ( 4% ) * 0.75 ) );margin-top:0px;margin-bottom:0px;">
+                                        <div class="fusion-column-wrapper fusion-flex-column-wrapper-legacy" style="background-position: left top; background-repeat: no-repeat; background-size: cover; padding: 6% 2% 5%; min-height: 454.703px; height: auto;">
+                                            <div class="fusion-text fusion-text-1">
+                                                <p style="text-align: justify; text-align-last: center;">@ourStory</p>
+                                                <p style="text-align: justify; text-align-last: center;">@ourMission</p>
+                                                <p style="text-align: justify; text-align-last: center;">@ourTeam</p>
+                                                <p style="text-align: justify; text-align-last: center;">@ourWorkshop</p>
+                                                <p style="text-align: justify; text-align-last: center;">@ourInvitation</p>
+                                            </div>
+                                            <div class="fusion-clearfix"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="mobile-view" style="width:100%; height:50%; background-color: #eaeaea;background-position: center center;background-repeat: no-repeat;padding-top:0px;padding-right:0px;padding-bottom:0px;padding-left:0px;margin-bottom: 0px;margin-top: 0px;border-width: 0px 0px 0px 0px;border-color:#eae9e9;border-style:solid;">
+                                <div class="d-flex" style="width:100%; height:100%;">
+                                    <div class="fusion-layout-column fusion_builder_column fusion-builder-column-3 fusion_builder_column_3_4 3_4 fusion-three-fourth fusion-column-last" style="width:100%; margin-top:0px;margin-bottom:0px;">
+                                        <div class="fusion-column-wrapper fusion-flex-column-wrapper-legacy" style="background-position: left top; background-repeat: no-repeat; background-size: cover; padding: 6% 2% 5%; min-height: 454.703px; height: auto;">
+                                            <div class="fusion-text fusion-text-1">
+                                                <p style="text-align: justify; text-align-last: center;">@ourStory</p>
+                                                <p style="text-align: justify; text-align-last: center;">@ourMission</p>
+                                                <p style="text-align: justify; text-align-last: center;">@ourTeam</p>
+                                                <p style="text-align: justify; text-align-last: center;">@ourWorkshop</p>
+                                                <p style="text-align: justify; text-align-last: center;">@ourInvitation</p>
+                                            </div>
+                                            <div class="fusion-clearfix"></div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-
-                        <div class="pc-view" style="width:100%; height:50%; background-color: #eaeaea;background-position: center center;background-repeat: no-repeat;padding-top:0px;padding-right:0px;padding-bottom:0px;padding-left:0px;margin-bottom: 0px;margin-top: 0px;border-width: 0px 0px 0px 0px;border-color:#eae9e9;border-style:solid;">
-                            <div class="d-flex" style="width:100%; height:100%;">
-                                <div class="fusion-layout-column fusion_builder_column fusion-builder-column-2 fusion_builder_column_1_4 1_4 fusion-one-fourth fusion-column-first fusion-no-small-visibility" style="width:25%;width:calc(25% - ( ( 4% ) * 0.25 ) );margin-right: 4%;margin-top:0px;margin-bottom:0px;">
-                                    <div class="fusion-column-wrapper fusion-flex-column-wrapper-legacy fusion-empty-column-bg-image lazyloaded" style="background-position: left top; background-repeat: no-repeat; background-size: cover; border-right: 10px solid rgb(255, 255, 255); padding: 0px; background-image: url(&quot;https://woodartllc.net/wp-content/uploads/2019/07/WA-web-portfolio-210.jpg&quot;); min-height: 454.703px; height: auto;" data-bg-url="https://woodartllc.net/wp-content/uploads/2019/07/WA-web-portfolio-210.jpg" data-bg="https://woodartllc.net/wp-content/uploads/2019/07/WA-web-portfolio-210.jpg">
-                                        <img decoding="async" style="width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0;" class="fusion-empty-dims-img-placeholder fusion-no-large-visibility" src="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%27715%27%20height%3D%271080%27%20viewBox%3D%270%200%20715%201080%27%3E%3Crect%20width%3D%27715%27%20height%3D%271080%27%20fill-opacity%3D%220%22%2F%3E%3C%2Fsvg%3E">
-                                        <div class="fusion-clearfix"></div>
-                                    </div>
-                                </div>
-                                <div class="fusion-layout-column fusion_builder_column fusion-builder-column-3 fusion_builder_column_3_4 3_4 fusion-three-fourth fusion-column-last" style="width:75%;width:calc(75% - ( ( 4% ) * 0.75 ) );margin-top:0px;margin-bottom:0px;">
-                                    <div class="fusion-column-wrapper fusion-flex-column-wrapper-legacy" style="background-position: left top; background-repeat: no-repeat; background-size: cover; padding: 6% 2% 5%; min-height: 454.703px; height: auto;">
-                                        <div class="fusion-text fusion-text-1">
-                                            <p style="text-align: left;">WoodArt, LLC provides quality custom cabinetry for many applications throughout your home.</p>
-                                            <p style="text-align: left;">We opened our family business in 2004 after seven years of hands-on experience working alongside skilled craftsmen and cabinet finishers. Our mission is to provide complete customer satisfaction, and we achieve this through acute attention to detail. We stay abreast of the latest trends and provide quality products with your budget in mind.</p>
-                                            <p>WoodArt, LLC is family-owned and operated by the Stoltzfus family. WoodArt, LLC was founded by Dave and Anna Mae Stoltzfus who get the privilege of working alongside several of their children (and even some of their parents) who are deeply involved in the business. We strive to provide each customer our undivided attention and listen closely to his or her needs and wants to help them achieve the quality custom cabinetry solution of their dreams.</p>
-                                            <p><strong>We’d love to meet you.</strong> Call us today at <a href="tel:+16109130605">(610) 913-0605</a>.</p>
-                                        </div>
-                                        <div class="fusion-clearfix"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-
-                        <div class="mobile-view" style="width:100%; height:50%; background-color: #eaeaea;background-position: center center;background-repeat: no-repeat;padding-top:0px;padding-right:0px;padding-bottom:0px;padding-left:0px;margin-bottom: 0px;margin-top: 0px;border-width: 0px 0px 0px 0px;border-color:#eae9e9;border-style:solid;">
-                            <div class="d-flex" style="width:100%; height:100%;">
-                                <div class="fusion-layout-column fusion_builder_column fusion-builder-column-3 fusion_builder_column_3_4 3_4 fusion-three-fourth fusion-column-last" style="width:100%; margin-top:0px;margin-bottom:0px;">
-                                    <div class="fusion-column-wrapper fusion-flex-column-wrapper-legacy" style="background-position: left top; background-repeat: no-repeat; background-size: cover; padding: 6% 2% 5%; min-height: 454.703px; height: auto;">
-                                        <div class="fusion-text fusion-text-1">
-                                            <p style="text-align: left;">WoodArt, LLC provides quality custom cabinetry for many applications throughout your home.</p>
-                                            <p style="text-align: left;">We opened our family business in 2004 after seven years of hands-on experience working alongside skilled craftsmen and cabinet finishers. Our mission is to provide complete customer satisfaction, and we achieve this through acute attention to detail. We stay abreast of the latest trends and provide quality products with your budget in mind.</p>
-                                            <p>WoodArt, LLC is family-owned and operated by the Stoltzfus family. WoodArt, LLC was founded by Dave and Anna Mae Stoltzfus who get the privilege of working alongside several of their children (and even some of their parents) who are deeply involved in the business. We strive to provide each customer our undivided attention and listen closely to his or her needs and wants to help them achieve the quality custom cabinetry solution of their dreams.</p>
-                                            <p><strong>We’d love to meet you.</strong> Call us today at <a href="tel:+16109130605">(610) 913-0605</a>.</p>
-                                        </div>
-                                        <div class="fusion-clearfix"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>  
-            </section>
-        </div>
-    </main>
+                    </div>  
+                </section>
+            </div>
+        </main>
     }
 }
 

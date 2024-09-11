@@ -309,3 +309,6 @@ $RECYCLE.BIN/
 # Network Trash Folder
 # Temporary Items
 .apdisk
+WoodArtCons.Server/WoodArtCons.db-wal
+WoodArtCons.Server/WoodArtCons.db-shm
+WoodArtCons.Server/WoodArtCons.db
