@@ -17,5 +17,6 @@ jobs:
           username: root
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            whoami
+            cd /root
+            ./run_services.sh
 
