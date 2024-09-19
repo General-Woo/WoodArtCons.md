@@ -21,5 +21,21 @@ namespace WoodArtCons.Server.Controllers
 
             return Ok(new { FilePath = filePath });
         }
+
+        [HttpDelete("delete")]
+        public IActionResult DeleteFile(string fileName)
+        {
+            if (string.IsNullOrEmpty(fileName))
+                return BadRequest("File name is required.");
+
+            var filePath = Path.Combine("..", "WoodArtCons", "wwwroot", "Images", "Categories", fileName);
+
+            if (!System.IO.File.Exists(filePath))
+                return NotFound("File not found.");
+
+            System.IO.File.Delete(filePath);
+
+            return Ok(new { Message = "File deleted successfully." });
+        }
     }
 }

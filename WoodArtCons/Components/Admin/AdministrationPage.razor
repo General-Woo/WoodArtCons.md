@@ -161,9 +161,24 @@ else
                         <MudTextField @bind-Value="categoryToEdit.NameEn" Label="Name En" Variant="Variant.Filled" />
                     </MudItem>
                     <MudItem xs="12">
-                        <MudTextField @bind-Value="categoryToEdit.ImageSrc" Label="Image Source" Variant="Variant.Filled" />
-                    </MudItem> 
+                        <MudButton HtmlTag="label"
+                                   Variant="Variant.Outlined"
+                                   Color="Color.Success"
+                                   StartIcon="@Icons.Material.Filled.CloudUpload"
+                                   for="fileInput">
+                            Upload files
+                        </MudButton>
+                        <InputFile id="fileInput" OnChange="HandleEditFileSelection" hidden multiple MaxFileSize="10485760" />
+                    </MudItem>
                     <MudImage Style="margin-left:12px;" Height="200" Width="200" ObjectPosition="ObjectPosition.Center" Src="@categoryToEdit.ImageSrc" />
+                    @if (!string.IsNullOrEmpty(categoryToEdit.ImageSrc))
+                    {
+                        <MudIconButton Icon="@Icons.Material.Filled.Close"
+                                        Color="Color.Error"
+                                        Class="delete-icon"
+                                        OnClick="DeleteEditImage"
+                                        Style="position: relative; top: 0px; right: 48px; height:100%;" />
+                    }
                     <MudItem xs="12">
                         <MudSelect T="bool" @bind-Value="categoryToEdit.IsForGalery" Label="For Galery" Variant="Variant.Filled" AnchorOrigin="Origin.BottomCenter">
                             <MudSelectItem T="bool" Value="true" />
@@ -212,9 +227,17 @@ else
                                    for="fileInput">
                             Upload files
                         </MudButton>
-                        <InputFile id="fileInput" OnChange="HandleFileSelection" hidden multiple />
+                        <InputFile id="fileInput" OnChange="HandleAddFileSelection" hidden multiple MaxFileSize />
                     </MudItem>
                     <MudImage Style="margin-left:12px;" Height="200" Width="200" ObjectPosition="ObjectPosition.Center" Src="@categoryToAdd.ImageSrc" />
+                    @if (!string.IsNullOrEmpty(categoryToAdd.ImageSrc))
+                    {
+                        <MudIconButton Icon="@Icons.Material.Filled.Close"
+                                        Color="Color.Error"
+                                        Class="delete-icon"
+                                        OnClick="DeleteAddImage"
+                                        Style="position: relative; top: 0px; right: 48px; height:100%;" />
+                    }
                     <MudItem xs="12">
                         <MudSelect T="bool" @bind-Value="categoryToAdd.IsForGalery" Label="For Galery" Variant="Variant.Filled" AnchorOrigin="Origin.BottomCenter">
                             <MudSelectItem T="bool" Value="true" />
@@ -613,7 +636,25 @@ else
         tabs.ActivatePanel(panel);
     }
 
-    private async Task HandleFileSelection(InputFileChangeEventArgs e)
+    // private async Task HandleFileSelection(InputFileChangeEventArgs e)
+    // {
+    //     var files = e.GetMultipleFiles();
+
+    //     foreach (var file in files)
+    //     {
+    //         using (var content = new MultipartFormDataContent())
+    //         {
+    //             var streamContent = new StreamContent(file.OpenReadStream());
+    //             streamContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(file.ContentType);
+    //             content.Add(streamContent, "file", file.Name);
+    //             uploadedImagePath = "/Images/Categories/" + file.Name;
+    //             categoryToAdd.ImageSrc = uploadedImagePath;
+    //             await fileUploadService.UploadFile(content);
+    //         }
+    //     }
+    // }
+
+    private async Task HandleAddFileSelection(InputFileChangeEventArgs e)
     {
         var files = e.GetMultipleFiles();
 
@@ -621,14 +662,48 @@ else
         {
             using (var content = new MultipartFormDataContent())
             {
-                var streamContent = new StreamContent(file.OpenReadStream());
+                long maxFileSize = 10L * 1024L * 1024L; // 10 MB
+
+                var streamContent = new StreamContent(file.OpenReadStream(maxAllowedSize: maxFileSize));
                 streamContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(file.ContentType);
                 content.Add(streamContent, "file", file.Name);
-                uploadedImagePath = "/Images/Categories/" + file.Name;
-                categoryToAdd.ImageSrc = uploadedImagePath;
-                await fileUploadService.UploadFile(content);
+
+                var uploadedPath = await fileUploadService.UploadFile(content);
+
+                if (!string.IsNullOrEmpty(uploadedPath))
+                {
+                    categoryToAdd.ImageSrc = "Images/Categories/" + file.Name;
+                }
             }
         }
+
+        StateHasChanged();
+    }
+
+    private async Task HandleEditFileSelection(InputFileChangeEventArgs e)
+    {
+        var files = e.GetMultipleFiles();
+
+        foreach (var file in files)
+        {
+            using (var content = new MultipartFormDataContent())
+            {
+                long maxFileSize = 10L * 1024L * 1024L; // 10 MB
+
+                var streamContent = new StreamContent(file.OpenReadStream(maxAllowedSize: maxFileSize));
+                streamContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(file.ContentType);
+                content.Add(streamContent, "file", file.Name);
+
+                var uploadedPath = await fileUploadService.UploadFile(content);
+
+                if (!string.IsNullOrEmpty(uploadedPath))
+                {
+                    categoryToEdit.ImageSrc = "Images/Categories/" + file.Name;
+                }
+            }
+        }
+
+        StateHasChanged();
     }
 
     private void OpenDialog(CategoryModelDto category)
@@ -656,6 +731,28 @@ else
         }
 
         IsDialogOpen = true;
+    }
+
+    private async Task DeleteAddImage()
+    {
+        if (!string.IsNullOrEmpty(categoryToAdd.ImageSrc))
+        {
+            var fileName = Path.GetFileName(categoryToAdd.ImageSrc);
+            await fileUploadService.DeleteFile(fileName); // Apelezi serviciul care șterge fișierul
+            categoryToAdd.ImageSrc = null; // Ștergi calea imaginii din model
+            StateHasChanged(); // Reîmprospătezi UI-ul
+        }
+    }
+
+    private async Task DeleteEditImage()
+    {
+        if (!string.IsNullOrEmpty(categoryToEdit.ImageSrc))
+        {
+            var fileName = Path.GetFileName(categoryToEdit.ImageSrc);
+            await fileUploadService.DeleteFile(fileName); // Apelezi serviciul care șterge fișierul
+            categoryToEdit.ImageSrc = null; // Ștergi calea imaginii din model
+            StateHasChanged(); // Reîmprospătezi UI-ul
+        }
     }
 
     private async void Submit()
@@ -734,7 +831,7 @@ else
         {
             categoryToAdd.Link = catalogUrl + categoryToAdd.Id;
         }
-        categoryToAdd.ImageSrc = uploadedImagePath;
+        // categoryToAdd.ImageSrc = uploadedImagePath;
         var addResult = await categoryManager.AddCategory(categoryToAdd);
 
         categoryToAdd = new CategoryModelDto();

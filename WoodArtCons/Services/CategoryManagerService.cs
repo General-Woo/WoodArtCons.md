@@ -23,11 +23,13 @@ namespace WoodArtCons.Services
             if (result.IsSuccessStatusCode)
             {
                 _snackbar.Add("Categoria a fost adaugata cu succes!", Severity.Success);
-                return default;
+                //return await result.Content.ReadFromJsonAsync<string>();
+                return await result.Content.ReadAsStringAsync();
+
             }
 
             _snackbar.Add("A aparut o eroare...", Severity.Error);
-            return await result.Content.ReadFromJsonAsync<string>();
+            return default;
         }
 
         public async Task<Unit> DeleteCategory(string id)

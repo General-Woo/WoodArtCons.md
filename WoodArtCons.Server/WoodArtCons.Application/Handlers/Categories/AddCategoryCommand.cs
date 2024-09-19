@@ -41,7 +41,7 @@ namespace WoodArtCons.Server.WoodArtCons.Application.Handlers.Categories
                     ImageSrc = request.ImageSrc,
                     IsForGalery = request.IsForGalery,
                     Link = request.Link,
-            };
+                };
 
                 //if(request.IsForGalery == true)
                 //{
