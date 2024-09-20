@@ -7,6 +7,8 @@
 @inject ICategoryProductManagerService categoryProduct
 @inject IJSRuntime JSRuntime
 
+<div style="z-index:-1; position:fixed; width:100vw; left: 0; top: 0; height:100vh;background-image: url('/Images/background1.jpg'); background-size: cover; background-repeat: no-repeat; min-width:300px; min-height:100px;"></div>
+
 @if (isLoading)
 {
     <MudProgressCircular Color="Color.Secondary" Style="height:100px; width:100px; position:fixed; top:40%; left:50%;" Indeterminate="true" />
@@ -17,20 +19,21 @@ else
     <div class="d-flex justify-content-center">
             @if(category != null) {
                 var categoryName = culture switch { "ru-RU" => category.NameRu, "en-US" => category.NameEn, "ro-RO" => category.NameRo };
-                <h1>@categoryName</h1> }
+                <h1 style="color:white;">@categoryName</h1>
+            }
     </div>
-    <MudCard Elevation="0" Outlined="false" Class="w-100 d-flex flex-wrap flex-row gap-16 justify-center">
-        <MudCard Elevation="0" Outlined="false" Style="max-width:1126px" Class="w-100 d-flex flex-wrap flex-row justify-center">
+        <MudCard Elevation="0" Outlined="false" Class="w-100 d-flex flex-wrap flex-row gap-16 justify-center" Style=" background: transparent;">
+            <MudCard Elevation="0" Outlined="false" Style="max-width:1126px; background: transparent;" Class="w-100 d-flex flex-wrap flex-row justify-center">
             @if (culture != null ){
                 @if (categoryId == "street-benches" && productsLength1_6 != null && productsLength2 != null)
                 {
                     @if (productsLength1_6.Any())
                     {
                         <div class="text-center my-4">
-                            <h3>@LengthText 1.6 @Meters</h3>
+                            <h3 style="color:white;">@LengthText 1.6 @Meters</h3>
                         </div>
 
-                        <MudCard Elevation="0" Outlined="false" Class="w-100 d-flex flex-wrap flex-row  gap-8 justify-center">
+                            <MudCard Elevation="0" Outlined="false" Class="w-100 d-flex flex-wrap flex-row  gap-8 justify-center" Style=" background: transparent;">
                             @foreach (var product in productsLength1_6)
                             {
                                 var productName = culture switch
@@ -42,7 +45,7 @@ else
 
                                 <MudLink Href="@($"/catalog/{product.CategoryId}/{product.Id}")" Underline="Underline.None">
                                     <MudPaper Class="pa-4 d-flex flex-column containerHover">
-                                        <MudImage Height="180" Width="180" ObjectPosition="ObjectPosition.Center" Src="@product.ImageSrc" />
+                                            <MudImage Height="145" Width="200" ObjectPosition="ObjectPosition.Center" Src="@product.ImageSrc" />
                                         <br />
                                         <MudText Align="Align.Left"><b>@Price</b>: @product.Price</MudText>
                                         <MudText Style="overflow-wrap:break-word;max-width:200px;" Typo="Typo.h6" Align="Align.Center">@productName</MudText>
@@ -55,10 +58,10 @@ else
                     @if (productsLength2.Any())
                     {
                         <div class="text-center my-4 pt-8">
-                            <h3>@LengthText 2 @Meters</h3>
+                                <h3 style="color:white;">@LengthText 2 @Meters</h3>
                         </div>
 
-                        <MudCard Elevation="0" Outlined="false" Class="w-100 d-flex flex-wrap flex-row  gap-8 justify-center">
+                            <MudCard Elevation="0" Outlined="false" Class="w-100 d-flex flex-wrap flex-row  gap-8 justify-center" Style=" background: transparent;">
                             @foreach (var product in productsLength2)
                             {
                                 var productName = culture switch
@@ -70,7 +73,7 @@ else
 
                                 <MudLink Href="@($"/catalog/{product.CategoryId}/{product.Id}")" Underline="Underline.None">
                                     <MudPaper Class="pa-4 d-flex flex-column containerHover">
-                                        <MudImage Height="180" Width="180" ObjectPosition="ObjectPosition.Center" Src="@product.ImageSrc"/>
+                                            <MudImage Height="145" Width="200" ObjectPosition="ObjectPosition.Center" Src="@product.ImageSrc" />
                                         <br/>
                                         <MudText Align="Align.Left"><b>@Price</b>: @product.Price</MudText>
                                         <MudText Style="overflow-wrap:break-word;max-width:200px;" Typo="Typo.h6" Align="Align.Center">@productName</MudText>
@@ -92,7 +95,7 @@ else
                         };
                         <MudLink Href="@($"/catalog/{product.CategoryId}/{product.Id}")" Underline="Underline.None">
                             <MudPaper Class="pa-4 d-flex flex-column containerHover">
-                                <MudImage Height="200" Width="200" ObjectPosition="ObjectPosition.Center" Src="@product.ImageSrc"/>
+                                    <MudImage Height="145" Width="200" ObjectPosition="ObjectPosition.Center" Src="@product.ImageSrc" />
                                 <br/>
                                 <MudText Align="Align.Left"><b>@Price</b>: @product.Price</MudText>
                                 <MudText Style="overflow-wrap:break-word;max-width:200px;" Typo="Typo.h6" Align="Align.Center">@productName</MudText>

@@ -43,15 +43,6 @@ namespace WoodArtCons.Server.WoodArtCons.Application.Handlers.Categories
                     Link = request.Link,
                 };
 
-                //if(request.IsForGalery == true)
-                //{
-                //    categoryToAdd.Link = galeryUrl + request.Id;
-                //}
-                //else
-                //{
-                //    categoryToAdd.Link = catalogUrl + request.Id;
-                //}
-
                 _appDbContext.Categories.Add(categoryToAdd);
 
                 await _appDbContext.SaveChangesAsync();

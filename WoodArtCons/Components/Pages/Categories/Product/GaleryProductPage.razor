@@ -6,6 +6,8 @@
 @inject ICategoryProductManagerService categoryProduct
 @inject IJSRuntime JSRuntime
 
+<div style="z-index:-1; position:fixed; width:100vw; left: 0; top: 0; height:100vh;background-image: url('/Images/background1.jpg'); background-size: cover; background-repeat: no-repeat; min-width:300px; min-height:100px;"></div>
+
 @if (isLoading)
 {
     <MudProgressCircular Color="Color.Secondary" Style="height:100px; width:100px; position:fixed; top:40%; left:50%;" Indeterminate="true" />
@@ -20,8 +22,8 @@ else
             </div>
 
             <MudItem Class="pc-description-view">
-                <MudCard Elevation="0" Outlined="false" Class="w-100 d-flex flex-wrap flex-row gap-2 justify-center">
-                    <MudCard Elevation="0" Outlined="false" Style="max-width:1126px" Class="w-100 d-flex flex-wrap flex-row gap-4 justify-center">
+                <MudCard Elevation="0" Outlined="false" Class="w-100 d-flex flex-wrap flex-row gap-2 justify-center" Style="background: transparent;">
+                    <MudCard Elevation="0" Outlined="false" Style="max-width:1126px; background: transparent;" Class="w-100 d-flex flex-wrap flex-row gap-4 justify-center">
                         <MudCard Elevation="0" Outlined="false" Class="w-100">
                             <MudText Typo="Typo.h4">@Price: @product.Price</MudText><br />
                             <MudCarousel Class="mud-width-full" Style="height:550px;" ShowArrows="true" ShowBullets="true" EnableSwipeGesture="true" AutoCycle="false" TData="object">

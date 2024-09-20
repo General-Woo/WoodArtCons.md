@@ -459,6 +459,8 @@ else
 }
 
 @code {
+
+    #region Variables
     private Dictionary<string, List<CategoryProductModelDto>> categoryProducts = new();
     private Dictionary<string, bool> sortAscending = new();
     private IEnumerable<CategoryModelDto>? catalogCategories;
@@ -475,7 +477,6 @@ else
     private string LengthMeters;
     private string WidthMeters;
     private string HeightMeters;
-    // private bool showGaleryContent = false;
 
     private bool IsDialogOpen { get; set; } = false;
     private bool IsAddDialogOpen { get; set; } = false;
@@ -493,6 +494,8 @@ else
     private CategoryProductModelDto productToAdd = new CategoryProductModelDto();
 
     MudTabs tabs;
+
+    #endregion
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -635,24 +638,6 @@ else
     {
         tabs.ActivatePanel(panel);
     }
-
-    // private async Task HandleFileSelection(InputFileChangeEventArgs e)
-    // {
-    //     var files = e.GetMultipleFiles();
-
-    //     foreach (var file in files)
-    //     {
-    //         using (var content = new MultipartFormDataContent())
-    //         {
-    //             var streamContent = new StreamContent(file.OpenReadStream());
-    //             streamContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(file.ContentType);
-    //             content.Add(streamContent, "file", file.Name);
-    //             uploadedImagePath = "/Images/Categories/" + file.Name;
-    //             categoryToAdd.ImageSrc = uploadedImagePath;
-    //             await fileUploadService.UploadFile(content);
-    //         }
-    //     }
-    // }
 
     private async Task HandleAddFileSelection(InputFileChangeEventArgs e)
     {
