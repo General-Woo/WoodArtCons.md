@@ -266,8 +266,16 @@ else
                 <DataAnnotationsValidator />
                 
                 @if (categoryForProductToEdit?.IsForGalery == true) {
+
+                    @* Galery Content *@
+
                     <MudItem xs="12">
-                        <MudTextField @bind-Value="productToEdit.CategoryId" Label="CategoryId" Variant="Variant.Filled" />
+                        <MudSelect T="string" Label="Select Category" @bind-Value="productToEdit.CategoryId" Variant="Variant.Filled" AnchorOrigin="Origin.BottomCenter">
+                            @foreach (var category in categories)
+                            {
+                                <MudSelectItem Value="@category.Id">@category.NameRo</MudSelectItem>
+                            }
+                        </MudSelect>
                     </MudItem>
                     <MudItem xs="12">
                         <MudTextField @bind-Value="productToEdit.Id" Label="Id" Variant="Variant.Filled" />
@@ -282,21 +290,68 @@ else
                         <MudTextField @bind-Value="productToEdit.NameEn" Label="NameEn" Variant="Variant.Filled" />
                     </MudItem>
                     <MudItem xs="12">
-                        <MudTextField @bind-Value="productToEdit.ImageSrc" Label="Sursa Imaginii" Variant="Variant.Filled" />
+                        @if (!string.IsNullOrEmpty(productToEdit.ImageSrc))
+                        {
+                            <MudImage Style="margin-top: 6px;" Height="200" Width="200" ObjectPosition="ObjectPosition.Center" Src="@productToEdit.ImageSrc" />
+                            <MudIconButton Icon="@Icons.Material.Filled.Close"
+                                           Color="Color.Error"
+                                           Class="delete-icon"
+                                           OnClick="DeleteProductEditImage"
+                                           Style="position: relative; top: -72px; right: 51px; height:100%;" />
+                        }else{
+                            <MudButton HtmlTag="label"
+                                       Style="margin-top: 6px; margin-bottom:6px;"
+                                       Variant="Variant.Outlined"
+                                       Color="Color.Success"
+                                       StartIcon="@Icons.Material.Filled.CloudUpload"
+                                       for="fileInput">
+                                Upload files
+                            </MudButton>
+                            <InputFile id="fileInput" OnChange="HandleProductEditFileSelection" hidden multiple MaxFileSize="10485760" />
+                        }
                     </MudItem>
+
                     <MudItem xs="12">
                         <MudTextField @bind-Value="productToEdit.Price" Label="Pret" Variant="Variant.Filled" />
                     </MudItem>
-                    @foreach (var photo in productToEdit.ListImagesSrc)
+                    <p>Pozele pentru galerie</p>
+                    <MudItem xs="12">
+                        <MudButton HtmlTag="label"
+                                   Style="margin-top: 6px; margin-bottom:6px;"
+                                   Variant="Variant.Outlined"
+                                   Color="Color.Success"
+                                   StartIcon="@Icons.Material.Filled.CloudUpload"
+                                   for="galeryFileInput">
+                            Upload Galery files
+                        </MudButton>
+                        <InputFile id="galeryFileInput" OnChange="HandleMultipleProductEditFileSelection" hidden multiple MaxFileSize="10485760" />
+                    </MudItem>
+
+                    @if (productToEdit.ListImagesSrc != null && productToEdit.ListImagesSrc.Any())
                     {
-                        <MudImage Style="margin-left:12px; margin-top :12px;" Height="200" Width="200" ObjectPosition="ObjectPosition.Center" Src="@photo" />
+                        @foreach (var photo in productToEdit.ListImagesSrc)
+                        {
+                            <MudImage Style="margin-left:12px; margin-top :12px;" Height="200" Width="200" ObjectPosition="ObjectPosition.Center" Src="@photo" />
+                            <MudIconButton Icon="@Icons.Material.Filled.Close"
+                                           Color="Color.Error"
+                                           Class="delete-icon"
+                                           OnClick="@(() => DeleteMultimpleProductEditImage(photo))"
+                                           Style="position: relative; top: -76px; right: 48px; height:100%;" />
+                        }
                     }
                     
                 }
                 else
                 {
+                    @* Catalog Content *@
+
                     <MudItem xs="12">
-                        <MudTextField @bind-Value="productToEdit.CategoryId" Label="CategoryId" Variant="Variant.Filled" />
+                        <MudSelect T="string" Label="Select Category" @bind-Value="productToEdit.CategoryId" Variant="Variant.Filled" AnchorOrigin="Origin.BottomCenter">
+                            @foreach (var category in categories)
+                            {
+                                <MudSelectItem Value="@category.Id">@category.NameRo</MudSelectItem>
+                            }
+                        </MudSelect>
                     </MudItem>
                     <MudItem xs="12">
                         <MudTextField @bind-Value="productToEdit.Id" Label="Id" Variant="Variant.Filled" />
@@ -310,9 +365,27 @@ else
                     <MudItem xs="12">
                         <MudTextField @bind-Value="productToEdit.NameEn" Label="NameEn" Variant="Variant.Filled" />
                     </MudItem>
-                    <MudItem xs="12">
-                        <MudTextField @bind-Value="productToEdit.ImageSrc" Label="Image Source" Variant="Variant.Filled" />
-                    </MudItem>
+                    @if (!string.IsNullOrEmpty(productToEdit.ImageSrc))
+                    {
+                        <MudImage Style="margin-top: 6px;" Height="290" Width="400" ObjectPosition="ObjectPosition.Center" Src="@productToEdit.ImageSrc" />
+                        <MudIconButton Icon="@Icons.Material.Filled.Close"
+                                       Color="Color.Error"
+                                       Class="delete-icon"
+                                       OnClick="DeleteProductEditImage"
+                        Style="position: relative; top: -118px; right: 51px; height:100%;" />
+                    }
+                    else
+                    {
+                        <MudButton HtmlTag="label"
+                                   Style="margin-top: 6px; margin-bottom:6px;"
+                                   Variant="Variant.Outlined"
+                                   Color="Color.Success"
+                                   StartIcon="@Icons.Material.Filled.CloudUpload"
+                                   for="fileInput">
+                            Upload files
+                        </MudButton>
+                        <InputFile id="fileInput" OnChange="HandleProductEditFileSelection" hidden multiple MaxFileSize="10485760" />
+                    }
                     <MudItem xs="12">
                         <MudTextField @bind-Value="productToEdit.Lenght" Label="Lungime" Variant="Variant.Filled" />
                     </MudItem>
@@ -360,11 +433,11 @@ else
             <b style="font-size: 20px;">Add Product</b>
         </TitleContent>
         <DialogContent>
-            <EditForm Model="productToEdit" OnValidSubmit="SubmitEditProduct">
+            <EditForm Model="productToAdd" OnValidSubmit="SubmitAddProduct">
                 <DataAnnotationsValidator />
 
                 <MudItem xs="12">
-                    <MudSelect T="string" Label="Select Category" @bind-Value="productToEdit.CategoryId" Variant="Variant.Filled" AnchorOrigin="Origin.BottomCenter">
+                    <MudSelect T="string" Label="Select Category" @bind-Value="productToAdd.CategoryId" Variant="Variant.Filled" AnchorOrigin="Origin.BottomCenter">
                         @foreach (var category in categories)
                         {
                             <MudSelectItem Value="@category.Id">@category.NameRo</MudSelectItem>
@@ -372,81 +445,142 @@ else
                     </MudSelect>
                 </MudItem>
 
-
-                @if (categories.FirstOrDefault(c => c.Id == productToEdit.CategoryId)?.IsForGalery == true)
+                @if (categories.FirstOrDefault(c => c.Id == productToAdd.CategoryId)?.IsForGalery == true)
                 {
                     @* Galery Content *@
-                    
+
                     <MudItem xs="12">
-                        <MudTextField @bind-Value="productToEdit.Id" Label="Id" Variant="Variant.Filled" />
+                        <MudTextField @bind-Value="productToAdd.Id" Label="Id" Variant="Variant.Filled" />
                     </MudItem>
                     <MudItem xs="12">
-                        <MudTextField @bind-Value="productToEdit.NameRo" Label="NameRo" Variant="Variant.Filled" />
+                        <MudTextField @bind-Value="productToAdd.NameRo" Label="NameRo" Variant="Variant.Filled" />
                     </MudItem>
                     <MudItem xs="12">
-                        <MudTextField @bind-Value="productToEdit.NameRu" Label="NameRu" Variant="Variant.Filled" />
+                        <MudTextField @bind-Value="productToAdd.NameRu" Label="NameRu" Variant="Variant.Filled" />
                     </MudItem>
                     <MudItem xs="12">
-                        <MudTextField @bind-Value="productToEdit.NameEn" Label="NameEn" Variant="Variant.Filled" />
+                        <MudTextField @bind-Value="productToAdd.NameEn" Label="NameEn" Variant="Variant.Filled" />
                     </MudItem>
                     <MudItem xs="12">
-                        <MudTextField @bind-Value="productToEdit.ImageSrc" Label="Sursa Imaginii" Variant="Variant.Filled" />
+                        @if (!string.IsNullOrEmpty(productToAdd.ImageSrc))
+                        {
+                            <MudImage Height="200" Width="200" ObjectPosition="ObjectPosition.Center" Src="@productToAdd.ImageSrc" />
+                            <MudIconButton Icon="@Icons.Material.Filled.Close"
+                                           Color="Color.Error"
+                                           Class="delete-icon"
+                                           OnClick="DeleteProductAddImage"
+                            Style="position: relative; top: -76px; right: 48px; height:100%;" />
+                        }
+                        else
+                        {
+                            <MudButton HtmlTag="label"
+                                       Style="margin-top: 6px; margin-bottom:6px;"
+                                       Variant="Variant.Outlined"
+                                       Color="Color.Success"
+                                       StartIcon="@Icons.Material.Filled.CloudUpload"
+                                       for="fileInput">
+                                Upload files
+                            </MudButton>
+                            <InputFile id="fileInput" OnChange="HandleProductAddFileSelection" hidden multiple MaxFileSize="10485760" />
+                        }
                     </MudItem>
                     <MudItem xs="12">
-                        <MudTextField @bind-Value="productToEdit.Price" Label="Pret" Variant="Variant.Filled" />
+                        <MudTextField @bind-Value="productToAdd.Price" Label="Pret" Variant="Variant.Filled" />
                     </MudItem>
-                    @* @foreach (var photo in productToEdit.ListImagesSrc)
+                    <p>Pozele pentru galerie</p>
+                    <MudItem xs="12">
+                        <MudButton HtmlTag="label"
+                                   Style="margin-top: 6px; margin-bottom:6px;"
+                                   Variant="Variant.Outlined"
+                                   Color="Color.Success"
+                                   StartIcon="@Icons.Material.Filled.CloudUpload"
+                                   for="galeryFileInput">
+                            Upload Galery files
+                        </MudButton>
+                        <InputFile id="galeryFileInput" OnChange="HandleMultipleProductAddFileSelection" hidden multiple MaxFileSize="10485760" />
+                    </MudItem>
+
+                    @if (productToAdd.ListImagesSrc != null && productToAdd.ListImagesSrc.Any())
                     {
-                        <MudImage Style="margin-left:12px; margin-top :12px;" Height="200" Width="200" ObjectPosition="ObjectPosition.Center" Src="@photo" />
-                    } *@
+                        @foreach (var photo in productToAdd.ListImagesSrc)
+                        {
+                            <MudImage Style="margin-left:12px; margin-top :12px;" Height="200" Width="200" ObjectPosition="ObjectPosition.Center" Src="@photo" />
+                            <MudIconButton Icon="@Icons.Material.Filled.Close"
+                                           Color="Color.Error"
+                                           Class="delete-icon"
+                                           OnClick="@(() => DeleteMultimpleProductAddImage(photo))"
+                                           Style="position: relative; top: -76px; right: 48px; height:100%;" />
+                        }
+                    }
+                    
+
                 }
                 else
                 {
-                    @* Non-Galery Content *@
+                    @* Catalog Content *@
+
                     <MudItem xs="12">
-                        <MudTextField @bind-Value="productToEdit.Id" Label="Id" Variant="Variant.Filled" />
+                        <MudTextField @bind-Value="productToAdd.Id" Label="Id" Variant="Variant.Filled" />
                     </MudItem>
                     <MudItem xs="12">
-                        <MudTextField @bind-Value="productToEdit.NameRo" Label="NameRo" Variant="Variant.Filled" />
+                        <MudTextField @bind-Value="productToAdd.NameRo" Label="NameRo" Variant="Variant.Filled" />
                     </MudItem>
                     <MudItem xs="12">
-                        <MudTextField @bind-Value="productToEdit.NameRu" Label="NameRu" Variant="Variant.Filled" />
+                        <MudTextField @bind-Value="productToAdd.NameRu" Label="NameRu" Variant="Variant.Filled" />
                     </MudItem>
                     <MudItem xs="12">
-                        <MudTextField @bind-Value="productToEdit.NameEn" Label="NameEn" Variant="Variant.Filled" />
+                        <MudTextField @bind-Value="productToAdd.NameEn" Label="NameEn" Variant="Variant.Filled" />
+                    </MudItem>
+                    @if (!string.IsNullOrEmpty(productToAdd.ImageSrc))
+                    {
+                        <MudImage Style="margin-top: 6px;" Height="290" Width="400" ObjectPosition="ObjectPosition.Center" Src="@productToAdd.ImageSrc" />
+                        <MudIconButton Icon="@Icons.Material.Filled.Close"
+                                       Color="Color.Error"
+                                       Class="delete-icon"
+                                       OnClick="DeleteProductAddImage"
+                                       Style="position: relative; top: -118px; right: 51px; height:100%;" />
+                    }
+                    else
+                    {
+                        <MudButton HtmlTag="label"
+                                   Style="margin-top: 6px; margin-bottom:6px;"
+                                   Variant="Variant.Outlined"
+                                   Color="Color.Success"
+                                   StartIcon="@Icons.Material.Filled.CloudUpload"
+                                   for="fileInput">
+                            Upload files
+                        </MudButton>
+                        <InputFile id="fileInput" OnChange="HandleProductAddFileSelection" hidden multiple MaxFileSize="10485760" />
+                    }
+                    <MudItem xs="12">
+                        <MudTextField @bind-Value="productToAdd.Lenght" Label="Lungime" Variant="Variant.Filled" />
                     </MudItem>
                     <MudItem xs="12">
-                        <MudTextField @bind-Value="productToEdit.ImageSrc" Label="Image Source" Variant="Variant.Filled" />
+                        <MudTextField @bind-Value="productToAdd.Height" Label="Inaltime" Variant="Variant.Filled" />
                     </MudItem>
                     <MudItem xs="12">
-                        <MudTextField @bind-Value="productToEdit.Lenght" Label="Lungime" Variant="Variant.Filled" />
+                        <MudTextField @bind-Value="productToAdd.Width" Label="Latime" Variant="Variant.Filled" />
                     </MudItem>
                     <MudItem xs="12">
-                        <MudTextField @bind-Value="productToEdit.Height" Label="Inaltime" Variant="Variant.Filled" />
+                        <MudTextField @bind-Value="productToAdd.DescriptionRo" Label="Descriere Ro" Variant="Variant.Filled" />
                     </MudItem>
                     <MudItem xs="12">
-                        <MudTextField @bind-Value="productToEdit.Width" Label="Latime" Variant="Variant.Filled" />
+                        <MudTextField @bind-Value="productToAdd.DescriptionRu" Label="Descriere Ru" Variant="Variant.Filled" />
                     </MudItem>
                     <MudItem xs="12">
-                        <MudTextField @bind-Value="productToEdit.DescriptionRo" Label="Descriere Ro" Variant="Variant.Filled" />
+                        <MudTextField @bind-Value="productToAdd.DescriptionEn" Label="Descriere En" Variant="Variant.Filled" />
                     </MudItem>
                     <MudItem xs="12">
-                        <MudTextField @bind-Value="productToEdit.DescriptionRu" Label="Descriere Ru" Variant="Variant.Filled" />
+                        <MudTextField @bind-Value="productToAdd.MaterialRo" Label="MaterialeRo" Variant="Variant.Filled" />
                     </MudItem>
                     <MudItem xs="12">
-                        <MudTextField @bind-Value="productToEdit.DescriptionEn" Label="Descriere En" Variant="Variant.Filled" />
+                        <MudTextField @bind-Value="productToAdd.MaterialRu" Label="MaterialeRu" Variant="Variant.Filled" />
                     </MudItem>
                     <MudItem xs="12">
-                        <MudTextField @bind-Value="productToEdit.MaterialRo" Label="MaterialeRo" Variant="Variant.Filled" />
+                        <MudTextField @bind-Value="productToAdd.MaterialEn" Label="MaterialeEn" Variant="Variant.Filled" />
                     </MudItem>
                     <MudItem xs="12">
-                        <MudTextField @bind-Value="productToEdit.MaterialRu" Label="MaterialeRu" Variant="Variant.Filled" />
-                    </MudItem>
-                    <MudItem xs="12">
-                        <MudTextField @bind-Value="productToEdit.MaterialEn" Label="MaterialeEn" Variant="Variant.Filled" />
-                    </MudItem>
-                    <MudItem xs="12">
-                        <MudTextField @bind-Value="productToEdit.Price" Label="Pret" Variant="Variant.Filled" />
+                        <MudTextField @bind-Value="productToAdd.Price" Label="Pret" Variant="Variant.Filled" />
                     </MudItem>
                 }
             </EditForm>
@@ -489,6 +623,7 @@ else
     private DialogOptions dialogOptions = new() { DisableBackdropClick = true };
     private CategoryModelDto categoryToEdit = new CategoryModelDto();
     private CategoryModelDto categoryToAdd = new CategoryModelDto();
+    private CategoryModelDto categoryForProductToAdd = new CategoryModelDto();
     private CategoryModelDto categoryForProductToEdit = new CategoryModelDto();
     private CategoryProductModelDto productToEdit = new CategoryProductModelDto();
     private CategoryProductModelDto productToAdd = new CategoryProductModelDto();
@@ -691,6 +826,132 @@ else
         StateHasChanged();
     }
 
+    private async Task HandleProductEditFileSelection(InputFileChangeEventArgs e)
+    {
+        var files = e.GetMultipleFiles();
+
+        foreach (var file in files)
+        {
+            using (var content = new MultipartFormDataContent())
+            {
+                long maxFileSize = 10L * 1024L * 1024L; // 10 MB
+
+                var streamContent = new StreamContent(file.OpenReadStream(maxAllowedSize: maxFileSize));
+                streamContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(file.ContentType);
+                content.Add(streamContent, "file", file.Name);
+
+                var uploadedPath = await fileUploadService.UploadFile(content);
+
+                if (!string.IsNullOrEmpty(uploadedPath))
+                {
+                    productToEdit.ImageSrc = "Images/Categories/" + file.Name;
+                }
+            }
+        }
+
+        StateHasChanged();
+    }
+
+    private async Task HandleProductAddFileSelection(InputFileChangeEventArgs e)
+    {
+        var files = e.GetMultipleFiles();
+
+        foreach (var file in files)
+        {
+            using (var content = new MultipartFormDataContent())
+            {
+                long maxFileSize = 10L * 1024L * 1024L; // 10 MB
+
+                var streamContent = new StreamContent(file.OpenReadStream(maxAllowedSize: maxFileSize));
+                streamContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(file.ContentType);
+                content.Add(streamContent, "file", file.Name);
+
+                var uploadedPath = await fileUploadService.UploadFile(content);
+
+                if (!string.IsNullOrEmpty(uploadedPath))
+                {
+                    productToAdd.ImageSrc = "Images/Categories/" + file.Name;
+                }
+            }
+        }
+
+        StateHasChanged();
+    }
+
+    private async Task HandleMultipleProductAddFileSelection(InputFileChangeEventArgs e)
+    {
+        var files = e.GetMultipleFiles();
+        var uploadedPaths = new List<string>();
+
+        foreach (var file in files)
+        {
+            using (var content = new MultipartFormDataContent())
+            {
+                long maxFileSize = 25L * 1024L * 1024L; // 25MB
+
+                var streamContent = new StreamContent(file.OpenReadStream(maxAllowedSize: maxFileSize));
+                streamContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(file.ContentType);
+                content.Add(streamContent, "file", file.Name);
+
+                var uploadedPath = await fileUploadService.UploadMultipleFiles(content);
+
+                if (!string.IsNullOrEmpty(uploadedPath))
+                {
+                    uploadedPaths.Add($"Images/Galery/{file.Name}");
+                }
+            }
+        }
+
+        if (productToAdd.ListImagesSrc == null)
+        {
+            productToAdd.ListImagesSrc = new List<string>();
+        }
+
+        if (uploadedPaths.Any())
+        {
+            productToAdd.ListImagesSrc = productToAdd.ListImagesSrc.Concat(uploadedPaths).ToList();
+        }
+
+        StateHasChanged(); 
+    }
+
+    private async Task HandleMultipleProductEditFileSelection(InputFileChangeEventArgs e)
+    {
+        var files = e.GetMultipleFiles();
+        var uploadedPaths = new List<string>();
+
+        foreach (var file in files)
+        {
+            using (var content = new MultipartFormDataContent())
+            {
+                long maxFileSize = 25L * 1024L * 1024L; // 25MB
+
+                var streamContent = new StreamContent(file.OpenReadStream(maxAllowedSize: maxFileSize));
+                streamContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(file.ContentType);
+                content.Add(streamContent, "file", file.Name);
+
+                var uploadedPath = await fileUploadService.UploadMultipleFiles(content);
+
+                if (!string.IsNullOrEmpty(uploadedPath))
+                {
+                    uploadedPaths.Add($"Images/Galery/{file.Name}");
+                }
+            }
+        }
+
+        if (productToEdit.ListImagesSrc == null)
+        {
+            productToEdit.ListImagesSrc = new List<string>();
+        }
+
+        if (uploadedPaths.Any())
+        {
+            productToEdit.ListImagesSrc = productToEdit.ListImagesSrc.Concat(uploadedPaths).ToList();
+        }
+
+        StateHasChanged(); 
+    }
+
     private void OpenDialog(CategoryModelDto category)
     {
         string catalogUrl = "/catalog/";
@@ -723,9 +984,9 @@ else
         if (!string.IsNullOrEmpty(categoryToAdd.ImageSrc))
         {
             var fileName = Path.GetFileName(categoryToAdd.ImageSrc);
-            await fileUploadService.DeleteFile(fileName); // Apelezi serviciul care șterge fișierul
-            categoryToAdd.ImageSrc = null; // Ștergi calea imaginii din model
-            StateHasChanged(); // Reîmprospătezi UI-ul
+            await fileUploadService.DeleteFile(fileName);
+            categoryToAdd.ImageSrc = null;
+            StateHasChanged(); 
         }
     }
 
@@ -734,10 +995,48 @@ else
         if (!string.IsNullOrEmpty(categoryToEdit.ImageSrc))
         {
             var fileName = Path.GetFileName(categoryToEdit.ImageSrc);
-            await fileUploadService.DeleteFile(fileName); // Apelezi serviciul care șterge fișierul
-            categoryToEdit.ImageSrc = null; // Ștergi calea imaginii din model
-            StateHasChanged(); // Reîmprospătezi UI-ul
+            await fileUploadService.DeleteFile(fileName); 
+            categoryToEdit.ImageSrc = null; 
+            StateHasChanged(); 
         }
+    }
+
+    private async Task DeleteProductEditImage()
+    {
+        if (!string.IsNullOrEmpty(productToEdit.ImageSrc))
+        {
+            var fileName = Path.GetFileName(productToEdit.ImageSrc);
+            await fileUploadService.DeleteFile(fileName); 
+            productToEdit.ImageSrc = null; 
+            StateHasChanged(); 
+        }
+    }
+
+    private async Task DeleteProductAddImage()
+    {
+        if (!string.IsNullOrEmpty(productToAdd.ImageSrc))
+        {
+            var fileName = Path.GetFileName(productToAdd.ImageSrc);
+            await fileUploadService.DeleteFile(fileName);
+            productToAdd.ImageSrc = null;
+            StateHasChanged();
+        }
+    }
+    
+    private async Task DeleteMultimpleProductAddImage(string path)
+    {
+        productToAdd.ListImagesSrc = productToAdd.ListImagesSrc.Where(p => p != path).ToList();
+        var fileName = Path.GetFileName(path);
+        await fileUploadService.DeleteMultipleFile(fileName);
+        StateHasChanged();
+    }
+    
+    private async Task DeleteMultimpleProductEditImage(string path)
+    {
+        productToEdit.ListImagesSrc = productToEdit.ListImagesSrc.Where(p => p != path).ToList();
+        var fileName = Path.GetFileName(path);
+        await fileUploadService.DeleteMultipleFile(fileName);
+        StateHasChanged();
     }
 
     private async void Submit()
@@ -784,7 +1083,7 @@ else
         await categoryProduct.DeleteProduct(id);
         await OnAfterRenderAsync(true);
     }
-    
+
     private async Task ConfirmProductDelete(string id)
     {
         var parameters = new DialogParameters { ["ContentText"] = "Esti sigur ca vrei sa stergi acest produs?" };
@@ -816,7 +1115,7 @@ else
         {
             categoryToAdd.Link = catalogUrl + categoryToAdd.Id;
         }
-        // categoryToAdd.ImageSrc = uploadedImagePath;
+
         var addResult = await categoryManager.AddCategory(categoryToAdd);
 
         categoryToAdd = new CategoryModelDto();
@@ -845,6 +1144,9 @@ else
                 DescriptionEn = product.DescriptionEn,
                 DescriptionRo = product.DescriptionRo,
                 DescriptionRu = product.DescriptionRu,
+                MaterialEn = product.MaterialEn,
+                MaterialRo = product.MaterialRo,
+                MaterialRu = product.MaterialRu,
                 Price = product.Price,
             };
 
@@ -882,19 +1184,20 @@ else
     {
         string catalogUrl = "/catalog/";
         string galeryUrl = "/galery/";
-        if (categoryToAdd.IsForGalery == true)
-        {
-            categoryToAdd.Link = galeryUrl + categoryToAdd.Id;
-        }
-        else
-        {
-            categoryToAdd.Link = catalogUrl + categoryToAdd.Id;
-        }
-        categoryToAdd.ImageSrc = uploadedImagePath;
-        var addResult = await categoryManager.AddCategory(categoryToAdd);
+        // if (categoryToAdd.IsForGalery == true)
+        // {
+        //     categoryToAdd.Link = galeryUrl + categoryToAdd.Id;
+        // }
+        // else
+        // {
+        //     categoryToAdd.Link = catalogUrl + categoryToAdd.Id;
+        // }
+        // categoryToAdd.ImageSrc = uploadedImagePath;
+        var addResult = await categoryProduct.AddProduct(productToAdd);
 
-        categoryToAdd = new CategoryModelDto();
-        IsAddDialogOpen = false;
+        productToAdd = new CategoryProductModelDto();
+        categoryForProductToAdd = new CategoryModelDto();
+        IsAddProductDialogOpen = false;
 
         await InvokeAsync(() => StateHasChanged());
         await OnAfterRenderAsync(true);

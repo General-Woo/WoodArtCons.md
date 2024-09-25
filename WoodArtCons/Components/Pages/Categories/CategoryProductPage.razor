@@ -85,6 +85,7 @@ else
                 }
                 else
                 {
+                    <MudCard Elevation="0" Outlined="false" Class="w-100 d-flex flex-wrap flex-row  gap-8 justify-center" Style=" background: transparent;">
                     @foreach (var product in products)
                     {
                         var productName = culture switch
@@ -102,6 +103,7 @@ else
                             </MudPaper>
                         </MudLink>
                     }
+                    </MudCard>
                 }
             }
         </MudCard>

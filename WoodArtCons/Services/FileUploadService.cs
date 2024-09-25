@@ -1,5 +1,4 @@
-﻿using MediatR;
-using MudBlazor;
+﻿using MudBlazor;
 using WoodArtCons.Interfaces;
 using WoodArtCons.Shared.DataTransferObjects;
 
@@ -41,6 +40,34 @@ namespace WoodArtCons.Services
             }
 
             _snackbar.Add("A aparut o eroare la stergerea imaginii...", Severity.Error);
+            return await result.Content.ReadAsStringAsync();
+        }
+
+        public async Task<string> UploadMultipleFiles(MultipartFormDataContent content)
+        {
+            var result = await _httpClient.PostAsync("api/MultipleFileUpload/upload", content);
+            if (result.IsSuccessStatusCode)
+            {
+                _snackbar.Add("Imaginea s-a incarcat cu succes!", Severity.Success);
+
+                var response = await result.Content.ReadFromJsonAsync<UploadResultDto>();
+                return response?.FilePath ?? string.Empty;
+            }
+
+            _snackbar.Add("A aparut o eroare...", Severity.Error);
+            return string.Empty;
+        }
+
+        public async Task<string> DeleteMultipleFile(string fileName)
+        {
+            var result = await _httpClient.DeleteAsync($"api/MultipleFileUpload/delete?fileName={fileName}");
+            if (result.IsSuccessStatusCode)
+            {
+                _snackbar.Add("Imaginea a fost ștearsă cu succes!", Severity.Success);
+                return await result.Content.ReadAsStringAsync();
+            }
+
+            _snackbar.Add("A apărut o eroare la ștergerea imaginii...", Severity.Error);
             return await result.Content.ReadAsStringAsync();
         }
     }
