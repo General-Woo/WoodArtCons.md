@@ -13,7 +13,7 @@ namespace WoodArtCons.Server.WoodArtCons.Application.Handlers.Products
         public string NameEn { get; set; }
         public string ImageSrc { get; set; }
         public IEnumerable<string> ListImagesSrc { get; set; }
-        public float? Lenght { get; set; }
+        public string? Lenght { get; set; }
         public float? Height { get; set; }
         public float? Width { get; set; }
         public string? Link { get; set; }
@@ -23,7 +23,8 @@ namespace WoodArtCons.Server.WoodArtCons.Application.Handlers.Products
         public string? MaterialRo { get; set; }
         public string? MaterialRu { get; set; }
         public string? MaterialEn { get; set; }
-        public float Price { get; set; }
+        public bool? PricePerSquareMeter { get; set; }
+        public string Price { get; set; }
         public AddProductCommand(CategoryProductModel model)
         {
             Id = model.Id;
@@ -43,6 +44,7 @@ namespace WoodArtCons.Server.WoodArtCons.Application.Handlers.Products
             MaterialRo = model.MaterialRo;
             MaterialRu = model.MaterialRu;
             MaterialEn = model.MaterialEn;
+            PricePerSquareMeter = model.PricePerSquareMeter;
             Price = model.Price;
         }
 
@@ -75,8 +77,9 @@ namespace WoodArtCons.Server.WoodArtCons.Application.Handlers.Products
                     MaterialRo = request.MaterialRo,
                     MaterialRu = request.MaterialRu,
                     MaterialEn = request.MaterialEn,
+                    PricePerSquareMeter = request.PricePerSquareMeter,
                     Price = request.Price,
-            };
+                };
 
                 _appDbContext.Products.Add(productToAdd);
 

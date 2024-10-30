@@ -11,7 +11,7 @@ namespace WoodArtCons.Shared.DataTransferObjects
         public string NameEn { get; set; }
         public string ImageSrc { get; set; }
         public IEnumerable<string>? ListImagesSrc { get; set; }
-        public float? Lenght { get; set; }
+        public string? Lenght { get; set; }
         public float? Height { get; set; }
         public float? Width { get; set; }
         public string? Link { get; set; }
@@ -21,6 +21,7 @@ namespace WoodArtCons.Shared.DataTransferObjects
         public string? MaterialRo { get; set; }
         public string? MaterialRu { get; set; }
         public string? MaterialEn { get; set; }
-        public float Price { get; set; }
+        public bool? PricePerSquareMeter { get; set; }
+        public string Price { get; set; }
     }
 }

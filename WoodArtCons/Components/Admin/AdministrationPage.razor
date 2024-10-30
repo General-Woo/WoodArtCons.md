@@ -115,7 +115,7 @@ else
                                         <MudTd DataLabel="Name Ru">@rowContext3.NameRu</MudTd>
                                         <MudTd DataLabel="Name En">@rowContext3.NameEn</MudTd>
                                         <MudTd DataLabel="Dimensiuni">
-                                            @((rowContext3.Lenght != 0 && rowContext3.Lenght != null) ? $"{rowContext3.Lenght} {@LengthMeters} " : "nu are lungime"),
+                                        @((!string.IsNullOrEmpty(rowContext3.Lenght)) ? $"{rowContext3.Lenght} {@LengthMeters} " : "nu are lungime"),
                                             @((rowContext3.Width != 0 && rowContext3.Width != null) ? $"{rowContext3.Width} {@WidthMeters} " : "nu are lățime"),
                                             @((rowContext3.Height != 0 && rowContext3.Height != null) ? $"{rowContext3.Height} {@HeightMeters} " : "nu are înălțime")
                                         </MudTd>
@@ -290,6 +290,9 @@ else
                         <MudTextField @bind-Value="productToEdit.NameEn" Label="NameEn" Variant="Variant.Filled" />
                     </MudItem>
                     <MudItem xs="12">
+                        <MudCheckBox  @bind-Value="productToEdit.PricePerSquareMeter" UnCheckedColor="Color.Error" Color="Color.Success" Label="Se afiseaza textul pret per metru patrat" ></MudCheckBox>
+                    </MudItem>
+                    <MudItem xs="12">
                         @if (!string.IsNullOrEmpty(productToEdit.ImageSrc))
                         {
                             <MudImage Style="margin-top: 6px;" Height="200" Width="200" ObjectPosition="ObjectPosition.Center" Src="@productToEdit.ImageSrc" />
@@ -460,6 +463,9 @@ else
                     </MudItem>
                     <MudItem xs="12">
                         <MudTextField @bind-Value="productToAdd.NameEn" Label="NameEn" Variant="Variant.Filled" />
+                    </MudItem>
+                    <MudItem xs="12">
+                        <MudCheckBox @bind-Value="productToEdit.PricePerSquareMeter" UnCheckedColor="Color.Error" Color="Color.Success" Label="Se afiseaza textul pret per metru patrat"></MudCheckBox>
                     </MudItem>
                     <MudItem xs="12">
                         @if (!string.IsNullOrEmpty(productToAdd.ImageSrc))
@@ -1147,6 +1153,7 @@ else
                 MaterialEn = product.MaterialEn,
                 MaterialRo = product.MaterialRo,
                 MaterialRu = product.MaterialRu,
+                PricePerSquareMeter = product.PricePerSquareMeter,
                 Price = product.Price,
             };
 

@@ -84,8 +84,8 @@ namespace WoodArtCons.Server.WoodArtCons.Persistence.Initializers
                     NameRo = "Model M-01",
                     NameRu = "Модель M-01",
                     NameEn = "Model M-01",
-                    ImageSrc = imageBaseUrl + "sbm01.png", Price = 3000,
-                    Lenght = 1.6f,
+                    ImageSrc = imageBaseUrl + "sbm01.png", Price = "3000",
+                    Lenght = "1.6",
                     Width = 0.6f,
                     Height = 0.8f,
                     DescriptionRo = "Scaun Model",
@@ -99,53 +99,53 @@ namespace WoodArtCons.Server.WoodArtCons.Persistence.Initializers
                     NameRo = "Model M-02",
                     NameRu = "Модель M-02",
                     NameEn = "Model M-02",
-                    Lenght = 1.6f,
+                    Lenght = "1.6",
                     Width = 0.6f,
                     Height = 0.8f,
-                    ImageSrc = imageBaseUrl + "sbm02.png", Price = 3300 };
+                    ImageSrc = imageBaseUrl + "sbm02.png", Price = "3300" };
                 appDbContext.Products.Add(categoryProduct);
                 categoryProduct = new CategoryProductModel { Id = "sb3", CategoryId = "street-benches",
                     NameRo = "Model M-04",
                     NameRu = "Модель M-04",
                     NameEn = "Model M-04",
-                    Lenght = 1.6f,
+                    Lenght = "1.6",
                     Width = 0.6f,
                     Height = 0.8f,
-                    ImageSrc = imageBaseUrl + "sbm04.png", Price = 3500 };
+                    ImageSrc = imageBaseUrl + "sbm04.png", Price = "3500" };
                 appDbContext.Products.Add(categoryProduct);
                 categoryProduct = new CategoryProductModel { Id = "sb4", CategoryId = "street-benches",
                     NameRo = "Model M-05 ",
                     NameRu = "Модель M-05 ",
                     NameEn = "Model M-05 ",
-                    Lenght = 1.6f,
+                    Lenght = "1.6",
                     Width = 0.6f,
                     Height = 0.8f,
-                    ImageSrc = imageBaseUrl + "sbm05.png", Price = 3600 };
+                    ImageSrc = imageBaseUrl + "sbm05.png", Price = "3600" };
                 appDbContext.Products.Add(categoryProduct);
                 categoryProduct = new CategoryProductModel { Id = "sb5", CategoryId = "street-benches",
                     NameRo = "Model M-06",
                     NameRu = "Модель M-06",
                     NameEn = "Model M-06",
-                    Lenght = 1.6f,
+                    Lenght = "1.6",
                     Width = 0.6f,
                     Height = 0.8f,
-                    ImageSrc = imageBaseUrl + "sbm06.png", Price = 3900 };
+                    ImageSrc = imageBaseUrl + "sbm06.png", Price = "3900" };
                 appDbContext.Products.Add(categoryProduct);
                 categoryProduct = new CategoryProductModel { Id = "sb6", CategoryId = "street-benches",
                     NameRo = "Model M-FP",
                     NameRu = "Модель M-ФП",
                     NameEn = "Model M-FP",
-                    Lenght = 1.6f,
+                    Lenght = "1.6",
                     Width = 0.6f,
                     Height = 0.8f,
-                    ImageSrc = imageBaseUrl + "sbmfp.png", Price = 6000 };
+                    ImageSrc = imageBaseUrl + "sbmfp.png", Price = "6000" };
                 appDbContext.Products.Add(categoryProduct);
                 categoryProduct = new CategoryProductModel { Id = "sb7", CategoryId = "street-benches",
                     NameRo = "Model M-01",
                     NameRu = "Модель M-01",
                     NameEn = "Model M-01",
-                    ImageSrc = imageBaseUrl + "sbm01.png", Price = 3100,
-                    Lenght = 2f,
+                    ImageSrc = imageBaseUrl + "sbm01.png", Price = "3100",
+                    Lenght = "2",
                     Width = 0.6f,
                     Height = 0.8f,
                     DescriptionRo = "Scaun Model",
@@ -159,46 +159,46 @@ namespace WoodArtCons.Server.WoodArtCons.Persistence.Initializers
                     NameRo = "Model M-02",
                     NameRu = "Модель M-02",
                     NameEn = "Model M-02",
-                    Lenght = 2f,
+                    Lenght = "2",
                     Width = 0.6f,
                     Height = 0.8f,
-                    ImageSrc = imageBaseUrl + "sbm02.png", Price = 3400 };
+                    ImageSrc = imageBaseUrl + "sbm02.png", Price = "3400" };
                 appDbContext.Products.Add(categoryProduct);
                 categoryProduct = new CategoryProductModel { Id = "sb9", CategoryId = "street-benches",
                     NameRo = "Model M-04",
                     NameRu = "Модель M-04",
                     NameEn = "Model M-04",
-                    Lenght = 2f,
+                    Lenght = "2",
                     Width = 0.6f,
                     Height = 0.8f,
-                    ImageSrc = imageBaseUrl + "sbm04.png", Price = 3700 };
+                    ImageSrc = imageBaseUrl + "sbm04.png", Price = "3700" };
                 appDbContext.Products.Add(categoryProduct);
                 categoryProduct = new CategoryProductModel { Id = "sb10", CategoryId = "street-benches",
                     NameRo = "Model M-05 ",
                     NameRu = "Модель M-05 ",
                     NameEn = "Model M-04 ",
-                    Lenght = 2f,
+                    Lenght = "2",
                     Width = 0.6f,
                     Height = 0.8f,
-                    ImageSrc = imageBaseUrl + "sbm05.png", Price = 3700 };
+                    ImageSrc = imageBaseUrl + "sbm05.png", Price = "3700" };
                 appDbContext.Products.Add(categoryProduct);
                 categoryProduct = new CategoryProductModel { Id = "sb11", CategoryId = "street-benches",
                     NameRo = "Model M-06",
                     NameRu = "Модель M-06",
                     NameEn = "Model M-06",
-                    Lenght = 2f,
+                    Lenght = "2",
                     Width = 0.6f,
                     Height = 0.8f,
-                    ImageSrc = imageBaseUrl + "sbm06.png", Price = 3800 };
+                    ImageSrc = imageBaseUrl + "sbm06.png", Price = "3800" };
                 appDbContext.Products.Add(categoryProduct);
                 categoryProduct = new CategoryProductModel { Id = "sb12", CategoryId = "street-benches",
                     NameRo = "Model M-FP",
                     NameRu = "Модель M-ФП",
                     NameEn = "Model M-FP",
-                    Lenght = 2f,
+                    Lenght = "2",
                     Width = 0.6f,
                     Height = 0.8f,
-                    ImageSrc = imageBaseUrl + "sbmfp.png", Price = 7000 };
+                    ImageSrc = imageBaseUrl + "sbmfp.png", Price = "7000" };
                 appDbContext.Products.Add(categoryProduct);
                 categoryProduct = new CategoryProductModel { Id = "tb1",
                     CategoryId = "trash-boxes",
@@ -206,21 +206,21 @@ namespace WoodArtCons.Server.WoodArtCons.Persistence.Initializers
                     NameRu = "Корзина для мусора CS-6",
                     NameEn = "Trash box CS-6",
                     ImageSrc = imageBaseUrl + "cg-cs6.jpg",
-                    Price = 1500 };
+                    Price = "1500" };
                 appDbContext.Products.Add(categoryProduct);
                 categoryProduct = new CategoryProductModel { Id = "t1",
                     CategoryId = "trays",
                     NameRo = "Platou 1",
                     NameRu = "Лоток 1",
                     NameEn = "Tray 1",
-                    ImageSrc = imageBaseUrl + "tray.png", Price = 1300 };
+                    ImageSrc = imageBaseUrl + "tray.png", Price = "1300" };
                 appDbContext.Products.Add(categoryProduct);
                 categoryProduct = new CategoryProductModel { Id = "f1",
                     CategoryId = "furniture",
                     NameRo = "Mobilier 1",
                     NameRu = "Мебель 1",
                     NameEn = "Furniture 1",
-                    ImageSrc = imageBaseUrl + "furniture.png", Price = 2700 };
+                    ImageSrc = imageBaseUrl + "furniture.png", Price = "2700" };
                 appDbContext.Products.Add(categoryProduct);
                 categoryProduct = new CategoryProductModel
                 {
@@ -230,7 +230,7 @@ namespace WoodArtCons.Server.WoodArtCons.Persistence.Initializers
                     NameRu = "Дома Типa A Frame",
                     NameEn = "House Type A Frame",
                     ImageSrc = imageBaseUrl + "aframe.png",
-                    Price = 1760000,
+                    Price = "1760000",
                     ListImagesSrc = new List<string>
                     {
                         imageGaleryBaseUrl + "aframe1.jpg",

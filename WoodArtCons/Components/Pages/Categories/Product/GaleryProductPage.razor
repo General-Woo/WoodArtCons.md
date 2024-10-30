@@ -18,14 +18,26 @@ else
     {
         <div class="page-item">
             <div class="d-flex justify-content-center">
-                <h1 style="overflow-wrap:break-word; word-wrap: break-word; max-width:100%">@productName</h1>
+                <h1 style="color:white;overflow-wrap:break-word; word-wrap: break-word; max-width:100%">@productName</h1>
             </div>
 
             <MudItem Class="pc-description-view">
                 <MudCard Elevation="0" Outlined="false" Class="w-100 d-flex flex-wrap flex-row gap-2 justify-center" Style="background: transparent;">
                     <MudCard Elevation="0" Outlined="false" Style="max-width:1126px; background: transparent;" Class="w-100 d-flex flex-wrap flex-row gap-4 justify-center">
                         <MudCard Elevation="0" Outlined="false" Class="w-100">
-                            <MudText Typo="Typo.h4">@Price: @product.Price</MudText><br />
+
+                            @if(product.PricePerSquareMeter == true)
+                            {
+                                <MudText Typo="Typo.h4">@PricePerSquareMeter: @product.Price</MudText>
+
+                                <br />
+                            }
+                            else
+                            {
+                                <MudText Typo="Typo.h4">@Price: @product.Price</MudText>
+
+                                <br />
+                            }
                             <MudCarousel Class="mud-width-full" Style="height:550px;" ShowArrows="true" ShowBullets="true" EnableSwipeGesture="true" AutoCycle="false" TData="object">
                                 @foreach (var imageSrc in product.ListImagesSrc)
                                 {
@@ -77,6 +89,7 @@ else
 
     private string productName;
     private string Price;
+    private string PricePerSquareMeter;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -106,6 +119,13 @@ else
             "ru-RU" => "Цена начинается с",
             "ro-RO" => "Prețul incepe de la",
             "en-US" => "The price starts at",
+        };
+
+        PricePerSquareMeter = culture switch
+        {
+            "ru-RU" => "Цена за квадратный метр",
+            "ro-RO" => "Preț pe metru pătrat",
+            "en-US" => "Price per square meter",
         };
     }
 }

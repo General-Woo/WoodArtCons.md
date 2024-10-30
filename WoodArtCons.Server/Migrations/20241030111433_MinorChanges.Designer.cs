@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WoodArtCons.Server.WoodArtCons.Persistence;
 
@@ -10,9 +11,11 @@ using WoodArtCons.Server.WoodArtCons.Persistence;
 namespace WoodArtCons.Server.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241030111433_MinorChanges")]
+    partial class MinorChanges
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.20");
@@ -105,9 +108,6 @@ namespace WoodArtCons.Server.Migrations
                     b.Property<string>("Price")
                         .IsRequired()
                         .HasColumnType("TEXT");
-
-                    b.Property<bool?>("PricePerSquareMeter")
-                        .HasColumnType("INTEGER");
 
                     b.Property<string>("SerializedListImagesSrc")
                         .HasColumnType("TEXT");

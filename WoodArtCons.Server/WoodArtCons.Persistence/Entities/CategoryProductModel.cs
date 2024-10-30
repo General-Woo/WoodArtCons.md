@@ -18,7 +18,7 @@ namespace WoodArtCons.Server.WoodArtCons.Persistence.Entities
             get => SerializedListImagesSrc?.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
             set => SerializedListImagesSrc = value != null ? string.Join(",", value) : null;
         }
-        public float? Lenght { get; set; }
+        public string? Lenght { get; set; }
         public float? Height { get; set; }
         public float? Width { get; set; }
         public string? Link { get; set; }
@@ -28,6 +28,7 @@ namespace WoodArtCons.Server.WoodArtCons.Persistence.Entities
         public string? MaterialRo { get; set; }
         public string? MaterialRu { get; set; }
         public string? MaterialEn { get; set; }
-        public float Price { get; set; }
+        public bool? PricePerSquareMeter { get; set; }
+        public string Price { get; set; }
     }
 }
