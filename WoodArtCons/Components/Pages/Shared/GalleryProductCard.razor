@@ -1,0 +1,70 @@
+﻿@using System.Globalization
+@using WoodArtCons.Shared.DataTransferObjects
+@inject NavigationManager NavigationManager
+
+<MudCard Elevation="3" Class="h-100" Style="border-radius: 12px; overflow: hidden;">
+    @if (Product?.ListImagesSrc != null && Product.ListImagesSrc.Any())
+    {
+        <MudCarousel Class="mud-width-full" Style="height: 250px;" ShowArrows="true" ShowDelimiters="true" AutoCycle="false" TData="string">
+            @foreach (var image in Product.ListImagesSrc)
+            {
+                <MudCarouselItem Transition="Transition.Slide">
+                    <div style="background-image: url('@image'); background-size: cover; background-position: center; height: 100%; width: 100%;"></div>
+                </MudCarouselItem>
+            }
+        </MudCarousel>
+    }
+    else
+    {
+        <MudCardMedia Image="@Product.ImageSrc" Height="250" />
+    }
+
+    <MudCardContent Class="pa-4">
+        @if (Product != null && Culture != null)
+        {
+            var productName = Culture switch
+            {
+                "ru-RU" => Product.NameRu,
+                "en-US" => Product.NameEn,
+                "ro-RO" => Product.NameRo,
+                _ => Product.NameRo
+            };
+            <MudText Typo="Typo.h6" Class="mb-3" Style="font-weight: 600;">@productName</MudText>
+
+            @if (Product.PricePerSquareMeter == true)
+            {
+                <MudAlert Severity="Severity.Info" Dense="true" Class="mb-2">
+                    <MudText Typo="Typo.body2" Style="font-weight: 500;">
+                        @PricePerSquareMeterText: @Product.Price €
+                    </MudText>
+                </MudAlert>
+            }
+            else
+            {
+                <MudText Typo="Typo.h6" Color="Color.Primary" Style="font-weight: 700;">@Product.Price MDL</MudText>
+            }
+        }
+    </MudCardContent>
+    <MudCardActions Class="pa-4 pt-0">
+        <MudButton Variant="Variant.Text"
+                   Color="Color.Primary"
+                   FullWidth="true"
+                   @onclick="@(() => NavigationManager.NavigateTo($"/gallery/{Product.CategoryId}/{Product.Id}"))">
+            @{
+                var viewDetails = Culture switch { "ru-RU" => "Подробнее", "en-US" => "View Details", "ro-RO" => "Vezi detalii", _ => "Vezi detalii" };
+            }
+            @viewDetails
+        </MudButton>
+    </MudCardActions>
+</MudCard>
+
+@code {
+    [Parameter]
+    public CategoryProductModelDto Product { get; set; }
+
+    [Parameter]
+    public string Culture { get; set; }
+
+    [Parameter]
+    public string PricePerSquareMeterText { get; set; }
+}

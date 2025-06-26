@@ -1,0 +1,179 @@
+﻿/* Reset and base styles */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background-color: #f8fafc;
+}
+
+/* Navigation styles - exact ca în v2 */
+.nav-menu-item {
+  font-weight: 500 !important;
+  text-transform: none !important;
+  padding: 8px 16px !important;
+  margin: 0 4px !important;
+  border-radius: 6px !important;
+  transition: all 0.2s ease-in-out !important;
+  color: #6b7280 !important;
+  font-size: 0.95rem !important;
+}
+
+.nav-menu-item:hover {
+  background-color: rgba(249, 115, 22, 0.1) !important;
+  color: #f97316 !important;
+}
+
+/* Navigation button styles */
+.nav-button {
+  font-weight: 500 !important;
+  text-transform: none !important;
+  padding: 8px 16px !important;
+  border-radius: 6px !important;
+  transition: all 0.2s ease-in-out !important;
+  color: #6b7280 !important;
+}
+
+.nav-button:hover {
+  background-color: rgba(249, 115, 22, 0.1) !important;
+  color: #f97316 !important;
+}
+
+.nav-button.mud-primary-text {
+  color: #f97316 !important;
+  background-color: rgba(249, 115, 22, 0.1) !important;
+}
+
+/* MudBlazor button overrides */
+.mud-button.mud-button-text.mud-primary-text {
+  color: #f97316 !important;
+}
+
+.mud-button.mud-button-text.mud-primary-text:hover {
+  background-color: rgba(249, 115, 22, 0.15) !important;
+}
+
+/* Button styles */
+.mud-button.mud-button-filled.mud-primary {
+  background-color: #f97316 !important;
+  color: white !important;
+  border: none !important;
+  font-weight: 600 !important;
+  text-transform: none !important;
+}
+
+.mud-button.mud-button-filled.mud-primary:hover {
+  background-color: #ea580c !important;
+}
+
+/* Footer link styles */
+.footer-link {
+  transition: all 0.2s ease-in-out;
+  display: block;
+  padding: 4px 0;
+}
+
+.footer-link:hover {
+  color: #f97316 !important;
+  text-decoration: underline !important;
+}
+
+/* AppBar styles - exact ca în v2 */
+.mud-appbar {
+  background-color: white !important;
+  color: #1f2937 !important;
+  border-bottom: 1px solid #e5e7eb !important;
+  box-shadow: none !important;
+}
+
+/* Drawer styles */
+.mud-drawer {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
+}
+
+/* Main content */
+.mud-main-content {
+  background-color: #f8fafc !important;
+  min-height: 100vh !important;
+  padding-top: 64px !important;
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 960px) {
+  .mud-container {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+
+  .mud-main-content {
+    padding-top: 56px !important;
+  }
+}
+
+/* Override MudBlazor primary color globally */
+:root {
+  --mud-palette-primary: #f97316;
+  --mud-palette-primary-rgb: 249, 115, 22;
+}
+
+.mud-theme-primary {
+  color: #f97316 !important;
+}
+
+.mud-primary-text {
+  color: #f97316 !important;
+}
+
+.mud-primary-hover:hover {
+  background-color: rgba(249, 115, 22, 0.04) !important;
+}
+
+/* Hover effects */
+.hover-card {
+  transition: all 0.3s ease;
+}
+
+.hover-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* Container max width */
+.mud-container.mud-container-maxwidth-xl {
+  max-width: 1200px !important;
+}
+
+.mud-drawer-header {
+  padding: 16px 24px !important;
+}
+
+/* Remove any unwanted margins/padding */
+.mud-typography {
+  margin: 0 !important;
+}
+
+/* Ensure proper spacing */
+.mb-4 {
+  margin-bottom: 1rem !important;
+}
+.mb-6 {
+  margin-bottom: 1.5rem !important;
+}
+.mb-8 {
+  margin-bottom: 2rem !important;
+}
+.mt-4 {
+  margin-top: 1rem !important;
+}
+.mt-6 {
+  margin-top: 1.5rem !important;
+}
+.mt-8 {
+  margin-top: 2rem !important;
+}
+.ml-6 {
+  margin-left: 1.5rem !important;
+}

@@ -1,38 +1,87 @@
 ﻿@page "/Error"
 @using System.Diagnostics
+@using System.Globalization
+@inject JSRuntime jSRuntime
+@rendermode InteractiveServer
 
 <div style="z-index:-1; position:fixed; width:100vw; left: 0; top: 0; height:100vh;background-image: url('/Images/contacts.jpg'); background-size: cover; background-repeat: no-repeat; min-width:300px; min-height:100px;"></div>
 
 <PageTitle>Error</PageTitle>
 
-<h1 class="text-danger">Error.</h1>
-<h2 class="text-danger">An error occurred while processing your request.</h2>
-
-@if (ShowRequestId)
+@if (!isloading && culture != null)
 {
-    <p>
-        <strong>Request ID:</strong> <code>@RequestId</code>
-    </p>
+    var errorTitle = culture switch { "ru-RU" => "Ошибка", "en-US" => "Error", "ro-RO" => "Eroare" };
+    var errorMessage = culture switch
+    {
+        "ru-RU" => "Произошла ошибка при обработке вашего запроса.",
+        "en-US" => "An error occurred while processing your request.",
+        "ro-RO" => "A apărut o eroare în timpul procesării cererii dumneavoastră."
+    };
+    var returnHome = culture switch { "ru-RU" => "Вернуться домой", "en-US" => "Return Home", "ro-RO" => "Înapoi acasă" };
+
+    <MudContainer MaxWidth="MaxWidth.Medium" Class="d-flex align-center justify-center" Style="min-height: 100vh;">
+        <MudPaper Elevation="3" Class="pa-8 text-center" Style="background-color: rgba(255, 255, 255, 0.95);">
+            <MudText Typo="Typo.h1" Class="mb-4 text-danger">@errorTitle</MudText>
+            <MudText Typo="Typo.h5" Class="mb-6 text-danger">@errorMessage</MudText>
+
+            @if (ShowRequestId)
+            {
+                <MudAlert Severity="Severity.Info" Class="mb-4">
+                    <strong>Request ID:</strong> <code>@RequestId</code>
+                </MudAlert>
+            }
+
+            <MudButton Variant="Variant.Filled"
+                       Color="Color.Primary"
+                       Href="/"
+                       Size="Size.Large"
+                       StartIcon="@Icons.Material.Filled.Home"
+                       Class="mt-4">
+                @returnHome
+            </MudButton>
+
+            @if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
+            {
+                <MudExpansionPanels Class="mt-6">
+                    <MudExpansionPanel Text="Development Information">
+                        <MudText Typo="Typo.h6" Class="mb-2">Development Mode</MudText>
+                        <MudText Typo="Typo.body2" Class="mb-2">
+                            Swapping to <strong>Development</strong> environment will display more detailed information about the error that occurred.
+                        </MudText>
+                        <MudText Typo="Typo.body2">
+                            <strong>The Development environment shouldn't be enabled for deployed applications.</strong>
+                            It can result in displaying sensitive information from exceptions to end users.
+                        </MudText>
+                    </MudExpansionPanel>
+                </MudExpansionPanels>
+            }
+        </MudPaper>
+    </MudContainer>
 }
 
-<h3>Development Mode</h3>
-<p>
-    Swapping to <strong>Development</strong> environment will display more detailed information about the error that occurred.
-</p>
-<p>
-    <strong>The Development environment shouldn't be enabled for deployed applications.</strong>
-    It can result in displaying sensitive information from exceptions to end users.
-    For local debugging, enable the <strong>Development</strong> environment by setting the <strong>ASPNETCORE_ENVIRONMENT</strong> environment variable to <strong>Development</strong>
-    and restarting the app.
-</p>
-
-@code{
+@code {
     [CascadingParameter]
     private HttpContext? HttpContext { get; set; }
 
     private string? RequestId { get; set; }
     private bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
+    private bool isloading = true;
+    private string culture;
 
     protected override void OnInitialized() =>
         RequestId = Activity.Current?.Id ?? HttpContext?.TraceIdentifier;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            culture = await jSRuntime.InvokeAsync<string>("getLanguage");
+            if (string.IsNullOrEmpty(culture))
+            {
+                culture = "ro-RO";
+            }
+            isloading = false;
+            StateHasChanged();
+        }
+    }
 }

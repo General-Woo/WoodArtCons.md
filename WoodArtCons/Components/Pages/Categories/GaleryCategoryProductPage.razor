@@ -1,4 +1,4 @@
-﻿@page "/galery/{categoryId}"
+﻿@* @page "/galery/{categoryId}"
 
 @using System.Globalization
 @using WoodArtCons.Interfaces
@@ -77,3 +77,4 @@ else
         products = await categoryProduct.GetProductsByCategoryId(categoryId);
     }
 }
+ *@

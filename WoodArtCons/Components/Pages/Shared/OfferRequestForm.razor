@@ -1,0 +1,83 @@
+@using MudBlazor
+@using System.ComponentModel.DataAnnotations
+@using Microsoft.AspNetCore.Components
+@inject ISnackbar Snackbar
+@inject WoodArtCons.Services.CrmLeadService CrmLeadService
+
+<EditForm Model="offerModel" OnValidSubmit="HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <MudTextField T="string" Label="@nameLabel" @bind-Value="offerModel.Name" Required="true" Variant="Variant.Outlined" Class="mb-3" FullWidth="true" />
+    <MudTextField T="string" Label="@contactLabel" @bind-Value="offerModel.Contact" Required="true" Variant="Variant.Outlined" Class="mb-3" FullWidth="true" />
+    <MudTextField T="string" Label="@requestLabel" @bind-Value="offerModel.Request" Required="true" Variant="Variant.Outlined" Lines="3" Class="mb-4" FullWidth="true" />
+    <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" Style="background-color: #f97316; color: white; padding: 12px 24px; font-weight: 600; text-transform: none; border-radius: 8px;" FullWidth="true">
+        @buttonLabel
+    </MudButton>
+</EditForm>
+
+@code {
+    [Parameter]
+    public string Culture { get; set; } = "ro-RO";
+
+    private OfferRequestModel offerModel = new();
+
+    private string nameLabel => Culture switch
+    {
+        "ru-RU" => "Имя и фамилия",
+        "en-US" => "Full Name",
+        _ => "Nume Prenume"
+    };
+    private string contactLabel => Culture switch
+    {
+        "ru-RU" => "Телефон или Email",
+        "en-US" => "Phone or Email",
+        _ => "Telefon sau Email"
+    };
+    private string requestLabel => Culture switch
+    {
+        "ru-RU" => "Запрашиваемое предложение",
+        "en-US" => "Requested Offer/Inquiry",
+        _ => "Oferta/solicitarea cerută"
+    };
+    private string buttonLabel => Culture switch
+    {
+        "ru-RU" => "Запросить предложение",
+        "en-US" => "Request Offer",
+        _ => "Solicită ofertă"
+    };
+
+    private async Task HandleValidSubmit()
+    {
+        var result = await CrmLeadService.SendOfferRequest(offerModel);
+        if (result)
+        {
+            var successMsg = Culture switch
+            {
+                "ru-RU" => "Запрос успешно отправлен!",
+                "en-US" => "Request sent successfully!",
+                _ => "Solicitarea a fost trimisă cu succes!"
+            };
+            Snackbar.Add(successMsg, Severity.Success);
+            offerModel = new();
+        }
+        else
+        {
+            var errorMsg = Culture switch
+            {
+                "ru-RU" => "Произошла ошибка при отправке запроса.",
+                "en-US" => "An error occurred while sending the request.",
+                _ => "A apărut o eroare la trimiterea solicitării."
+            };
+            Snackbar.Add(errorMsg, Severity.Error);
+        }
+    }
+
+    public class OfferRequestModel
+    {
+        [Required]
+        public string Name { get; set; }
+        [Required]
+        public string Contact { get; set; }
+        [Required]
+        public string Request { get; set; }
+    }
+} 

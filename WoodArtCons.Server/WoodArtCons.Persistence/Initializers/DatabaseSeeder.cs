@@ -50,7 +50,7 @@ namespace WoodArtCons.Server.WoodArtCons.Persistence.Initializers
         public static void AddCategories(AppDbContext appDbContext)
         {
             string catalogUrl = "/catalog/";
-            string galeryUrl = "/galery/";
+            string galeryUrl = "/gallery/";
 
             if (appDbContext.Categories.Count() == 0)
             {

@@ -62,7 +62,7 @@ namespace WoodArtCons.Server.WoodArtCons.Application.Handlers.Products
         public async Task<Unit> Handle(EditProductCommand request, CancellationToken cancellationToken)
         {
             string catalogUrl = "/catalog/";
-            string galeryUrl = "/galery/";
+            string galeryUrl = "/gallery/";
 
             var productToEdit = await _appDbContext.Products.Where(a => a.Id == request.Id).FirstOrDefaultAsync();
 

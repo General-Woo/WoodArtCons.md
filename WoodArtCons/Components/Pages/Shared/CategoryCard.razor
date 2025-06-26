@@ -1,0 +1,53 @@
+﻿@using System.Globalization
+@using WoodArtCons.Shared.DataTransferObjects
+
+<MudCard Elevation="3" Class="h-100 hover-card" Style="border-radius: 12px; overflow: hidden; cursor: pointer; transition: transform 0.2s ease-in-out;" @onclick="@(() => NavigateToCategory())">
+    <MudCardMedia Image="@Category.ImageSrc" Height="200" />
+    <MudCardContent Class="pa-4 text-center">
+        @if (Category != null && Culture != null)
+        {
+            var categoryName = Culture switch
+            {
+                "ru-RU" => Category.NameRu,
+                "en-US" => Category.NameEn,
+                "ro-RO" => Category.NameRo,
+                _ => Category.NameRo
+            };
+            <MudText Typo="Typo.h6" Style="font-weight: 600;">@categoryName</MudText>
+        }
+    </MudCardContent>
+    <MudCardActions Class="pa-4 pt-0">
+        <MudButton Variant="Variant.Filled"
+                   Color="Color.Primary"
+                   FullWidth="true"
+                   StartIcon="@Icons.Material.Filled.ArrowForward">
+            @{
+                var viewProducts = Culture switch { "ru-RU" => "Посмотреть продукты", "en-US" => "View Products", "ro-RO" => "Vezi produsele", _ => "Vezi produsele" };
+            }
+            @viewProducts
+        </MudButton>
+    </MudCardActions>
+</MudCard>
+
+<style>
+    .hover-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    }
+</style>
+
+@code {
+    [Parameter]
+    public CategoryModelDto Category { get; set; }
+
+    [Parameter]
+    public string Culture { get; set; }
+
+    [Inject]
+    private NavigationManager NavigationManager { get; set; }
+
+    private void NavigateToCategory()
+    {
+        NavigationManager.NavigateTo($"/catalog/{Category.Id}");
+    }
+}

@@ -76,8 +76,8 @@ using (var scope = builder.Services.BuildServiceProvider().CreateScope())
         if (dbContext.Database.GetPendingMigrations().Any())
         {
             dbContext.Database.Migrate();
+            DatabaseSeeder.SeedDb(dbContext);
         }
-        DatabaseSeeder.SeedDb(dbContext);
     }
 }
 

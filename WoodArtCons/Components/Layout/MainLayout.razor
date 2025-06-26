@@ -1,13 +1,137 @@
 ﻿@inherits LayoutComponentBase
-<MudThemeProvider />
+@using System.Globalization
+@inject NavigationManager _navigationManager
+@inject IJSRuntime jSRuntime
+@rendermode InteractiveServer
+
+<MudThemeProvider Theme="_currentTheme" />
 <MudDialogProvider />
 <MudSnackbarProvider />
-<NavMenu />
 
-<div class="page">
-    <main>
-        <article class="content px-4 mt-12">
-            @Body
-        </article>
-    </main>
-</div>
+<MudLayout>
+    <MudAppBar Elevation="1" Style="background-color: white; color: #1f2937;">
+        <MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="d-flex align-center">
+            <MudIconButton Icon="@Icons.Material.Filled.Menu"
+                           Color="Color.Inherit"
+                           Edge="Edge.Start"
+                           OnClick="@((e) => DrawerToggle())"
+                           Class="d-flex d-md-none" />
+
+            <MudLink Href="/" Underline="Underline.None" Class="d-flex align-center">
+                <MudImage Src="Images/WoodArtCons_Logo.png" Alt="WoodArtCons" Height="40" Class="mr-3" />
+                <MudText Typo="Typo.h6" Style="color: #1f2937; font-weight: 600;">WoodArtCons</MudText>
+            </MudLink>
+
+            <MudSpacer />
+
+            <!-- Desktop Navigation -->
+            <div class="d-none d-md-flex align-center">
+                <NavMenu />
+                <MudMenu Icon="@Icons.Material.Filled.Language"
+                         Color="Color.Inherit"
+                         AnchorOrigin="Origin.BottomCenter"
+                         TransformOrigin="Origin.TopCenter"
+                         Class="ml-4">
+                    <MudMenuItem OnClick="@(() => SetLanguage("ro-RO"))">
+                        <div class="d-flex align-center">
+                            <MudText>🇷🇴</MudText>
+                            <MudText Class="ml-2">Română</MudText>
+                        </div>
+                    </MudMenuItem>
+                    <MudMenuItem OnClick="@(() => SetLanguage("ru-RU"))">
+                        <div class="d-flex align-center">
+                            <MudText>🇷🇺</MudText>
+                            <MudText Class="ml-2">Русский</MudText>
+                        </div>
+                    </MudMenuItem>
+                    <MudMenuItem OnClick="@(() => SetLanguage("en-US"))">
+                        <div class="d-flex align-center">
+                            <MudText>🇺🇸</MudText>
+                            <MudText Class="ml-2">English</MudText>
+                        </div>
+                    </MudMenuItem>
+                </MudMenu>
+
+                <MudIconButton Icon="@Icons.Material.Filled.Download"
+                               Color="Color.Inherit"
+                               OnClick="@DownloadBrochure"
+                               Class="ml-2" />
+            </div>
+        </MudContainer>
+    </MudAppBar>
+
+    <MudDrawer @bind-Open="_drawerOpen"
+               ClipMode="DrawerClipMode.Always"
+               Elevation="2"
+               Variant="DrawerVariant.Temporary"
+               Class="d-flex d-md-none">
+        <MudDrawerHeader Style="background-color: #f8fafc;">
+            <div class="d-flex align-center">
+                <MudImage Src="Images/WoodArtCons_Logo.png" Alt="WoodArtCons" Height="32" Class="mr-2" />
+                <MudText Typo="Typo.h6" Style="color: #1f2937; font-weight: 600;">WoodArtCons</MudText>
+            </div>
+        </MudDrawerHeader>
+        <MudNavMenu>
+            <NavMenuMobile />
+        </MudNavMenu>
+    </MudDrawer>
+
+    <MudMainContent Style="background-color: #f8fafc;">
+        @Body
+        <Footer />
+    </MudMainContent>
+</MudLayout>
+
+@code {
+    private string culture;
+    private bool _drawerOpen = false;
+    private MudTheme _currentTheme = new MudTheme()
+        {
+            Typography = new Typography()
+            {
+                Default = new Default()
+                {
+                    FontFamily = new[] { "Inter", "system-ui", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "Roboto", "sans-serif" }
+                }
+            },
+            Palette = new PaletteLight()
+            {
+                Primary = "#3b82f6",
+                Secondary = "#64748b",
+                Background = "#f8fafc",
+                Surface = "#ffffff",
+                AppbarBackground = "#ffffff",
+                AppbarText = "#1f2937"
+            }
+        };
+
+    private void DrawerToggle()
+    {
+        _drawerOpen = !_drawerOpen;
+    }
+
+    private async Task DownloadBrochure()
+    {
+        await jSRuntime.InvokeVoidAsync("downloadFile", "brochures/WoodArtCons_Brochure.pdf", "WoodArtCons_Brochure.pdf");
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            culture = await jSRuntime.InvokeAsync<string>("getLanguage");
+            if (culture == null)
+            {
+                await jSRuntime.InvokeVoidAsync("setLanguage", "ro-RO");
+                _navigationManager.NavigateTo(_navigationManager.Uri, forceLoad: true);
+            }
+            StateHasChanged();
+        }
+    }
+
+    async Task SetLanguage(string cultureCode)
+    {
+        await jSRuntime.InvokeVoidAsync("setLanguage", cultureCode);
+        _navigationManager.NavigateTo(_navigationManager.Uri, forceLoad: true);
+    }
+}

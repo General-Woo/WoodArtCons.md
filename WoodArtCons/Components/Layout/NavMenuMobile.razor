@@ -1,0 +1,107 @@
+﻿@using System.Globalization
+@inject NavigationManager _navigationManager 
+@inject IJSRuntime jSRuntime
+@rendermode InteractiveServer
+
+@if (!isloading && culture != null)
+{
+    var homePageTitle = culture switch { "ru-RU" => "Главная", "en-US" => "Home", "ro-RO" => "Acasă" };
+    var catalogPageTitle = culture switch { "ru-RU" => "Каталог", "en-US" => "Catalog", "ro-RO" => "Catalog" };
+    var galeryPageTitle = culture switch { "ru-RU" => "Галерея", "en-US" => "Gallery", "ro-RO" => "Galerie" };
+    var aboutPageTitle = culture switch { "ru-RU" => "О нас", "en-US" => "About Us", "ro-RO" => "Despre noi" };
+    var contactsPageTitle = culture switch { "ru-RU" => "Контакты", "en-US" => "Contacts", "ro-RO" => "Contacte" };
+    var admin = culture switch { "ru-RU" => "Админ", "en-US" => "Admin", "ro-RO" => "Admin" };
+    var downloadBrochure = culture switch { "ru-RU" => "Cкачать брошюру", "en-US" => "Download Brochure", "ro-RO" => "Descărcați broșura" };
+    var language = culture switch { "ru-RU" => "Язык", "en-US" => "Language", "ro-RO" => "Limba" };
+
+    <AuthorizeView>
+        <Authorized>
+            <MudNavLink Href="/admin" Match="NavLinkMatch.All">
+                @admin
+            </MudNavLink>
+            <MudDivider />
+        </Authorized>
+    </AuthorizeView>
+
+    <MudNavLink Href="/" Match="NavLinkMatch.All">
+        @homePageTitle
+    </MudNavLink>
+    <MudDivider />
+    <MudNavLink Href="/catalog" Match="NavLinkMatch.Prefix">
+        @catalogPageTitle
+    </MudNavLink>
+    <MudDivider />
+    <MudNavLink Href="/gallery" Match="NavLinkMatch.All">
+        @galeryPageTitle
+    </MudNavLink>
+    <MudDivider />
+    <MudNavLink Href="/about" Match="NavLinkMatch.All">
+        @aboutPageTitle
+    </MudNavLink>
+    <MudDivider />
+    <MudNavLink Href="/contacts" Match="NavLinkMatch.All">
+        @contactsPageTitle
+    </MudNavLink>
+    <MudDivider />
+    <MudNavLink @onclick="@(() => DownloadBrochure())" Icon="@Icons.Material.Filled.Download">
+        @downloadBrochure
+    </MudNavLink>
+    
+    <MudDivider Class="my-2" />
+    
+    <MudExpansionPanels>
+        <MudExpansionPanel Text="@language" Icon="@Icons.Material.Filled.Language">
+            <MudList>
+                <MudListItem OnClick="@(() => SetLanguage("ro-RO"))">
+                    <div class="d-flex align-center">
+                        <MudText>🇷🇴</MudText>
+                        <MudText Class="ml-2">Română</MudText>
+                    </div>
+                </MudListItem>
+                <MudListItem OnClick="@(() => SetLanguage("ru-RU"))">
+                    <div class="d-flex align-center">
+                        <MudText>🇷🇺</MudText>
+                        <MudText Class="ml-2">Русский</MudText>
+                    </div>
+                </MudListItem>
+                <MudListItem OnClick="@(() => SetLanguage("en-US"))">
+                    <div class="d-flex align-center">
+                        <MudText>🇺🇸</MudText>
+                        <MudText Class="ml-2">English</MudText>
+                    </div>
+                </MudListItem>
+            </MudList>
+        </MudExpansionPanel>
+    </MudExpansionPanels>
+}
+
+@code {
+    private bool isloading = true;
+    private string culture;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            culture = await jSRuntime.InvokeAsync<string>("getLanguage");
+            if (string.IsNullOrEmpty(culture))
+            {
+                culture = "ro-RO";
+            }
+            isloading = false;
+            StateHasChanged();
+        }
+    }
+
+    private async Task DownloadBrochure()
+    {
+        await jSRuntime.InvokeVoidAsync("downloadFile", "brochures/WoodArtCons_Brochure.pdf", "WoodArtCons_Brochure.pdf");
+    }
+
+    async Task SetLanguage(string cultureCode)
+    {
+        await jSRuntime.InvokeVoidAsync("setLanguage", cultureCode);
+        _navigationManager.NavigateTo(_navigationManager.Uri, forceLoad: true);
+        StateHasChanged();
+    }
+}

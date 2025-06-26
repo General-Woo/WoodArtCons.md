@@ -1,119 +1,120 @@
 ﻿@page "/contacts"
 @using System.Globalization
-@inject IJSRuntime JSRuntime
+@inject IJSRuntime jSRuntime
+@rendermode InteractiveServer
 
-<div style="z-index:-1; position:fixed; width:100vw; left: 0; top: 0; height:100vh;background-image: url('/Images/contacts.jpg'); background-size: cover; background-repeat: no-repeat; min-width:300px; min-height:100px;">
-</div>
+<PageTitle>WoodArtCons - Contacte</PageTitle>
 
-@if (isloading)
+@if (!isloading && culture != null)
 {
-    <MudProgressCircular Color="Color.Secondary" Style="height:100px; width:100px; position:fixed; top:40%; left:50%;" Indeterminate="true" />
+    var contactUs = culture switch { "ru-RU" => "Свяжитесь с нами", "en-US" => "Contact Us", "ro-RO" => "Contactează-ne" };
+    var contactInfo = culture switch { "ru-RU" => "Контактная информация", "en-US" => "Contact Information", "ro-RO" => "Informații de contact" };
+    var address = culture switch { "ru-RU" => "Адрес", "en-US" => "Address", "ro-RO" => "Adresă" };
+    var sendMessage = culture switch { "ru-RU" => "Отправить сообщение", "en-US" => "Send a Message", "ro-RO" => "Trimite un mesaj" };
+    var name = culture switch { "ru-RU" => "Имя", "en-US" => "Name", "ro-RO" => "Nume" };
+    var email = culture switch { "ru-RU" => "Email", "en-US" => "Email", "ro-RO" => "Email" };
+    var phone = culture switch { "ru-RU" => "Телефон", "en-US" => "Phone", "ro-RO" => "Telefon" };
+    var subject = culture switch { "ru-RU" => "Тема", "en-US" => "Subject", "ro-RO" => "Subiect" };
+    var message = culture switch { "ru-RU" => "Сообщение", "en-US" => "Message", "ro-RO" => "Mesaj" };
+    var send = culture switch { "ru-RU" => "Отправить", "en-US" => "Send", "ro-RO" => "Trimite" };
+
+    <MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="mt-4">
+        <MudPaper Elevation="3" Class="pa-8" Style="border-radius: 16px;">
+            <MudText Typo="Typo.h4" Class="mb-6" Style="font-weight: 600; color: #1f2937;">@contactUs</MudText>
+
+            <MudGrid>
+                <MudItem xs="12" md="6">
+                    <MudText Typo="Typo.h6" Class="mb-4" Style="font-weight: 600;">@contactInfo</MudText>
+
+                    <MudList>
+                        <MudListItem Icon="@Icons.Material.Filled.Business">
+                            <MudText Style="font-weight: 500;">WoodArtCons</MudText>
+                        </MudListItem>
+                        <MudListItem Icon="@Icons.Material.Filled.LocationOn">
+                            <MudText>@address: Strada Vadul lui Vodă 110, Chișinău, Republica Moldova</MudText>
+                        </MudListItem>
+                        <MudListItem Icon="@Icons.Material.Filled.Email">
+                            <MudText>woodartcons@gmail.com</MudText>
+                        </MudListItem>
+                        <MudListItem Icon="@Icons.Material.Filled.Phone">
+                        <MudText>Valentina Covalenco: +37360086365</MudText>
+                        </MudListItem>
+                        <MudListItem Icon="@Icons.Material.Filled.Phone">
+                            <MudText>Valerii Gukov: +37360201373</MudText>
+                        </MudListItem>
+                        <MudListItem Icon="@Icons.Material.Filled.Phone">
+                            <MudText>Andrei Covalenco: +37368312964</MudText>
+                        </MudListItem>
+                        <MudListItem Icon="@Icons.Material.Filled.Phone">
+                            <MudText>Petru Damaschin: +37379356131</MudText>
+                        </MudListItem>
+                    </MudList>
+                </MudItem>
+
+                <MudItem xs="12" md="6">
+                    <OfferRequestForm Culture="@culture" />
+                </MudItem>
+            </MudGrid>
+        </MudPaper>
+    </MudContainer>
 }
 else
 {
-    @if (culture != null) {
-        var contactsPageTitle = culture switch { "ru-RU" => "Контакты", "en-US" => "Contacts", "ro-RO" => "Contacte" };
-        var Valeri = culture switch { "ru-RU" => "Валерий Гуков", "en-US" => "Valeriy Gukov", "ro-RO" => "Valerii Gukov" };
-        var Andrei = culture switch { "ru-RU" => "Андрей Коваленко", "en-US" => "Andrey Covalenco", "ro-RO" => "Andrei Covalenco" };
-        var Petru = culture switch { "ru-RU" => "Петр Дамаскин", "en-US" => "Petru Damaschin", "ro-RO" => "Petru Damaschin" };
-        var Adress = culture switch { "ru-RU" => "Адрес", "en-US" => "Adress", "ro-RO" => "Adresă" };
-        var Email = culture switch { "ru-RU" => "Электронная Почта", "en-US" => "Email", "ro-RO" => "Email" };
-        var AdressLocation = culture switch { "ru-RU" => "Улица Вадул луй Водэ 110, Кишинев, Молдова", "en-US" => "Vadul lui Voda Street 110, Chisinau, Republic Of Moldova", "ro-RO" => "Strada Vadul lui Vodă 110, Chișinău, Republica Moldova" };
-        var YouCanFind = culture switch { "ru-RU" => "Вы можете найти нас на", "en-US" => "You can find us on", "ro-RO" => "Ne puteți găsi pe" };
-        var LocationText = culture switch { "ru-RU" => "Наше местоположение", "en-US" => "Our location", "ro-RO" => "Locația noastră" };
-<div class="page-item">
-    <div class="d-flex justify-content-center">
-        <h1 style="color:White">@contactsPageTitle</h1>
-    </div>
-</div>
-
-<MudItem Class="pc-description-view">
-    <MudCard Elevation="0" Outlined="false" Style="background-color:transparent;" Class="w-100 d-flex flex-wrap flex-row gap-0 justify-center">
-        <MudCard Elevation="0" Outlined="false" Style="max-width:1126px; background-color:transparent;" Class="w-100 d-flex flex-wrap flex-row gap-0 justify-center">
-            <MudPaper Elevation="0" Outlined="false" Width="50%">
-                <MudAvatar Class="ml-8 mt-8" Size="Size.Large" Style="background-color:white;">
-                    <MudImage Src="/Images/WoodArtCons_Logo.png" Alt="Logo Companie" />
-                </MudAvatar>
-                <MudText Class="px-8" Typo="Typo.h5"><strong>WoodArtCons</strong></MudText>
-                <MudDivider />
-                <MudText Class="px-8 pt-3" Typo="Typo.body1"><strong> @Valeri:</strong> +37360201373 </MudText>
-                <MudText Class="px-8" Typo="Typo.body1"><strong> @Andrei:</strong> +37368312964 </MudText>
-                <MudText Class="px-8" Typo="Typo.body1"><strong> @Petru:</strong> +37379356131 </MudText>
-                <MudText Class="px-8" Typo="Typo.body1"><strong> @Adress:</strong> @AdressLocation </MudText>
-                <MudText Class="px-8 pb-8" Typo="Typo.body1"><strong> @Email:</strong> <a href="mailto:[Email]"> woodartcons@gmail.com </a></MudText>
-                <MudDivider />
-                <MudText Class="px-8 pt-3" Typo="Typo.h6"> @YouCanFind</MudText>
-                <MudCard Elevation="0" Outlined="false" Style="background-color:transparent;" Class="pl-8 pt-3 pb-6 w-100 d-flex flex-wrap flex-row gap-6 justify-left">
-                    <MudLink Href="https://999.md/ro/profile/WoodArt">
-                        <MudAvatar Color="Color.Secondary" Variant="Variant.Outlined">
-                            <MudImage Src="/Images/999_logo.png"></MudImage>
-                        </MudAvatar>
-                    </MudLink>
-                    <MudLink Href="https://www.facebook.com/p/Acoperi%C8%99-Foisor-Terasa-Wood-Art-Cons-100068195080802/?paipv=0&eav=AfY-VWWWJb6y0lFLZk8-mZKrxD38iMAdQsUUup6ZJDEbbajScf5wC47iiEA_OnWlS_A&_rdr">
-                        <MudAvatar Color="Color.Info" Variant="Variant.Outlined">
-                            <MudImage Src="/Images/facebook_logo.png"></MudImage>
-                        </MudAvatar>
-                    </MudLink>
-                </MudCard>
-            </MudPaper>
-            <MudPaper Elevation="0" Outlined="false" Width="50%">
-                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d836.5170648752589!2d28.89371276967531!3d47.0334731122546!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x40c97d005833384f%3A0xac0a80a304a672ea!2sWoodArtCons%20SRL!5e1!3m2!1sro!2s!4v1715854920929!5m2!1sro!2s" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-            </MudPaper>
-        </MudCard>
-    </MudCard>
-</MudItem>
-
-<MudItem Class="mobile-description-view">
-    <MudCard Elevation="0" Outlined="false" Class="w-100 d-flex flex-wrap flex-column gap-2 justify-center">
-        <MudPaper Elevation="0" Outlined="false" Width="100%">
-            <MudAvatar Class="ml-8 mt-8" Size="Size.Large" Style="background-color:white;">
-                <MudImage Src="/Images/WoodArtCons_Logo.png" Alt="Logo Companie" />
-            </MudAvatar>
-            <MudText Class="px-8" Typo="Typo.h5"><strong>WoodArtCons</strong></MudText>
-            <MudDivider />
-            <MudText Class="px-8 pt-3" Typo="Typo.body1"><strong> @Valeri:</strong> +37360201373 </MudText>
-            <MudText Class="px-8" Typo="Typo.body1"><strong> @Andrei:</strong> +37368312964 </MudText>
-            <MudText Class="px-8" Typo="Typo.body1"><strong> @Petru:</strong> +37379356131 </MudText>
-            <MudText Class="px-8" Typo="Typo.body1"><strong> @Adress:</strong> @AdressLocation</MudText>
-            <MudText Class="px-8 pb-8" Typo="Typo.body1"><strong> @Email:</strong> <a href="mailto:[Email]"> woodartcons@gmail.com </a></MudText>
-            <MudDivider />
-            <MudText Class="px-8 py-3" Typo="Typo.h6"> @LocationText </MudText>
-            <MudPaper Elevation="0" Outlined="false" Width="100%" Style="min-height:400px; max-height:400px; height:100%;">
-                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d836.5170648752589!2d28.89371276967531!3d47.0334731122546!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x40c97d005833384f%3A0xac0a80a304a672ea!2sWoodArtCons%20SRL!5e1!3m2!1sro!2s!4v1715854920929!5m2!1sro!2s" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-            </MudPaper>
-            <MudDivider />
-
-            <MudText Class = "px-8 pt-3" Typo = "Typo.h6" > @YouCanFind </MudText>
-            <MudCard Elevation="0" Outlined="false" Style="background-color:transparent;" Class="pl-8 pt-3 pb-6 w-100 d-flex flex-wrap flex-row gap-6 justify-left">
-                <MudLink Href="https://999.md/ro/profile/WoodArt">
-                    <MudAvatar Color="Color.Secondary" Variant="Variant.Outlined">
-                        <MudImage Src="/Images/999_logo.png"></MudImage>
-                    </MudAvatar>
-                </MudLink>
-                <MudLink Href="https://www.facebook.com/p/Acoperi%C8%99-Foisor-Terasa-Wood-Art-Cons-100068195080802/?paipv=0&eav=AfY-VWWWJb6y0lFLZk8-mZKrxD38iMAdQsUUup6ZJDEbbajScf5wC47iiEA_OnWlS_A&_rdr">
-                    <MudAvatar Color="Color.Info" Variant="Variant.Outlined">
-                        <MudImage Src="/Images/facebook_logo.png"></MudImage>
-                    </MudAvatar>
-                </MudLink>
-            </MudCard>
+    <!-- Simple loading state -->
+    <MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="mt-4">
+        <MudPaper Elevation="3" Class="pa-8" Style="border-radius: 16px;">
+            <MudText Typo="Typo.h4" Class="mb-6" Style="font-weight: 600; color: #1f2937;">Contactează-ne</MudText>
+            <MudText Typo="Typo.body1" Class="mb-4">Loading...</MudText>
         </MudPaper>
-    </MudCard>
-</MudItem>
-}
+    </MudContainer>
 }
 
 @code {
     private bool isloading = true;
     private string culture;
+    // private ContactForm _contactForm = new();
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            isloading = true;
-            culture = await JSRuntime.InvokeAsync<string>("getLanguage");
+            culture = await jSRuntime.InvokeAsync<string>("getLanguage");
+            if (string.IsNullOrEmpty(culture))
+            {
+                culture = "ro-RO";
+            }
             isloading = false;
             StateHasChanged();
         }
     }
+
+    private async Task HandleValidSubmit()
+    {
+        var successMessage = culture switch
+        {
+            "ru-RU" => "Сообщение успешно отправлено! Мы свяжемся с вами в ближайшее время.",
+            "en-US" => "Message sent successfully! We will contact you soon.",
+            "ro-RO" => "Mesajul a fost trimis cu succes! Vă vom contacta în curând."
+        };
+        await jSRuntime.InvokeVoidAsync("alert", successMessage);
+        // _contactForm = new ContactForm();
+    }
+
+    // private class ContactForm
+    // {
+    //     [Required]
+    //     public string Name { get; set; }
+
+    //     [Required]
+    //     [EmailAddress]
+    //     public string Email { get; set; }
+
+    //     public string Phone { get; set; }
+
+    //     [Required]
+    //     public string Subject { get; set; }
+
+    //     [Required]
+    //     public string Message { get; set; }
+    // }
 }

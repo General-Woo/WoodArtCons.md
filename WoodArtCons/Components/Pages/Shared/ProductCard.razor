@@ -1,0 +1,48 @@
+﻿@using System.Globalization
+@using WoodArtCons.Shared.DataTransferObjects
+
+<MudCard Elevation="3" Class="h-100" Style="border-radius: 12px; overflow: hidden;">
+    <MudCardMedia Image="@GetProductImage()" Height="200" />
+    <MudCardContent Class="pa-4">
+        @if (Product != null && Culture != null)
+        {
+            var productName = Culture switch
+            {
+                "ru-RU" => Product.NameRu,
+                "en-US" => Product.NameEn,
+                "ro-RO" => Product.NameRo,
+                _ => Product.NameRo
+            };
+            <MudText Typo="Typo.h6" Class="mb-2" Style="font-weight: 600;">@productName</MudText>
+            <MudText Typo="Typo.h6" Color="Color.Primary" Style="font-weight: 700;">@Product.Price MDL</MudText>
+        }
+    </MudCardContent>
+    <MudCardActions Class="pa-4 pt-0">
+        <MudButton Variant="Variant.Text"
+                   Color="Color.Primary"
+                   FullWidth="true"
+                   Href="@($"/catalog/{Product.CategoryId}/{Product.Id}")">
+            @{
+                var viewDetails = Culture switch { "ru-RU" => "Подробнее", "en-US" => "View Details", "ro-RO" => "Vezi detalii", _ => "Vezi detalii" };
+            }
+            @viewDetails
+        </MudButton>
+    </MudCardActions>
+</MudCard>
+
+@code {
+    [Parameter]
+    public CategoryProductModelDto Product { get; set; }
+
+    [Parameter]
+    public string Culture { get; set; }
+
+    private string GetProductImage()
+    {
+        if (Product?.ListImagesSrc != null && Product.ListImagesSrc.Any())
+        {
+            return Product.ListImagesSrc.First();
+        }
+        return Product?.ImageSrc ?? "/Images/placeholder.jpg";
+    }
+}

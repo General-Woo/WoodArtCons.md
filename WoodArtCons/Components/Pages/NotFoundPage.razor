@@ -1,0 +1,63 @@
+﻿@using System.Globalization
+@inject IJSRuntime jSRuntime
+@rendermode InteractiveServer
+
+@if (!isloading && culture != null)
+{
+    var text404 = culture switch
+    {
+        "ru-RU" => "404 — Страница не найдена",
+        "en-US" => "404 - Page Not Found",
+        "ro-RO" => "404 - Pagina nu a fost găsită",
+        _ => "404 - Pagina nu a fost găsită"
+    };
+    var textSorry = culture switch
+    {
+        "ru-RU" => "Мы не смогли найти страницу, которую вы ищете.",
+        "en-US" => "We couldn't find the page you're looking for.",
+        "ro-RO" => "Nu am putut găsi pagina pe care o căutați.",
+        _ => "Nu am putut găsi pagina pe care o căutați."
+    };
+    var returnHome = culture switch
+    {
+        "ru-RU" => "Вернуться домой",
+        "en-US" => "Return Home",
+        "ro-RO" => "Înapoi acasă",
+        _ => "Înapoi acasă"
+    };
+
+    <div style="background-image: url('/Images/contacts.jpg'); background-size: cover; background-position: center; min-height: 100vh; display: flex; align-items: center; justify-content: center;">
+        <MudContainer MaxWidth="MaxWidth.Medium" Class="text-center">
+            <MudPaper Elevation="3" Class="pa-8" Style="background-color: rgba(255, 255, 255, 0.95);">
+                <MudText Typo="Typo.h1" Class="mb-4" Style="color: #1f2937; font-weight: 700;">@text404</MudText>
+                <MudText Typo="Typo.h5" Class="mb-8" Style="color: #6b7280;">@textSorry</MudText>
+                <MudButton Variant="Variant.Filled"
+                           Color="Color.Primary"
+                           Href="/"
+                           Size="Size.Large"
+                           StartIcon="@Icons.Material.Filled.Home">
+                    @returnHome
+                </MudButton>
+            </MudPaper>
+        </MudContainer>
+    </div>
+}
+
+@code {
+    private bool isloading = true;
+    private string culture;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            culture = await jSRuntime.InvokeAsync<string>("getLanguage");
+            if (string.IsNullOrEmpty(culture))
+            {
+                culture = "ro-RO";
+            }
+            isloading = false;
+            StateHasChanged();
+        }
+    }
+}

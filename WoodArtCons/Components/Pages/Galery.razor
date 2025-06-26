@@ -1,59 +1,107 @@
-﻿@page "/galery"
+﻿@page "/gallery"
+@page "/gallery/{CategoryId}"
+@using System.Globalization
 @using WoodArtCons.Interfaces
 @using WoodArtCons.Shared.DataTransferObjects
+@inject IJSRuntime jSRuntime
+@inject NavigationManager NavigationManager
 @inject ICategoryManagerService categoryManager
-@inject IJSRuntime JSRuntime
+@inject ICategoryProductManagerService categoryProduct
+@rendermode InteractiveServer
 
-<div style="z-index:-1; position:fixed; width:100vw; left: 0; top: 0; height:100vh;background-image: url('/Images/contacts.jpg'); background-size: cover; background-repeat: no-repeat; min-width:300px; min-height:100px;"></div>
+<PageTitle>WoodArtCons - Gallery</PageTitle>
 
-@if (isLoading)
+@if (!isLoading && culture != null)
 {
-    <MudProgressCircular Color="Color.Secondary" Style="height:100px; width:100px; position:fixed; top:40%; left:50%;" Indeterminate="true" />
-}
-else
-{    
-    <div class="page-item">
-        <div class="d-flex justify-content-center">
-            <h1 style="color:white;">@galeryPageTitle</h1>
-        </div>
+    var galleryTitle = culture switch { "ru-RU" => "Галерея", "en-US" => "Gallery", "ro-RO" => "Galerie", _ => "Galerie" };
+    var galleryCategories = culture switch { "ru-RU" => "Категории галереи", "en-US" => "Gallery Categories", "ro-RO" => "Categorii galerie", _ => "Categorii galerie" };
+    var home = culture switch { "ru-RU" => "Главная", "en-US" => "Home", "ro-RO" => "Acasă", _ => "Acasă" };
+    var viewGallery = culture switch { "ru-RU" => "Посмотреть галерею", "en-US" => "View Gallery", "ro-RO" => "Vezi galeria", _ => "Vezi galeria" };
+    var noProducts = culture switch { "ru-RU" => "В этой галерее пока нет продуктов.", "en-US" => "No products in this gallery yet.", "ro-RO" => "Nu există încă produse în această galerie.", _ => "Nu există încă produse în această galerie." };
 
-        <MudCard Elevation="0" Outlined="false" Style="background-color: transparent;" Class="w-100 d-flex flex-wrap flex-row gap-16 justify-center">
-            <MudCard Elevation="0" Outlined="false" Style="max-width:1126px; background-color: transparent;" Class="w-100 d-flex flex-wrap flex-row gap-16 justify-center">
-                @if (categories != null)
+    <MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="mt-4">
+        <!-- Breadcrumbs -->
+        <MudBreadcrumbs Items="@_breadcrumbs" Class="mb-6"></MudBreadcrumbs>
+
+        @if (string.IsNullOrEmpty(CategoryId))
+        {
+            <!-- Categories View -->
+            <MudText Typo="Typo.h4" Class="mb-6" Style="font-weight: 600; color: #1f2937;">@galleryCategories</MudText>
+
+            <MudGrid>
+                @foreach (var category in categories)
                 {
-                    @foreach (var category in categories)
+                    @if (category.IsForGalery)
                     {
-                        @if (category.IsForGalery)
-                        {
-                            <MudLink Href="@category.Link" Underline="Underline.None">
-                                <MudPaper Class="pa-4 d-flex flex-column containerHover">
-                                    <MudImage Height="200" Width="200" ObjectPosition="ObjectPosition.Center" Src="@category.ImageSrc" />
-                                    <br />
-                                    @if (category != null)
-                                    {
-                                        var categoryName = culture switch
-                                        {
-                                            "ru-RU" => category.NameRu,
-                                            "en-US" => category.NameEn,
-                                            "ro-RO" => category.NameRo
-                                        };
-                                        <MudText Typo="Typo.h6" Align="Align.Center">@categoryName</MudText>
-                                    }
-                                </MudPaper>
-                            </MudLink>
-                        }
+                        <MudItem xs="12" sm="6" md="4" lg="3">
+                            <MudCard Elevation="3" Class="h-100 hover-card" Style="border-radius: 12px; overflow: hidden; cursor: pointer;" @onclick="@(() => NavigationManager.NavigateTo($"/gallery/{category.Id}"))">
+                                <MudCardMedia Image="@category.ImageSrc" Height="200" />
+                                <MudCardContent Class="pa-4 text-center">
+                                    <MudText Typo="Typo.h6" Style="font-weight: 600;">@GetCategoryName(category, culture)</MudText>
+                                </MudCardContent>
+                                <MudCardActions Class="pa-4 pt-0">
+                                    <MudButton Variant="Variant.Filled"
+                                               Color="Color.Secondary"
+                                               FullWidth="true"
+                                               StartIcon="@Icons.Material.Filled.PhotoLibrary"
+                                               @onclick="@(() => NavigationManager.NavigateTo($"/gallery/{category.Id}"))">
+                                        @viewGallery
+                                    </MudButton>
+                                </MudCardActions>
+                            </MudCard>
+                        </MudItem>
                     }
                 }
-            </MudCard>
-        </MudCard>
-    </div>
+            </MudGrid>
+        }
+        else
+        {
+            <!-- Gallery Products View -->
+            <MudText Typo="Typo.h4" Class="mb-6" Style="font-weight: 600; color: #1f2937;">@GetCurrentCategoryName()</MudText>
+
+            @if (categoryProducts != null && categoryProducts.Any())
+            {
+                <MudGrid>
+                    @foreach (var product in categoryProducts)
+                    {
+                        <MudItem xs="12" sm="6" md="4" lg="3">
+                            <MudCard Elevation="3" Class="h-100 hover-card" Style="border-radius: 12px; overflow: hidden; cursor: pointer;" @onclick="@(() => NavigationManager.NavigateTo($"/gallery/{CategoryId}/{product.Id}"))">
+                                <MudCardMedia Image="@(product.ImageSrc ?? "Images/placeholder.jpg")" Height="200" />
+                                <MudCardContent Class="pa-4">
+                                    <MudText Typo="Typo.h6" Style="font-weight: 600;">@GetProductName(product, culture)</MudText>
+                                    <MudText Typo="Typo.body1" Color="Color.Primary" Style="font-weight: 600; margin-top: 8px !important;">@product.Price MDL</MudText>
+                                </MudCardContent>
+                                <MudCardActions Class="pa-4 pt-0">
+                                    <MudButton Variant="Variant.Text"
+                                               Color="Color.Primary"
+                                               FullWidth="true"
+                                               @onclick="@(() => NavigationManager.NavigateTo($"/gallery/{CategoryId}/{product.Id}"))">
+                                        @(culture switch { "ru-RU" => "Подробнее", "en-US" => "View Details", "ro-RO" => "Vezi detalii", _ => "Vezi detalii" })
+                                    </MudButton>
+                                </MudCardActions>
+                            </MudCard>
+                        </MudItem>
+                    }
+                </MudGrid>
+            }
+            else
+            {
+                <MudAlert Severity="Severity.Info" Class="mt-4">
+                    @noProducts
+                </MudAlert>
+            }
+        }
+    </MudContainer>
 }
 
 @code {
-    private List<CategoryModelDto> categories;
-    private string culture;
+    [Parameter]
+    public string CategoryId { get; set; }
+    private List<CategoryModelDto>? categories;
+    private List<CategoryProductModelDto>? categoryProducts;
     private bool isLoading = true;
-    private string galeryPageTitle;
+    private string culture;
+    private List<BreadcrumbItem> _breadcrumbs = new();
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -61,20 +109,97 @@ else
         {
             isLoading = true;
             await LoadData();
+            UpdateBreadcrumbs();
             isLoading = false;
-            StateHasChanged(); // Trigger a re-render
+            StateHasChanged();
         }
-
+        UpdateBreadcrumbs();
     }
 
     private async Task LoadData()
     {
-        culture = await JSRuntime.InvokeAsync<string>("getLanguage");
+        culture = await jSRuntime.InvokeAsync<string>("getLanguage");
+        if (string.IsNullOrEmpty(culture))
+        {
+            culture = "ro-RO";
+        }
+
         categories = await categoryManager.GetAllCategories();
-        galeryPageTitle = culture switch { 
-            "ru-RU" => "Галерея", 
-            "en-US" => "Gallery", 
-            "ro-RO" => "Galerie" 
+
+        if (!string.IsNullOrEmpty(CategoryId))
+        {
+            categoryProducts = await categoryProduct.GetProductsByCategoryId(CategoryId);
+        }
+
+        UpdateBreadcrumbs();
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (!isLoading && categories != null)
+        {
+            if (!string.IsNullOrEmpty(CategoryId))
+            {
+                categoryProducts = await categoryProduct.GetProductsByCategoryId(CategoryId);
+            }
+            else
+            {
+                categoryProducts = null;
+            }
+
+            UpdateBreadcrumbs();
+            StateHasChanged();
+        }
+    }
+
+    private void UpdateBreadcrumbs()
+    {
+        if (string.IsNullOrEmpty(culture) || categories == null)
+            return;
+
+        var home = culture switch { "ru-RU" => "Главная", "en-US" => "Home", "ro-RO" => "Acasă", _ => "Acasă" };
+        var gallery = culture switch { "ru-RU" => "Галерея", "en-US" => "Gallery", "ro-RO" => "Galerie", _ => "Galerie" };
+
+        _breadcrumbs.Clear();
+        _breadcrumbs.Add(new BreadcrumbItem(home, href: "/"));
+        _breadcrumbs.Add(new BreadcrumbItem(gallery, href: "/gallery"));
+
+        if (!string.IsNullOrEmpty(CategoryId))
+        {
+            var category = categories.FirstOrDefault(c => c.Id == CategoryId);
+            if (category != null)
+            {
+                var categoryName = GetCategoryName(category, culture);
+                _breadcrumbs.Add(new BreadcrumbItem(categoryName, href: null, disabled: true));
+            }
+        }
+    }
+
+    private string GetCurrentCategoryName()
+    {
+        var category = categories.FirstOrDefault(c => c.Id == CategoryId);
+        if (category == null) return "";
+
+        return GetCategoryName(category, culture);
+    }
+
+    private string GetCategoryName(dynamic category, string currentCulture)
+    {
+        return currentCulture switch
+        {
+            "ru-RU" => category.NameRu,
+            "en-US" => category.NameEn,
+            "ro-RO" => category.NameRo,
+        };
+    }
+
+    private string GetProductName(CategoryProductModelDto product, string currentCulture)
+    {
+        return currentCulture switch
+        {
+            "ru-RU" => product.NameRu,
+            "en-US" => product.NameEn,
+            "ro-RO" => product.NameRo,
         };
     }
 }

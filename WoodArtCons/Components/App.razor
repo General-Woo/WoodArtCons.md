@@ -1,4 +1,7 @@
 ﻿@using System.Globalization
+@using WoodArtCons.Components.Layout
+@inject IJSRuntime _JSRuntime
+@inject NavigationManager NavigationManager
 
 <!DOCTYPE html>
 <html lang="en">
@@ -33,7 +36,9 @@
 </head>
 
 <body>
-<Routes />
+
+     <Routes /> 
+
     <script src="_framework/blazor.server.js"></script>
     <script src="Functions/GetCookie.js"></script>
     <script>
@@ -69,7 +74,29 @@
             document.cookie = name + '=' + '' + '; expires=' + '' + '; path=/;';
         };
 
+        function downloadFile(filePath, fileName) {
+            const link = document.createElement('a');
+            link.href = filePath;
+            link.download = fileName;
+            link.click();
+        }
+
     </script>
 </body>
 </html>
 
+@code {
+    private bool isloading;
+    private string culture;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            isloading = true;
+            culture = await _JSRuntime.InvokeAsync<string>("getLanguage");
+            isloading = false;
+            StateHasChanged();
+        }
+    }
+}

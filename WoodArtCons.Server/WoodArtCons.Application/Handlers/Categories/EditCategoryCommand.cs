@@ -38,7 +38,7 @@ namespace WoodArtCons.Server.WoodArtCons.Application.Handlers.Categories
         public async Task<Unit> Handle(EditCategoryCommand request, CancellationToken cancellationToken)
         {
             string catalogUrl = "/catalog/";
-            string galeryUrl = "/galery/";
+            string galeryUrl = "/gallery/";
 
             var categoryToEdit = await _appDbContext.Categories.Where(a => a.Id == request.Id).FirstOrDefaultAsync();
 

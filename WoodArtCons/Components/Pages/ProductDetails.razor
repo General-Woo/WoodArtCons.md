@@ -1,0 +1,293 @@
+﻿@page "/catalog/{CategoryId}/{ProductId}"
+@page "/gallery/{CategoryId}/{ProductId}"
+@using System.Globalization
+@using WoodArtCons.Interfaces
+@using WoodArtCons.Shared.DataTransferObjects
+@inject IJSRuntime jSRuntime
+@inject NavigationManager NavigationManager
+@inject ICategoryManagerService categoryManager
+@inject ICategoryProductManagerService categoryProduct
+@rendermode InteractiveServer
+
+<PageTitle>WoodArtCons - @GetProductName()</PageTitle>
+
+@if (!isLoading && culture != null && product != null)
+{
+    var home = culture switch { "ru-RU" => "Главная", "en-US" => "Home", "ro-RO" => "Acasă", _ => "Acasă" };
+    var catalog = culture switch { "ru-RU" => "Каталог", "en-US" => "Catalog", "ro-RO" => "Catalog", _ => "Catalog" };
+    var gallery = culture switch { "ru-RU" => "Галерея", "en-US" => "Gallery", "ro-RO" => "Galerie", _ => "Galerie" };
+    var material = culture switch { "ru-RU" => "Материал", "en-US" => "Material", "ro-RO" => "Material", _ => "Material" };
+    var dimensions = culture switch { "ru-RU" => "Размеры", "en-US" => "Dimensions", "ro-RO" => "Dimensiuni", _ => "Dimensiuni" };
+    var length = culture switch { "ru-RU" => "Длина", "en-US" => "Length", "ro-RO" => "Lungime", _ => "Lungime" };
+    var width = culture switch { "ru-RU" => "Ширина", "en-US" => "Width", "ro-RO" => "Lățime", _ => "Lățime" };
+    var height = culture switch { "ru-RU" => "Высота", "en-US" => "Height", "ro-RO" => "Înălțime", _ => "Înălțime" };
+    var requestQuote = culture switch { "ru-RU" => "Запросить предложение", "en-US" => "Request Quote", "ro-RO" => "Solicită ofertă", _ => "Solicită ofertă" };
+    var priceStartsFrom = culture switch { "ru-RU" => "Цена начинается от", "en-US" => "Price starts from", "ro-RO" => "Prețul începe de la", _ => "Prețul începe de la" };
+
+    <MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="mt-4">
+        <MudBreadcrumbs Items="@_breadcrumbs" Class="mb-6"></MudBreadcrumbs>
+
+        @if (!category.IsForGalery)
+        {
+            <!-- Catalog Product Details - Full Design -->
+            <MudGrid>
+                <MudItem xs="12" md="6">
+                    @if (product.ListImagesSrc != null && product.ListImagesSrc.Any())
+                    {
+                        <MudCarousel Class="mud-width-full" Style="height: 500px; border-radius: 12px; overflow: hidden;" ShowArrows="true" ShowDelimiters="true" AutoCycle="false" TData="string">
+                            @foreach (var image in product.ListImagesSrc)
+                            {
+                                <MudCarouselItem Transition="Transition.Slide">
+                                    <MudImage Src="@image" Alt="@GetProductName()" ObjectFit="ObjectFit.Cover" Style="width: 100%; height: 100%;" />
+                                </MudCarouselItem>
+                            }
+                        </MudCarousel>
+                    }
+                    else
+                    {
+                        <MudImage Src="@product.ImageSrc" Alt="@GetProductName()" Style="width: 100%; height: 500px; border-radius: 12px;" ObjectFit="ObjectFit.Cover" />
+                    }
+                </MudItem>
+
+                <MudItem xs="12" md="6">
+                    <MudPaper Elevation="0" Class="pa-6" Style="background-color: white; border-radius: 12px; height: 100%;">
+                        <MudText Typo="Typo.h4" Class="mb-4" Style="font-weight: 700; color: #1f2937;">@GetProductName()</MudText>
+
+                        <MudText Typo="Typo.body1" Class="mb-6" Style="color: #4b5563; line-height: 1.6;">@GetProductDescription()</MudText>
+
+                        <MudDivider Class="my-4" />
+
+                        <!-- Price -->
+                        <div class="d-flex align-center mb-4">
+                            <MudText Typo="Typo.h5" Style="color: #f97316; font-weight: 700;">@product.Price MDL</MudText>
+                        </div>
+
+                        <!-- Material -->
+                        <div class="mb-4">
+                            <MudText Typo="Typo.subtitle1" Style="font-weight: 600; color: #1f2937;">@material:</MudText>
+                            <MudText Typo="Typo.body1" Style="color: #4b5563;">@GetProductMaterial()</MudText>
+                        </div>
+
+                        <!-- Dimensions -->
+                        <div class="mb-6">
+                            <MudText Typo="Typo.subtitle1" Class="mb-2" Style="font-weight: 600; color: #1f2937;">@dimensions:</MudText>
+                            <MudGrid>
+                                <MudItem xs="4">
+                                    <MudText Typo="Typo.body2" Style="color: #6b7280;">@length:</MudText>
+                                    <MudText Typo="Typo.body1" Style="font-weight: 600;">@product.Lenght m</MudText>
+                                </MudItem>
+                                <MudItem xs="4">
+                                    <MudText Typo="Typo.body2" Style="color: #6b7280;">@width:</MudText>
+                                    <MudText Typo="Typo.body1" Style="font-weight: 600;">@product.Width m</MudText>
+                                </MudItem>
+                                <MudItem xs="4">
+                                    <MudText Typo="Typo.body2" Style="color: #6b7280;">@height:</MudText>
+                                    <MudText Typo="Typo.body1" Style="font-weight: 600;">@product.Height m</MudText>
+                                </MudItem>
+                            </MudGrid>
+                        </div>
+
+                        <!-- Action Button -->
+                        <MudButton Variant="Variant.Filled"
+                                   Color="Color.Primary"
+                                   Size="Size.Large"
+                                   FullWidth="true"
+                                   StartIcon="@Icons.Material.Filled.RequestQuote"
+                                   Href="/contacts"
+                                   Style="background-color: #f97316; color: white; font-weight: 600; text-transform: none; border-radius: 8px; padding: 12px 24px;">
+                            @requestQuote
+                        </MudButton>
+                    </MudPaper>
+                </MudItem>
+            </MudGrid>
+        }
+        else
+        {
+            <!-- Gallery Product Details - Simple Design -->
+            <MudPaper Elevation="3" Class="pa-8" Style="background-color: white; border-radius: 16px; text-align: center;">
+                @if (product.ListImagesSrc != null && product.ListImagesSrc.Any())
+                {
+                    <MudCarousel Class="mud-width-full" Style="height: 600px; border-radius: 12px; overflow: hidden; margin-bottom: 32px;" ShowArrows="true" ShowDelimiters="true" AutoCycle="false" TData="string">
+                        @foreach (var image in product.ListImagesSrc)
+                        {
+                            <MudCarouselItem Transition="Transition.Slide">
+                                <div style="background-image: url('@image'); background-size: cover; background-position: center; height: 100%; width: 100%;"></div>
+                            </MudCarouselItem>
+                        }
+                    </MudCarousel>
+                }
+                else
+                {
+                    <div style="width: 100%; height: 600px; background-color: #e2e8f0; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 32px;">
+                        <MudIcon Icon="@Icons.Material.Filled.Image" Size="Size.Large" Style="color: #94a3b8;" />
+                    </div>
+                }
+
+                <MudText Typo="Typo.h4" Class="mb-6" Style="font-weight: 700; color: #1f2937;">@GetProductName()</MudText>
+
+                <MudAlert Severity="Severity.Info" Class="mb-4" Style="background-color: #f0f9ff; border: 1px solid #0ea5e9; border-radius: 8px;">
+                    <MudText Typo="Typo.h6" Style="color: #0369a1; font-weight: 600;">
+                        @priceStartsFrom @product.Price MDL
+                    </MudText>
+                </MudAlert>
+
+                <MudButton Variant="Variant.Filled"
+                           Color="Color.Primary"
+                           Size="Size.Large"
+                           StartIcon="@Icons.Material.Filled.ContactMail"
+                           Href="/contacts"
+                           Style="background-color: #f97316; color: white; font-weight: 600; text-transform: none; border-radius: 8px; padding: 12px 24px;">
+                    @requestQuote
+                </MudButton>
+            </MudPaper>
+        }
+    </MudContainer>
+}
+else if (!isLoading)
+{
+    <MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="mt-4">
+        <MudAlert Severity="Severity.Warning" Class="mt-4">
+            @(culture switch { "ru-RU" => "Продукт не найден", "en-US" => "Product not found", "ro-RO" => "Produsul nu a fost găsit", _ => "Produsul nu a fost găsit" })
+        </MudAlert>
+    </MudContainer>
+}
+
+@code {
+    [Parameter]
+    public string CategoryId { get; set; }
+
+    [Parameter]
+    public string ProductId { get; set; }
+
+    private bool isLoading = true;
+    private string culture;
+    private List<BreadcrumbItem> _breadcrumbs = new();
+    private List<CategoryModelDto>? categories;
+    private CategoryModelDto category;
+    private CategoryProductModelDto product;
+    // private bool IsFromCatalog;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            isLoading = true;
+            await LoadData();
+            UpdateBreadcrumbs();
+            isLoading = false;
+            StateHasChanged();
+        }
+        UpdateBreadcrumbs();
+    }
+
+    private async Task LoadData()
+    {
+        culture = await jSRuntime.InvokeAsync<string>("getLanguage");
+        if (string.IsNullOrEmpty(culture))
+        {
+            culture = "ro-RO";
+        }
+
+        categories = await categoryManager.GetAllCategories();
+
+        if (!string.IsNullOrEmpty(ProductId))
+        {
+            product = await categoryProduct.GetProductById(ProductId);
+        }
+
+        if (!string.IsNullOrEmpty(CategoryId))
+        {
+            category = await categoryManager.GetCategoryById(CategoryId);
+        }
+
+        UpdateBreadcrumbs();
+    }
+
+    private void UpdateBreadcrumbs()
+    {
+        var home = culture switch { "ru-RU" => "Главная", "en-US" => "Home", "ro-RO" => "Acasă", _ => "Acasă" };
+        var catalog = culture switch { "ru-RU" => "Каталог", "en-US" => "Catalog", "ro-RO" => "Catalog", _ => "Catalog" };
+        var gallery = culture switch { "ru-RU" => "Галерея", "en-US" => "Gallery", "ro-RO" => "Galerie", _ => "Galerie" };
+
+        _breadcrumbs.Clear();
+        _breadcrumbs.Add(new BreadcrumbItem(home, href: "/"));
+
+        if (!category.IsForGalery)
+        {
+            _breadcrumbs.Add(new BreadcrumbItem(catalog, href: "/catalog"));
+            if (!string.IsNullOrEmpty(CategoryId))
+            {
+                var category = categories.FirstOrDefault(c => c.Id == CategoryId);
+                if (category != null)
+                {
+                    var categoryName = GetCategoryName(category, culture);
+                    _breadcrumbs.Add(new BreadcrumbItem(categoryName, href: $"/catalog/{CategoryId}"));
+                }
+            }
+        }
+        else
+        {
+            _breadcrumbs.Add(new BreadcrumbItem(gallery, href: "/gallery"));
+            if (!string.IsNullOrEmpty(CategoryId))
+            {
+                var category = categories.FirstOrDefault(c => c.Id == CategoryId);
+                if (category != null)
+                {
+                    var categoryName = GetCategoryName(category, culture);
+                    _breadcrumbs.Add(new BreadcrumbItem(categoryName, href: $"/gallery/{CategoryId}"));
+                }
+            }
+        }
+
+        _breadcrumbs.Add(new BreadcrumbItem(GetProductName(), href: null, disabled: true));
+    }
+
+    private string GetProductName()
+    {
+        if (product == null) return "";
+
+        return culture switch
+        {
+            "ru-RU" => product.NameRu,
+            "en-US" => product.NameEn,
+            "ro-RO" => product.NameRo,
+            _ => product.NameRo
+        };
+    }
+
+    private string GetProductDescription()
+    {
+        if (product == null) return "";
+
+        return culture switch
+        {
+            "ru-RU" => product.DescriptionRu,
+            "en-US" => product.DescriptionEn,
+            "ro-RO" => product.DescriptionRo,
+            _ => product.DescriptionRo
+        };
+    }
+
+    private string GetProductMaterial()
+    {
+        if (product == null) return "";
+
+        return culture switch
+        {
+            "ru-RU" => product.MaterialRu,
+            "en-US" => product.MaterialEn,
+            "ro-RO" => product.MaterialRo,
+            _ => product.MaterialRo
+        };
+    }
+
+    private string GetCategoryName(dynamic category, string currentCulture)
+    {
+        return currentCulture switch
+        {
+            "ru-RU" => category.NameRu,
+            "en-US" => category.NameEn,
+            "ro-RO" => category.NameRo,
+        };
+    }
+}

@@ -1,98 +1,244 @@
 ﻿@page "/"
+@page "/home"
 @using System.Globalization
-@inject IJSRuntime JSRuntime
-@inject NavigationManager _navigationManager
+@using WoodArtCons.Interfaces
+@using WoodArtCons.Shared.DataTransferObjects
+@inject IJSRuntime jSRuntime
+@inject NavigationManager NavigationManager
+@inject ICategoryManagerService categoryManager
+@inject ICategoryProductManagerService categoryProduct
+@rendermode InteractiveServer
 
-<div style="z-index:-1; position:fixed; width:100vw; left: 0; top: 0; height:100vh;background-image: url('/Images/contacts.jpg'); background-size: cover; background-repeat: no-repeat; min-width:300px; min-height:100px;"></div>
+<PageTitle>WoodArtCons</PageTitle>
 
-@if (isloading)
+@if (!isLoading && culture != null)
 {
-    <MudProgressCircular Color="Color.Secondary" Style="height:100px; width:100px; position:fixed; top:40%; left:50%;" Indeterminate="true" />
+    <div style="background-color: #f1f5f9; padding: 80px 0;">
+        <MudContainer MaxWidth="MaxWidth.ExtraLarge">
+            <MudGrid>
+                <MudItem xs="12" md="6" Class="d-flex flex-column justify-center">
+                    <MudText Typo="Typo.h3" Class="mb-4" Style="font-weight: 700; color: #1f2937; line-height: 1.2;">
+                        @welcomeMessage
+                    </MudText>
+                    <MudText Typo="Typo.body1" Class="mb-6" Style="color: #4b5563; line-height: 1.6; font-size: 1.1rem;">
+                        @companyDescription
+                    </MudText>
+                    <div>
+                        <MudButton Variant="Variant.Filled"
+                                   Color="Color.Primary"
+                                   Size="Size.Large"
+                                   OnClick="@(() => NavigationManager.NavigateTo("/catalog"))"
+                                   Style="background-color: #f97316; color: white; padding: 12px 24px; font-weight: 600; text-transform: none; border-radius: 8px;">
+                            @exploreProducts
+                        </MudButton>
+                    </div>
+                </MudItem>
+                <MudItem xs="12" md="6">
+                    <OfferRequestForm Culture="@culture" />
+                </MudItem>
+            </MudGrid>
+        </MudContainer>
+    </div>
+
+    <!-- Featured Products Section -->
+    <div style="background-color: white; padding: 80px 0;">
+        <MudContainer MaxWidth="MaxWidth.ExtraLarge">
+            <MudText Typo="Typo.h4" Class="mb-8" Style="font-weight: 600; color: #1f2937; text-align: left;">
+                @featuredProductsTitle
+            </MudText>
+
+            <MudGrid>
+                @foreach (var product in categoryProducts)
+                {
+                    var productLink = GetProductLink(product);
+                    <MudItem xs="12" sm="6" md="4" @onclick="@(() => NavigationManager.NavigateTo(productLink))">
+                        <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; height: 100%;">
+                            <!-- Product Image Placeholder -->
+                            <MudCardMedia Image="@(product.ImageSrc ?? "Images/placeholder.jpg")" Height="200" />
+                            <!-- Product Content -->
+                            <div style="padding: 20px;">
+                                <MudText Typo="Typo.h6" Class="mb-2" Style="font-weight: 600; color: #1f2937;">
+                                    @GetProductName(product)
+                                </MudText>
+                                <MudButton Variant="Variant.Text"
+                                           Color="Color.Primary"
+                                           Size="Size.Small"
+                                           Style="color: #f97316; font-weight: 600; text-transform: none; padding: 8px 0;"
+                                           @onclick="@(() => NavigationManager.NavigateTo(productLink))">
+                                    Vezi detalii
+                                </MudButton>
+                            </div>
+                        </div>
+                    </MudItem>
+                }
+            </MudGrid>
+
+            <!-- Why Choose Us Section -->
+            <MudText Typo="Typo.h4" Class="mb-6" Style="font-weight: 600; color: #1f2937;">@whyChooseUs</MudText>
+            <MudGrid>
+                <MudItem xs="12" sm="6" md="4">
+                    <MudCard Elevation="3" Class="h-100 pa-6" Style="border-radius: 12px;">
+                        <div class="d-flex align-center mb-4">
+                            <MudIcon Icon="@Icons.Material.Filled.Verified" Color="Color.Primary" Size="Size.Large" Class="mr-3" />
+                            <MudText Typo="Typo.h6" Style="font-weight: 600;">@quality</MudText>
+                        </div>
+                        <MudText Typo="Typo.body2" Style="line-height: 1.6;">@qualityDescription</MudText>
+                    </MudCard>
+                </MudItem>
+                <MudItem xs="12" sm="6" md="4">
+                    <MudCard Elevation="3" Class="h-100 pa-6" Style="border-radius: 12px;">
+                        <div class="d-flex align-center mb-4">
+                            <MudIcon Icon="@Icons.Material.Filled.Settings" Color="Color.Secondary" Size="Size.Large" Class="mr-3" />
+                            <MudText Typo="Typo.h6" Style="font-weight: 600;">@customSolutions</MudText>
+                        </div>
+                        <MudText Typo="Typo.body2" Style="line-height: 1.6;">@customSolutionsDescription</MudText>
+                    </MudCard>
+                </MudItem>
+                <MudItem xs="12" sm="6" md="4">
+                    <MudCard Elevation="3" Class="h-100 pa-6" Style="border-radius: 12px;">
+                        <div class="d-flex align-center mb-4">
+                            <MudIcon Icon="@Icons.Material.Filled.Engineering" Color="Color.Success" Size="Size.Large" Class="mr-3" />
+                            <MudText Typo="Typo.h6" Style="font-weight: 600;">@experience</MudText>
+                        </div>
+                        <MudText Typo="Typo.body2" Style="line-height: 1.6;">@experienceDescription</MudText>
+                    </MudCard>
+                </MudItem>
+            </MudGrid>
+        </MudContainer>
+    </div>
 }
 else
 {
-    @if (culture != null) {
-        var homePageWelcome  = culture switch { "ru-RU" => "Добро пожаловать в", "en-US" => "Welcome to", "ro-RO" => "Bun venit la" };
-        var homePageSubtitle = culture switch { "ru-RU" => "Ваш эксперт по качественным продуктам и услугам!", "en-US" => "Your expert in quality products and services!", "ro-RO" => "Expertul tău în Produse și Servicii de Calitate!" };
-        var paragraph1 = culture switch { 
-            "ru-RU" => "В WoodArtCons детали имеют значение. Здесь мы воплощаем мечты в реальность, Хотите ли вы прочный дом, уютную беседку или индивидуальную мебель, отражающую вашу индивидуальность. Мы являемся надежным партнером на каждом этапе проекта с солидным опытом строительства.",
-            "en-US" => "At WoodArtCons, details make the differences. Here we turn dreams into reality, whether you want a sustainable home, a comfortable gazebo or custom furniture that reflects your personality. We are the reliable partner at every stage of the project, with a solid experience in construction.",
-            "ro-RO" => "La WoodArtCons, detaliile fac diferența. Aici transformăm visele în realitate, fie că doriți o casă durabilă, un foișor confortabil sau mobilier personalizat care să reflecte personalitatea dvs. Suntem partenerul de încredere în fiecare etapă a proiectului, cu o experiență solidă în construcții."
-        };
-        var paragraph2 = culture switch { 
-            "ru-RU" => "Мы используем только высококачественные материалы с акцентом на дерево и металл, чтобы создать структуры, долговечные и впечатляющие объекты. Мы строим дома, крыши, террасы, беседки и другие внешние конструкции. Мы также производим уличную и внутреннюю мебель, а также уникальные, мастерски обработанные предметы по заказу клиента.",
-            "en-US" => "We only use high-quality materials with an emphasis on wood and metal to create structures, objects that last and impress. We build houses, roofs, terraces, gazebos and other outdoor structures. We also make street and interior furniture, as well as unique objects, crafted with craftsmanship, to the customer's order.",
-            "ro-RO" => "Folosim doar materiale de înaltă calitate, cu accent pe lemn și metal, pentru a crea structuri, obiecte care să dureze și să impresioneze. Construim case, acoperișuri, terase, foișoare și alte structuri exterioare. De asemenea, realizăm mobilier stradal și de interior, precum și obiecte unicat, lucrate cu măiestrie, la comanda clientului."
-        };
-        var paragraph3 = culture switch { 
-            "ru-RU" => "К каждому проекту относятся с максимальной осторожностью и профессионализмом. Мы уделяем особое внимание качеству и предоставляем услуги, которым вы можете доверять, с учетом ваших потребностей.",
-            "en-US" => "Each project is treated with utmost care and professionalism. We focus on quality and offer services you can trust, tailored to your needs.",
-            "ro-RO" => "Fiecare proiect este tratat cu maximă atenție și profesionalism. Punem accent pe calitate și oferim servicii de care poți avea încredere, adaptate necesităților dumneavoastră."
-        };
-    <div class="page-item">
-        <div class="d-flex justify-content-center align-content-center">
-            <h1 style="color:White">@homePageWelcome <strong>WoodArtCons</strong></h1>
-        </div>
-        <div class="d-flex justify-content-center align-content-center">
-            <h5 style="color:White">@homePageSubtitle</h5>
-        </div>
-        <MudCard Elevation="0" Outlined="false" Style="background-color:transparent;" Class="w-100 d-flex flex-wrap flex-row gap-16 justify-center">
-            <MudCard Elevation="0" Outlined="false" Style="max-width:1126px; background-color:transparent;" Class="w-100 d-flex flex-wrap flex-row gap-16 justify-center">
-                <MudGrid>
-                    <MudItem xs="12" sm="6" Class="custom-mud-item">
-                        <MudPaper Class="d-flex align-center justify-center mud-width-full py-8 px-8" Style="text-align: justify; text-align-last: center; color: black;">
-                            @paragraph1
-                        </MudPaper>
-                    </MudItem>
-                    <MudItem xs="12" sm="6" Class="custom-mud-item">
-                        <MudPaper Class="d-flex align-center justify-center mud-width-full">
-                                <MudImage Src="/Images/home1.jpg" Class="rounded-lg custom-image-size" />
-                        </MudPaper>
-                    </MudItem>
-                </MudGrid>
-                <MudGrid>
-                    <MudItem xs="12" sm="6" Class="custom-mud-item custom-order-xs-2 custom-order-sm-1">
-                        <MudPaper Class="d-flex align-center justify-center mud-width-full">
-                            <MudImage Src="/Images/home4.jpg" Class="rounded-lg custom-image-size" />
-                        </MudPaper>
-                    </MudItem>
-                    <MudItem xs="12" sm="6" Class="custom-mud-item custom-order-xs-1 custom-order-sm-2">
-                        <MudPaper Class="d-flex align-center justify-center mud-width-full py-8 px-8" Style="text-align: justify; text-align-last: center; color: black;">
-                            @paragraph2
-                        </MudPaper>
-                    </MudItem>
-                </MudGrid>
-                <MudGrid>
-                    <MudItem xs="12" sm="6" Class="custom-mud-item">
-                        <MudPaper Class="d-flex align-center justify-center mud-width-full py-8 px-8" Style="text-align: justify; text-align-last: center; color: black;">
-                            @paragraph3
-                        </MudPaper>
-                    </MudItem>
-                    <MudItem xs="12" sm="6" Class="custom-mud-item">
-                        <MudPaper Class="d-flex align-center justify-center mud-width-full">
-                            <MudImage Src="/Images/home3.jpg" Class="rounded-lg custom-image-size" />
-                        </MudPaper>
-                    </MudItem>
-                </MudGrid>
-            </MudCard>
-        </MudCard>
+    <div style="display: flex; justify-content: center; align-items: center; height: 100vh; width: 100vw;">
+        <MudProgressCircular Color="Color.Warning" Size="Size.Large" Indeterminate="true" />
     </div>
-    }
 }
 
-
 @code {
-    private bool isloading;
+    private bool isLoading = true;
     private string culture;
+    string welcomeMessage;
+    string companyDescription;
+    string exploreProducts;
+    string featuredProductsTitle;
+    string whyChooseUs;
+    string quality;
+    string qualityDescription;
+    string customSolutions;
+    string customSolutionsDescription;
+    string experience;
+    string experienceDescription;
+    private List<CategoryModelDto>? categories;
+    private List<CategoryProductModelDto>? categoryProducts = new List<CategoryProductModelDto>();
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            isloading = true;
-            culture = await JSRuntime.InvokeAsync<string>("getLanguage");
-            isloading = false;
+            culture = await jSRuntime.InvokeAsync<string>("getLanguage");
+            if (string.IsNullOrEmpty(culture))
+            {
+                culture = "ro-RO";
+            }
+            welcomeMessage = culture switch
+            {
+                "ru-RU" => "Добро пожаловать в WoodArtCons",
+                "en-US" => "Welcome to WoodArtCons",
+                "ro-RO" => "Bine ați venit la WoodArtCons",
+            };
+            companyDescription = culture switch
+            {
+                "ru-RU" => "Мы производим высококачественные изделия из дерева, от мебели до уличных скамеек и мусорных урн. С большим опытом и вниманием к деталям, мы стремимся предоставлять долговечные и эстетически привлекательные решения для каждого клиента.",
+                "en-US" => "We manufacture high-quality wooden products, from furniture to street benches and trash bins. With extensive experience and attention to detail, we are dedicated to providing durable and aesthetic solutions for every client.",
+                "ro-RO" => "Fabricăm produse de înaltă calitate din lemn, de la mobilier până la bănci stradale și coșuri de gunoi. Cu experiență vastă și atenție la detalii, suntem dedicați să oferim soluții durabile și estetice pentru fiecare client.",
+            };
+            exploreProducts = culture switch
+            {
+                "ru-RU" => "Исследовать продукты",
+                "en-US" => "Explore Products",
+                "ro-RO" => "Explorează produsele",
+            };
+            featuredProductsTitle = culture switch
+            {
+                "ru-RU" => "Популярные продукты",
+                "en-US" => "Featured Products",
+                "ro-RO" => "Produse populare",
+            };
+            whyChooseUs = culture switch { "ru-RU" => "Почему выбирают нас", "en-US" => "Why Choose Us", "ro-RO" => "De ce să ne alegeți" };
+            quality = culture switch { "ru-RU" => "Качество", "en-US" => "Quality", "ro-RO" => "Calitate" };
+            qualityDescription = culture switch
+            {
+                "ru-RU" => "Мы используем только лучшие материалы и производственные технологии, чтобы обеспечить долговечность и высокое качество продукции.",
+                "en-US" => "We use only the best materials and production techniques to ensure durable and high-quality products.",
+                "ro-RO" => "Utilizăm doar cele mai bune materiale și tehnici de producție pentru a asigura produse durabile și de înaltă calitate."
+            };
+            customSolutions = culture switch { "ru-RU" => "Индивидуальные решения", "en-US" => "Custom Solutions", "ro-RO" => "Soluții personalizate" };
+            customSolutionsDescription = culture switch
+            {
+                "ru-RU" => "Независимо от ваших потребностей, мы можем создать индивидуальные продукты, идеально соответствующие вашим требованиям.",
+                "en-US" => "Whatever your needs, we can create customized products that perfectly fit your requirements.",
+                "ro-RO" => "Indiferent de nevoile dvs., putem crea produse personalizate care să se potrivească perfect cerințelor dvs."
+            };
+            experience = culture switch { "ru-RU" => "Опыт", "en-US" => "Experience", "ro-RO" => "Experiență" };
+            experienceDescription = culture switch
+            {
+                "ru-RU" => "С многолетним опытом в отрасли, наша команда профессионалов знает, как выполнить даже самые сложные запросы.",
+                "en-US" => "With years of industry experience, our team of professionals knows how to fulfill even the most demanding requests.",
+                "ro-RO" => "Cu ani de experiență în industrie, echipa noastră de profesioniști știe cum să îndeplinească chiar și cele mai exigente solicitări."
+            };
+
+            categories = await categoryManager.GetAllCategories();
+            var topCategories = categories.Take(3).ToList();
+            foreach (var category in topCategories)
+            {
+                var products = await categoryProduct.GetProductsByCategoryId(category.Id);
+                var firstProduct = products.FirstOrDefault();
+                if (firstProduct != null)
+                {
+                    categoryProducts.Add(new CategoryProductModelDto
+                    {
+                        Id = firstProduct.Id,
+                        CategoryId = firstProduct.CategoryId,
+                        NameRo = firstProduct.NameRo,
+                        NameRu = firstProduct.NameRu,
+                        NameEn = firstProduct.NameEn,
+                        ImageSrc = firstProduct.ImageSrc,
+                        Link = firstProduct.Link,
+                        DescriptionRo = firstProduct.DescriptionRo,
+                        DescriptionRu = firstProduct.DescriptionRu,
+                        DescriptionEn = firstProduct.DescriptionEn,
+                    });
+                }
+            }
+
+            isLoading = false;
             StateHasChanged();
+        }
+    }
+
+    private string GetProductName(CategoryProductModelDto product)
+    {
+        return culture switch
+        {
+            "ru-RU" => product.NameRu,
+            "en-US" => product.NameEn,
+            "ro-RO" => product.NameRo,
+        };
+    }
+
+    private string GetProductLink(CategoryProductModelDto product)
+    {
+        // Find the category for this product
+        var category = categories?.FirstOrDefault(c => c.Id == product.CategoryId);
+        
+        // If category is for gallery, use gallery link, otherwise use catalog link
+        if (category?.IsForGalery == true)
+        {
+            return $"/gallery/{product.CategoryId}/{product.Id}";
+        }
+        else
+        {
+            return $"/catalog/{product.CategoryId}/{product.Id}";
         }
     }
 }

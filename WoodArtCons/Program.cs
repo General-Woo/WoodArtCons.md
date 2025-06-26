@@ -9,7 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddSingleton(new HttpClient()
 {
-    BaseAddress = new Uri("http://localhost:5001/")
+    BaseAddress = new Uri("http://backend:5001/")
 });
 
 // Add services to the container.
@@ -23,6 +23,7 @@ builder.Services.AddScoped<IAuthProfileService, AuthProfileService>();
 builder.Services.AddScoped<ICategoryManagerService, CategoryManagerService>();
 builder.Services.AddScoped<ICategoryProductManagerService, CategoryProductManagerService>();
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
+builder.Services.AddScoped<WoodArtCons.Services.CrmLeadService>();
 
 builder.Services.AddRazorComponents().AddInteractiveServerComponents();
 builder.Services.AddOptions();

@@ -961,7 +961,7 @@ else
     private void OpenDialog(CategoryModelDto category)
     {
         string catalogUrl = "/catalog/";
-        string galeryUrl = "/galery/";
+        string galeryUrl = "/gallery/";
 
         categoryToEdit = new CategoryModelDto
         {
@@ -1112,7 +1112,7 @@ else
     private async void SubmitAdd()
     {
         string catalogUrl = "/catalog/";
-        string galeryUrl = "/galery/";
+        string galeryUrl = "/gallery/";
         if (categoryToAdd.IsForGalery == true)
         {
             categoryToAdd.Link = galeryUrl + categoryToAdd.Id;
@@ -1190,7 +1190,7 @@ else
     private async void SubmitAddProduct()
     {
         string catalogUrl = "/catalog/";
-        string galeryUrl = "/galery/";
+        string galeryUrl = "/gallery/";
         // if (categoryToAdd.IsForGalery == true)
         // {
         //     categoryToAdd.Link = galeryUrl + categoryToAdd.Id;

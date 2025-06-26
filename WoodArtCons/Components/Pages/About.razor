@@ -1,166 +1,132 @@
 ﻿@page "/about"
-
 @using System.Globalization
-@inject IJSRuntime JSRuntime
+@inject IJSRuntime jSRuntime
+@rendermode InteractiveServer
 
+<PageTitle>WoodArtCons - About</PageTitle>
 
-
-@* <div style="z-index:-1; position:fixed; width:100vw; left: 0; top: 0; height:100vh;background-image: url('/Images/about.jpg'); background-size: cover; background-repeat: no-repeat; min-width:300px; min-height:100px;"></div>
- *@
-
-@if (isloading)
+@if (!isloading && culture != null)
 {
-    <MudProgressCircular Color="Color.Secondary" Style="height:100px; width:100px; position:fixed; top:40%; left:50%;" Indeterminate="true" />
-}
-else
-{
-    @if (culture != null) {
-        var aboutPageName = culture switch { "ru-RU" => "О нас", "en-US" => "About Us", "ro-RO" => "Despre noi" };
-        var aboutPageSlogan1 = culture switch { 
-            "ru-RU" => "WoodArtCons - Мы превращаем дерево в устойчивое",
-            "en-US" => "WoodArtCons - We turn wood into sustainable art for",
-            "ro-RO" => "WoodArtCons - Transformăm lemnul în artă durabilă"
-        };
+    var aboutUsTitle = culture switch { 
+        "ru-RU" => "О компании WoodArtCons", 
+        "en-US" => "About WoodArtCons", 
+        "ro-RO" => "Despre WoodArtCons",
+        _ => "Despre WoodArtCons"
+    };
+    var aboutUsDescription1 = culture switch { 
+        "ru-RU" => "WoodArtCons - компания, специализирующаяся на производстве высококачественных изделий из дерева, от внутренней и наружной мебели до уличных скамеек, мусорных урн и игровых площадок.",
+        "en-US" => "WoodArtCons is a company specialized in producing high-quality wooden items, from interior and exterior furniture to street benches, trash bins, and playgrounds.",
+        "ro-RO" => "WoodArtCons este o companie specializată în producerea de obiecte din lemn de înaltă calitate, de la mobilier interior și exterior, la bănci stradale, coșuri de gunoi și terenuri de joacă.",
+        _ => "WoodArtCons este o companie specializată în producerea de obiecte din lemn de înaltă calitate, de la mobilier interior și exterior, la bănci stradale, coșuri de gunoi și terenuri de joacă."
+    };
+    var aboutUsDescription2 = culture switch { 
+        "ru-RU" => "Основанная в 2010 году, наша компания выросла из небольшой столярной мастерской в современную фабрику, обслуживающую клиентов по всей Молдове и за рубежом.",
+        "en-US" => "Founded in 2010, our company has grown from a small carpentry workshop to a modern factory serving customers throughout Moldova and abroad.",
+        "ro-RO" => "Fondată în 2010, compania noastră a crescut de la un mic atelier de tâmplărie la o fabrică modernă care servește clienți din întreaga Moldovă și din străinătate.",
+        _ => "Fondată în 2010, compania noastră a crescut de la un mic atelier de tâmplărie la o fabrică modernă care servește clienți din întreaga Moldovă și din străinătate."
+    };
+    var ourValues = culture switch { 
+        "ru-RU" => "Наши ценности", 
+        "en-US" => "Our Values", 
+        "ro-RO" => "Valorile noastre",
+        _ => "Valorile noastre"
+    };
+    var quality = culture switch { 
+        "ru-RU" => "Качество", 
+        "en-US" => "Quality", 
+        "ro-RO" => "Calitate",
+        _ => "Calitate"
+    };
+    var qualityDesc = culture switch { 
+        "ru-RU" => "Мы стремимся предлагать продукцию самого высокого качества, используя премиальное сырье и передовые производственные технологии.",
+        "en-US" => "We are committed to offering products of the highest quality, using premium raw materials and advanced manufacturing techniques.",
+        "ro-RO" => "Ne angajăm să oferim produse de cea mai înaltă calitate, folosind materii prime premium și tehnici de fabricație avansate.",
+        _ => "Ne angajăm să oferim produse de cea mai înaltă calitate, folosind materii prime premium și tehnici de fabricație avansate."
+    };
+    var innovation = culture switch { 
+        "ru-RU" => "Инновации", 
+        "en-US" => "Innovation", 
+        "ro-RO" => "Inovație",
+        _ => "Inovație"
+    };
+    var innovationDesc = culture switch { 
+        "ru-RU" => "Мы постоянно стремимся улучшать наши продукты и процессы, внедряя новые технологии и материалы.",
+        "en-US" => "We constantly strive to improve our products and processes, adopting new technologies and materials.",
+        "ro-RO" => "Căutăm constant să ne îmbunătățim produsele și procesele, adoptând noi tehnologii și materiale.",
+        _ => "Căutăm constant să ne îmbunătățim produsele și procesele, adoptând noi tehnologii și materiale."
+    };
+    var sustainability = culture switch { 
+        "ru-RU" => "Устойчивое развитие", 
+        "en-US" => "Sustainability", 
+        "ro-RO" => "Sustenabilitate",
+        _ => "Sustenabilitate"
+    };
+    var sustainabilityDesc = culture switch { 
+        "ru-RU" => "Мы преданы устойчивым бизнес-практикам, используя ответственные источники древесины.",
+        "en-US" => "We are dedicated to sustainable business practices, using responsibly sourced wood.",
+        "ro-RO" => "Suntem dedicați practicilor de afaceri durabile, utilizând surse responsabile de lemn.",
+        _ => "Suntem dedicați practicilor de afaceri durabile, utilizând surse responsabile de lemn."
+    };
 
-        var aboutPageSlogan2 = culture switch
-        {
-            "ru-RU" => "искусство  для всех ваших нужд, от комфорта до элегантности.",
-            "en-US" => "all  your needs, from comfort to elegance.",
-            "ro-RO" => "pentru  toate nevoile tale, de la confort la eleganță."
-        };
+    <MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="mt-4">
+        <MudPaper Elevation="3" Class="pa-8" Style="border-radius: 16px;">
+            <MudText Typo="Typo.h4" Class="mb-6" Style="font-weight: 600; color: #1f2937;">@aboutUsTitle</MudText>
+            
+            <MudGrid>
+                <MudItem xs="12" md="6">
+                    <MudText Typo="Typo.body1" Class="mb-4" Style="line-height: 1.8;">@aboutUsDescription1</MudText>
+                    <MudText Typo="Typo.body1" Class="mb-4" Style="line-height: 1.8;">@aboutUsDescription2</MudText>
+                </MudItem>
+                @* <MudItem xs="12" md="6">
+                    <MudImage Src="Images/about-us.jpg" 
+                             Alt="About WoodArtCons" 
+                             Class="rounded-lg" 
+                             Elevation="3" 
+                             ObjectFit="ObjectFit.Cover" 
+                             Style="width:100%; height:300px;"/>
+                </MudItem> *@
+                <MudPaper Elevation="0" Outlined="false" Width="50%">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d836.5170648752589!2d28.89371276967531!3d47.0334731122546!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x40c97d005833384f%3A0xac0a80a304a672ea!2sWoodArtCons%20SRL!5e1!3m2!1sro!2s!4v1715854920929!5m2!1sro!2s" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                </MudPaper>
+            </MudGrid>
+            
+            <MudDivider Class="my-8" />
 
-        var ourStory = culture switch
-        {
-            "ru-RU" => "Наша история началась с глубокой страсти к дереву и желания создавать уникальные продукты, которые приносят радость и полезность тем, кто их использует. В WoodArtCons мы гордимся прочными традициями деревообработки в сочетании с инновациями и современным дизайном.",
-            "en-US" => "Our story began with a deep passion for wood and the desire to create unique products that bring joy and utility to those who use them. At WoodArtCons, we pride ourselves on a solid woodworking tradition combined with innovation and modern design.",
-            "ro-RO" => "Povestea noastră a început cu o pasiune profundă pentru lemn și dorința de a crea produse unice care să aducă bucurie și utilitate celor care le folosesc. La WoodArtCons, ne mândrim cu o tradiție solidă în prelucrarea lemnului, combinată cu inovația și designul modern."
-        };
-
-        var ourMission = culture switch
-        {
-            "ru-RU" => "Наша миссия - предоставлять клиентам изделия из дерева высочайшего качества, изготовленные с осторожностью и мастерством. Каждая деталь, которую мы создаем, является результатом тщательного процесса выбора материалов и тщательной обработки, чтобы обеспечить особую долговечность и эстетику.",
-            "en-US" => "Our mission is to offer customers the highest quality wood products, made with care and craftsmanship. Each piece we create is the result of a careful material selection process and meticulous processing to ensure durability and outstanding aesthetics.",
-            "ro-RO" => "Misiunea noastră este să oferim clienților produse din lemn de cea mai înaltă calitate, realizate cu grijă și măiestrie. Fiecare piesă pe care o creăm este rezultatul unui proces atent de selecție a materialelor și de prelucrare meticuloasă, pentru a asigura durabilitate și estetică deosebită."
-        };
-
-        var ourTeam = culture switch
-        {
-            "ru-RU" => "Наша команда состоит из талантливых ремесленников и преданных своему делу профессионалов, которые работают вместе, чтобы превратить необработанное дерево в функциональные предметы искусства. Наши ценности основаны на уважении к природе, бескомпромиссном качестве и удовлетворенности наших клиентов.",
-            "en-US" => "Our team consists of talented artisans and dedicated professionals who work together to transform raw wood into functional art objects. Our values are based on respect for nature, uncompromising quality and the satisfaction of our customers.",
-            "ro-RO" => "Echipa noastră este formată din artizani talentați și profesioniști dedicați, care lucrează împreună pentru a transforma lemnul brut în obiecte de artă funcționale. Valorile noastre sunt bazate pe respect pentru natură, calitate fără compromisuri și satisfacția clienților noștri."
-        };
-
-        var ourWorkshop = culture switch
-        {
-            "ru-RU" => "В нашей мастерской традиция встречается с современными технологиями для создания разнообразных изделий: от уютной и стильной мебели до декоративных элементов и деревянного жилого строительства. Мы хотим, чтобы каждый клиент чувствовал, что он выбрал не только продукт, но и историю, часть природы, преобразованную с заботой и мастерством.",
-            "en-US" => "In our workshop, tradition meets modern technology to create various products: from comfortable and elegant furniture, to decorative elements and residential constructions made of wood. We want every customer to feel that they have chosen not just a product, but a story, a part of nature, transformed with care and skill.",
-            "ro-RO" => "În atelierul nostru, tradiția se întâlnește cu tehnologia modernă pentru a crea produse variate: de la mobilier confortabil și elegant, la elemente decorative și construcții rezidențiale din lemn. Ne dorim ca fiecare client să simtă că a ales nu doar un produs, ci o poveste, o parte din natură, transformată cu grijă și pricepere."
-        };
-
-        var ourInvitation = culture switch
-        {
-            "ru-RU" => "Мы приглашаем вас лучше узнать нас и открыть для себя наш ассортимент продукции, созданный со страстью и уважением к дереву. В WoodArtCons каждая вещь обещает качество и устойчивую красоту.",
-            "en-US" => "We invite you to get to know us better and discover our range of products, created with passion and respect for wood. At WoodArtCons, every piece is a promise of quality and lasting beauty.",
-            "ro-RO" => "Te invităm să ne cunoști mai bine și să descoperi gama noastră de produse, create cu pasiune și respect pentru lemn. La WoodArtCons, fiecare piesă este o promisiune de calitate și frumusețe durabilă."
-        };
-
-        <main id="main" class="clearfix custom-nonscrolable-vertical" style="width:100%; left: 0; top: 0; position:absolute;">
-            <div class="fusion-row" style="max-width:100%;">
-                <section id="content" class="full-width">
-                    <div id="post-705" class="post-705 page type-page status-publish hentry">
-                        <div class="post-content">
-                            <div class="fusion-fullwidth fullwidth-box fusion-builder-row-1 fusion-parallax-fixed hundred-percent-fullwidth non-hundred-percent-height-scrolling lazyloaded" style="background-color: rgba(255, 255, 255, 0); background-position: center center; background-repeat: no-repeat; padding: 0px; margin-bottom: 0px; margin-top: 0px; border-width: 0px; border-color: rgb(234, 233, 233); border-style: solid; background-size: cover; background-attachment: fixed; background-image: url('https://woodartllc.net/wp-content/uploads/2019/07/landscape-hi-res-1.jpg');"
-                                data-bg="https://woodartllc.net/wp-content/uploads/2019/07/landscape-hi-res-1.jpg">
-                                <div class="fusion-builder-row fusion-row">
-                                    <div class="fusion-layout-column fusion_builder_column fusion-builder-column-0 fusion_builder_column_1_1 1_1 fusion-one-full fusion-column-first fusion-column-last fusion-animated" style="margin-top: 0px; margin-bottom: 0px; visibility: visible; animation-duration: 1s;"
-                                        data-animationtype="fadeIn" data-animationduration="1.0" data-animationoffset="bottom-in-view">
-                                        <div class="fusion-column-wrapper fusion-flex-column-wrapper-legacy" style="background-position:left top;background-repeat:no-repeat;-webkit-background-size:cover;-moz-background-size:cover;-o-background-size:cover;background-size:cover;background-color:rgba(83,61,42,0.8);padding: 11% 0px 11% 0px;">
-                                            <div class="fusion-column-content-centered">
-                                                <div class="fusion-column-content">
-                                                    <div class="fusion-title title fusion-title-1 fusion-sep-none fusion-title-center fusion-title-text fusion-title-size-one" style="font-size:60px;margin-top:0px;margin-right:0px;margin-bottom:31px;margin-left:0px;">
-                                                        <h1 class="title-heading-center fusion-responsive-typography-calculated" style="margin:0;font-size:1em;color:#ffffff;--fontSize:60;line-height:1;">
-                                                            <p style="text-align: center;">
-
-                                                                <!-- Page Name -->
-
-                                                                @* <span style="color: #ffffff;">@aboutPageName</span> *@
-                                                                <MudText Typo="Typo.h2" Align="Align.Center"><b>@aboutPageName</b></MudText>
-                                                            </p>
-                                                        </h1>
-                                                    </div>
-                                                    <div class="fusion-title title fusion-title-2 fusion-sep-none fusion-title-center fusion-title-text fusion-title-size-three" style="font-size:26px;margin-top:0px;margin-right:0px;margin-bottom:0px;margin-left:0px;">
-                                                        <h3 class="title-heading-center fusion-responsive-typography-calculated" style="margin:0;font-size:1em;color:#ffffff;--fontSize:26;line-height:1.23;">
-                                                            <p style="text-align: center;">
-
-                                                                <!-- Description upon page name -->
-
-                                                                @* <span style="color: #ffffff;">FAMILY OWNED AND OPERATED PRODUCER OF<br> QUALITY CUSTOM CABINETRY IN LANCASTER COUNTY, PA</span> *@
-                                                                <MudText Typo="Typo.h4" Align="Align.Center">@aboutPageSlogan1 <br /> @aboutPageSlogan2 </MudText>
-                                                            </p>
-                                                        </h3>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="fusion-clearfix"></div>
-                                        </div>
-                                    </div>
-                                    <div class="fusion-layout-column fusion_builder_column fusion-builder-column-1 fusion_builder_column_1_1 1_1 fusion-one-full fusion-column-first fusion-column-last" style="margin-top:0px;margin-bottom:0px;">
-                                        <div class="fusion-column-wrapper fusion-flex-column-wrapper-legacy" style="background-position:left top;background-repeat:no-repeat;-webkit-background-size:cover;-moz-background-size:cover;-o-background-size:cover;background-size:cover;border-bottom:10px solid #ffffff;padding: 0px 0px 0px 0px;">
-                                            <div class="fusion-clearfix"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="pc-view" style="width:100%; height:50%; background-color: #eaeaea;background-position: center center;background-repeat: no-repeat;padding-top:0px;padding-right:0px;padding-bottom:0px;padding-left:0px;margin-bottom: 0px;margin-top: 0px;border-width: 0px 0px 0px 0px;border-color:#eae9e9;border-style:solid;">
-                                <div class="d-flex" style="width:100%; height:100%;">
-                                    <div class="fusion-layout-column fusion_builder_column fusion-builder-column-2 fusion_builder_column_1_4 1_4 fusion-one-fourth fusion-column-first fusion-no-small-visibility" style="width:25%;width:calc(25% - ( ( 4% ) * 0.25 ) );margin-right: 4%;margin-top:0px;margin-bottom:0px;">
-                                        <div class="fusion-column-wrapper fusion-flex-column-wrapper-legacy fusion-empty-column-bg-image lazyloaded" style="background-position: left top; background-repeat: no-repeat; background-size: cover; border-right: 10px solid rgb(255, 255, 255); padding: 0px; background-image: url(&quot;https://woodartllc.net/wp-content/uploads/2019/07/WA-web-portfolio-210.jpg&quot;); min-height: 454.703px; height: auto;" data-bg-url="https://woodartllc.net/wp-content/uploads/2019/07/WA-web-portfolio-210.jpg" data-bg="https://woodartllc.net/wp-content/uploads/2019/07/WA-web-portfolio-210.jpg">
-                                            <img decoding="async" style="width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0;" class="fusion-empty-dims-img-placeholder fusion-no-large-visibility" src="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%27715%27%20height%3D%271080%27%20viewBox%3D%270%200%20715%201080%27%3E%3Crect%20width%3D%27715%27%20height%3D%271080%27%20fill-opacity%3D%220%22%2F%3E%3C%2Fsvg%3E">
-                                            <div class="fusion-clearfix"></div>
-                                        </div>
-                                    </div>
-                                    <div class="fusion-layout-column fusion_builder_column fusion-builder-column-3 fusion_builder_column_3_4 3_4 fusion-three-fourth fusion-column-last" style="width:75%;width:calc(75% - ( ( 4% ) * 0.75 ) );margin-top:0px;margin-bottom:0px;">
-                                        <div class="fusion-column-wrapper fusion-flex-column-wrapper-legacy" style="background-position: left top; background-repeat: no-repeat; background-size: cover; padding: 6% 2% 5%; min-height: 454.703px; height: auto;">
-                                            <div class="fusion-text fusion-text-1">
-                                                <p style="text-align: justify; text-align-last: center;">@ourStory</p>
-                                                <p style="text-align: justify; text-align-last: center;">@ourMission</p>
-                                                <p style="text-align: justify; text-align-last: center;">@ourTeam</p>
-                                                <p style="text-align: justify; text-align-last: center;">@ourWorkshop</p>
-                                                <p style="text-align: justify; text-align-last: center;">@ourInvitation</p>
-                                            </div>
-                                            <div class="fusion-clearfix"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-
-                            <div class="mobile-view" style="width:100%; height:50%; background-color: #eaeaea;background-position: center center;background-repeat: no-repeat;padding-top:0px;padding-right:0px;padding-bottom:0px;padding-left:0px;margin-bottom: 0px;margin-top: 0px;border-width: 0px 0px 0px 0px;border-color:#eae9e9;border-style:solid;">
-                                <div class="d-flex" style="width:100%; height:100%;">
-                                    <div class="fusion-layout-column fusion_builder_column fusion-builder-column-3 fusion_builder_column_3_4 3_4 fusion-three-fourth fusion-column-last" style="width:100%; margin-top:0px;margin-bottom:0px;">
-                                        <div class="fusion-column-wrapper fusion-flex-column-wrapper-legacy" style="background-position: left top; background-repeat: no-repeat; background-size: cover; padding: 6% 2% 5%; min-height: 454.703px; height: auto;">
-                                            <div class="fusion-text fusion-text-1">
-                                                <p style="text-align: justify; text-align-last: center;">@ourStory</p>
-                                                <p style="text-align: justify; text-align-last: center;">@ourMission</p>
-                                                <p style="text-align: justify; text-align-last: center;">@ourTeam</p>
-                                                <p style="text-align: justify; text-align-last: center;">@ourWorkshop</p>
-                                                <p style="text-align: justify; text-align-last: center;">@ourInvitation</p>
-                                            </div>
-                                            <div class="fusion-clearfix"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+            <MudText Typo="Typo.h5" Class="mb-6" Style="font-weight: 600;">@ourValues</MudText>
+            <MudGrid>
+                <MudItem xs="12" sm="4">
+                    <MudCard Elevation="2" Class="h-100 pa-4" Style="border-radius: 12px;">
+                        <div class="d-flex align-center mb-3">
+                            <MudIcon Icon="@Icons.Material.Filled.HighQuality" Color="Color.Primary" Size="Size.Large" Class="mr-3" />
+                            <MudText Typo="Typo.h6" Style="font-weight: 600;">@quality</MudText>
                         </div>
-                    </div>  
-                </section>
-            </div>
-        </main>
-    }
+                        <MudText Typo="Typo.body2" Style="line-height: 1.6;">@qualityDesc</MudText>
+                    </MudCard>
+                </MudItem>
+                <MudItem xs="12" sm="4">
+                    <MudCard Elevation="2" Class="h-100 pa-4" Style="border-radius: 12px;">
+                        <div class="d-flex align-center mb-3">
+                            <MudIcon Icon="@Icons.Material.Filled.Lightbulb" Color="Color.Secondary" Size="Size.Large" Class="mr-3" />
+                            <MudText Typo="Typo.h6" Style="font-weight: 600;">@innovation</MudText>
+                        </div>
+                        <MudText Typo="Typo.body2" Style="line-height: 1.6;">@innovationDesc</MudText>
+                    </MudCard>
+                </MudItem>
+                <MudItem xs="12" sm="4">
+                    <MudCard Elevation="2" Class="h-100 pa-4" Style="border-radius: 12px;">
+                        <div class="d-flex align-center mb-3">
+                            <MudIcon Icon="@Icons.Material.Filled.Nature" Color="Color.Success" Size="Size.Large" Class="mr-3" />
+                            <MudText Typo="Typo.h6" Style="font-weight: 600;">@sustainability</MudText>
+                        </div>
+                        <MudText Typo="Typo.body2" Style="line-height: 1.6;">@sustainabilityDesc</MudText>
+                    </MudCard>
+                </MudItem>
+            </MudGrid>
+        </MudPaper>
+    </MudContainer>
 }
 
-@code { 
+@code {
     private bool isloading = true;
     private string culture;
 
@@ -168,8 +134,11 @@ else
     {
         if (firstRender)
         {
-            isloading = true;
-            culture = await JSRuntime.InvokeAsync<string>("getLanguage");
+            culture = await jSRuntime.InvokeAsync<string>("getLanguage");
+            if (string.IsNullOrEmpty(culture))
+            {
+                culture = "ro-RO";
+            }
             isloading = false;
             StateHasChanged();
         }

@@ -1,0 +1,104 @@
+﻿@using System.Globalization
+@inject IJSRuntime jSRuntime
+@rendermode InteractiveServer
+
+@if (!isloading && culture != null)
+{
+    var quickLinks = culture switch { "ru-RU" => "Быстрые ссылки", "en-US" => "Quick Links", "ro-RO" => "Linkuri rapide" };
+    var contactInfo = culture switch { "ru-RU" => "Контактная информация", "en-US" => "Contact Information", "ro-RO" => "Informații de contact" };
+    var address = culture switch { "ru-RU" => "Адрес", "en-US" => "Address", "ro-RO" => "Adresă" };
+    var allRightsReserved = culture switch { "ru-RU" => "Все права защищены", "en-US" => "All Rights Reserved", "ro-RO" => "Toate drepturile rezervate" };
+    var footerDescription = culture switch
+    {
+        "ru-RU" => "WoodArtCons - ведущий производитель деревянной мебели и продукции для благоустройства городских пространств в Республике Молдова.",
+        "en-US" => "WoodArtCons is a leading manufacturer of wooden furniture and products for urban space development in the Republic of Moldova.",
+        "ro-RO" => "WoodArtCons este un producător de top de mobilier din lemn și produse pentru amenajarea spațiilor urbane din Republica Moldova."
+    };
+    var homePageTitle = culture switch { "ru-RU" => "Главная", "en-US" => "Home", "ro-RO" => "Acasă" };
+    var catalogPageTitle = culture switch { "ru-RU" => "Каталог", "en-US" => "Catalog", "ro-RO" => "Catalog" };
+    var galeryPageTitle = culture switch { "ru-RU" => "Галерея", "en-US" => "Gallery", "ro-RO" => "Galerie" };
+    var aboutPageTitle = culture switch { "ru-RU" => "О нас", "en-US" => "About Us", "ro-RO" => "Despre noi" };
+    var contactsPageTitle = culture switch { "ru-RU" => "Контакты", "en-US" => "Contacts", "ro-RO" => "Contacte" };
+
+    <MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="mt-16">
+        <MudDivider Class="mb-8" />
+        <MudGrid>
+            <MudItem xs="12" sm="4">
+                <div class="d-flex align-center mb-4">
+                    <MudImage Src="Images/WoodArtCons_Logo.png" Alt="WoodArtCons" Height="40" Class="mr-3" />
+                    <MudText Typo="Typo.h6" Style="font-weight: 600; color: #1f2937;">WoodArtCons</MudText>
+                </div>
+                <MudText Typo="Typo.body2" Style="color: #6b7280; line-height: 1.6;">@footerDescription</MudText>
+            </MudItem>
+
+            <MudItem xs="12" sm="4">
+                <MudText Typo="Typo.h6" Class="mb-4" Style="font-weight: 600; color: #1f2937;">@quickLinks</MudText>
+                <MudStack>
+                    <MudLink Href="/" Style="color: #6b7280; text-decoration: none;" Class="footer-link">@homePageTitle</MudLink>
+                    <MudLink Href="/catalog" Style="color: #6b7280; text-decoration: none;" Class="footer-link">@catalogPageTitle</MudLink>
+                    <MudLink Href="/gallery" Style="color: #6b7280; text-decoration: none;" Class="footer-link">@galeryPageTitle</MudLink>
+                    <MudLink Href="/about" Style="color: #6b7280; text-decoration: none;" Class="footer-link">@aboutPageTitle</MudLink>
+                    <MudLink Href="/contacts" Style="color: #6b7280; text-decoration: none;" Class="footer-link">@contactsPageTitle</MudLink>
+                </MudStack>
+            </MudItem>
+
+            <MudItem xs="12" sm="4">
+                <MudText Typo="Typo.h6" Class="mb-4" Style="font-weight: 600; color: #1f2937;">@contactInfo</MudText>
+                <MudText Typo="Typo.body2" Style="color: #6b7280; line-height: 1.6;">
+                    @address: Strada Vadul lui Vodă 110, Chișinău, Republica Moldova<br />
+                    Email: woodartcons@gmail.com<br />
+                    Valentina Covalenco: +37360086365<br />
+                    Valerii Gukov: +37360201373<br />
+                    Andrei Covalenco: +37368312964<br />
+                    Petru Damaschin: +37379356131
+                </MudText>
+                <MudStack Row="true" Class="mt-4">
+                    <MudLink Href="https://www.facebook.com/p/Wood-Art-Cons-Acoperi%C8%99-Foisor-Terasa-100068195080802/" Target="_blank" Style="color: #3b82f6;">
+                        <MudIcon Icon="@Icons.Custom.Brands.Facebook" />
+                    </MudLink>
+                    <MudLink Href="https://www.instagram.com/woodartcons_/" Target="_blank" Style="color: #ec4899;">
+                        <MudIcon Icon="@Icons.Custom.Brands.Instagram"  />
+                    </MudLink>
+                    <MudLink Href="https://www.tiktok.com/&#64;woodartcons" Target="_blank" Style="display:inline-block;">
+    			<div style="width: 32px; height: 32px;">
+        		    TikTok
+    			</div>
+		    </MudLink>
+                    @*<MudIconButton Icon="@Icons.Custom.Brands.WhatsApp" Style="color: #10b981;" />*@
+                </MudStack>
+            </MudItem>
+        </MudGrid>
+
+        <MudDivider Class="my-8" />
+
+        <MudText Typo="Typo.body2" Align="Align.Center" Style="color: #9ca3af;">
+            &copy; @DateTime.Now.Year WoodArtCons. @allRightsReserved
+        </MudText>
+    </MudContainer>
+}
+
+<style>
+    .footer-link:hover {
+        color: #f97316 !important;
+        text-decoration: underline !important;
+    }
+</style>
+
+@code {
+    private bool isloading = true;
+    private string culture;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            culture = await jSRuntime.InvokeAsync<string>("getLanguage");
+            if (string.IsNullOrEmpty(culture))
+            {
+                culture = "ro-RO";
+            }
+            isloading = false;
+            StateHasChanged();
+        }
+    }
+}
