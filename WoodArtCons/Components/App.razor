@@ -37,7 +37,27 @@
             text-decoration: none;
         }
         .mr-3 { margin-right: 1rem; }
-        .mr-4 { margin-right: 1.5rem; }                        
+        .mr-4 { margin-right: 1.5rem; }   
+        .pt-content-offset {
+            padding-top: 101px; /* ex: 40px topbar + 56px MudAppBar */
+        }
+        .appbar-below-topbar {
+            top: 37px !important; /* exact cât are topbar-ul */
+            z-index: 1090;
+        }
+        .topbar-sticky {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 40px; /* sau cât are înălțime */
+            background-color: #553214;
+            color: white;
+            z-index: 1100;
+            display: flex;
+            align-items: center;
+            padding: 0 1rem;
+        }                     
     </style>
     <HeadOutlet />
 </head>
