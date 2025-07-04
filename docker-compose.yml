@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   backend:
     build:
@@ -9,6 +7,9 @@ services:
       - "5001:5001"
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
+    volumes:
+      - woodartcons-db:/root/WoodArtCons.md/WoodArtCons.Server/WoodArtCons.db
+      - woodartcons-images:/root/WoodArtCons.md/WoodArtCons/wwwroot/Images
     restart: always
 
   frontend:
@@ -22,3 +23,7 @@ services:
     depends_on:
       - backend
     restart: always 
+
+volumes:
+  woodartcons-db:
+  woodartcons-images:

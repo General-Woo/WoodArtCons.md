@@ -9,7 +9,28 @@
 <MudSnackbarProvider />
 
 <MudLayout>
-    <MudAppBar Elevation="1" Style="background-color: white; color: #1f2937;">
+    <div class="topbar-sticky">
+        <MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="d-flex flex-wrap align-center justify-space-between">
+            <div class="d-flex align-center flex-wrap">
+                <MudIcon Icon="@Icons.Material.Filled.Phone" Style="margin-right: 0.25rem;" />
+                <a href="tel:+37360086365" class="text-white mr-4">+37360086365</a>
+                <MudIcon Icon="@Icons.Material.Filled.Email" Style="margin-right: 0.25rem;" />
+                <a href="mailto:reception.woodart@gmail.com" class="text-white mr-4">reception.woodart@gmail.com</a>
+            </div>
+            <div class="d-flex align-center">
+                <a href="https://instagram.com/woodartcons_" target="_blank" class="text-white mr-3">
+                    <i class="fab fa-instagram"></i>
+                </a>
+                <a href="https://t.me/woodartcons" target="_blank" class="text-white mr-3">
+                    <i class="fab fa-telegram-plane"></i>
+                </a>
+                <a href="https://tiktok.com/&#64;woodartcons" target="_blank" class="text-white">
+                    <i class="fab fa-tiktok"></i>
+                </a>
+            </div>
+        </MudContainer>
+    </div>
+    <MudAppBar Position="Fixed" Elevation="0" Class="appbar-below-topbar" Style="background-color: white; color: #1f2937;">
         <MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="d-flex align-center">
             <MudIconButton Icon="@Icons.Material.Filled.Menu"
                            Color="Color.Inherit"
@@ -76,9 +97,8 @@
         </MudNavMenu>
     </MudDrawer>
 
-    <MudMainContent Style="background-color: #f8fafc;">
+    <MudMainContent Class="pt-content-offset" Style="background-color: #f8fafc;">
         @Body
-        <Footer />
     </MudMainContent>
 </MudLayout>
 
@@ -96,7 +116,7 @@
             },
             Palette = new PaletteLight()
             {
-                Primary = "#3b82f6",
+                Primary = "#553214",
                 Secondary = "#64748b",
                 Background = "#f8fafc",
                 Surface = "#ffffff",

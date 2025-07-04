@@ -115,20 +115,20 @@ body {
 
 /* Override MudBlazor primary color globally */
 :root {
-  --mud-palette-primary: #f97316;
-  --mud-palette-primary-rgb: 249, 115, 22;
+  --mud-palette-primary: #553214;
+  --mud-palette-primary-rgb: 85, 50, 20;
 }
 
 .mud-theme-primary {
-  color: #f97316 !important;
+  color: #553214 !important;
 }
 
 .mud-primary-text {
-  color: #f97316 !important;
+  color: #553214 !important;
 }
 
 .mud-primary-hover:hover {
-  background-color: rgba(249, 115, 22, 0.04) !important;
+  background-color: rgba(85, 50, 20, 0.04) !important;
 }
 
 /* Hover effects */

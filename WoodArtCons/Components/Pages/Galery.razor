@@ -41,9 +41,10 @@
                                 </MudCardContent>
                                 <MudCardActions Class="pa-4 pt-0">
                                     <MudButton Variant="Variant.Filled"
-                                               Color="Color.Secondary"
+                                               Color="Color.Primary"
                                                FullWidth="true"
                                                StartIcon="@Icons.Material.Filled.PhotoLibrary"
+                                               Style="background-color: #553214; color: white; font-weight: 600; text-transform: none; border-radius: 8px;"
                                                @onclick="@(() => NavigationManager.NavigateTo($"/gallery/{category.Id}"))">
                                         @viewGallery
                                     </MudButton>
