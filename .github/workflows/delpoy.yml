@@ -61,11 +61,4 @@ jobs:
               fi
             done
             echo "✅ Serviciile au pornit!"
-
-            echo "==> Restaurare fișiere DB în container..."
-            docker cp /backup/WoodArtCons.db woodartconsmd_backend_1:/app/WoodArtCons.db
-            docker cp /backup/WoodArtCons.db-shm woodartconsmd_backend_1:/app/WoodArtCons.db-shm
-            docker cp /backup/WoodArtCons.db-wal woodartconsmd_backend_1:/app/WoodArtCons.db-wal
-
-            echo "✅ Baza de date restabilita cu success!"
             
