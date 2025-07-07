@@ -8,15 +8,52 @@ jobs:
   deploy:
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout repo
+        uses: actions/checkout@v3
       
-      - name: SSH into VPS
+      - name: Deploy to VPS via SSH
         uses: appleboy/ssh-action@v0.1.5
         with:
           host: 195.178.106.159
           username: root
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            cd /root
-            ./run_services.sh
+            echo "==> Salvare fișiere DB înainte de rebuild..."
+            mkdir -p /backup
 
+            # Backup baza de date din container (dacă există)
+            docker cp woodartconsmd_backend_1:/app/WoodArtCons.db /backup/WoodArtCons.db || echo "No DB to backup"
+            docker cp woodartconsmd_backend_1:/app/WoodArtCons.db-shm /backup/WoodArtCons.db-shm || echo "No SHM to backup"
+            docker cp woodartconsmd_backend_1:/app/WoodArtCons.db-wal /backup/WoodArtCons.db-wal || echo "No WAL to backup"
+
+            echo "==> Oprire containere..."
+            docker-compose -f /root/WoodArtCons.md/docker-compose.yml down
+
+            echo "==> Actualizare cod sursă..."
+            cd /root/WoodArtCons.md
+            git pull origin main
+
+            echo "==> Rebuild și repornire containere..."
+            docker-compose -f docker-compose.yml up --build -d
+
+            echo "==> Aștept ca serviciile să pornească..."
+            timeout=60  
+            elapsed=0
+            until ss -tulpn | grep 5000 && ss -tulpn | grep 5001; do
+              sleep 2
+              elapsed=$((elapsed+2))
+              if [ $elapsed -ge $timeout ]; then
+                echo "❌ Timeout: serviciile nu au pornit în $timeout secunde."
+                docker compose logs
+                exit 1
+              fi
+            done
+            echo "✅ Serviciile au pornit!"
+
+            echo "==> Restaurare fișiere DB în container..."
+            docker cp /backup/WoodArtCons.db woodartconsmd_backend_1:/app/WoodArtCons.db
+            docker cp /backup/WoodArtCons.db-shm woodartconsmd_backend_1:/app/WoodArtCons.db-shm
+            docker cp /backup/WoodArtCons.db-wal woodartconsmd_backend_1:/app/WoodArtCons.db-wal
+
+            echo "✅ Baza de date restabilita cu success!"
+            
