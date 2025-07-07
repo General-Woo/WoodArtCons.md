@@ -33,8 +33,20 @@ jobs:
             cd /root/WoodArtCons.md
             git pull origin main
 
-            echo "==> Rebuild și repornire containere..."
-            docker-compose -f docker-compose.yml up --build -d
+            echo "==> Rebuild containere (fără pornire încă)..."
+            docker-compose -f docker-compose.yml build
+
+            echo "==> Restaurare fișiere DB în container (copiere în imagine pregătită)..."
+            # Pornește containerul backend doar pentru a copia fișierele (fără execuție)
+            docker create --name temp_backend woodartconsmd_backend
+            docker cp /backup/WoodArtCons.db temp_backend:/app/WoodArtCons.db
+            docker cp /backup/WoodArtCons.db-shm temp_backend:/app/WoodArtCons.db-shm
+            docker cp /backup/WoodArtCons.db-wal temp_backend:/app/WoodArtCons.db-wal
+            docker commit temp_backend woodartconsmd_backend
+            docker rm temp_backend
+
+            echo "==> Pornire containere cu baza restaurată..."
+            docker-compose -f docker-compose.yml up -d
 
             echo "==> Aștept ca serviciile să pornească..."
             timeout=60  
