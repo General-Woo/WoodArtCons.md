@@ -71,15 +71,20 @@ var app = builder.Build();
 
 using (var scope = builder.Services.BuildServiceProvider().CreateScope())
 {
-    using (var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>())
+    var env = scope.ServiceProvider.GetRequiredService<IWebHostEnvironment>();
+    if (env.IsDevelopment())
     {
-        if (dbContext.Database.GetPendingMigrations().Any())
+        using (var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>())
         {
-            dbContext.Database.Migrate();
-            DatabaseSeeder.SeedDb(dbContext);
+            if (dbContext.Database.GetPendingMigrations().Any())
+            {
+                dbContext.Database.Migrate();
+                DatabaseSeeder.SeedDb(dbContext);
+            }
         }
     }
 }
+
 
 if (app.Environment.IsDevelopment())
 {

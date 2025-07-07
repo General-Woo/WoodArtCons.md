@@ -177,3 +177,22 @@ body {
 .ml-6 {
   margin-left: 1.5rem !important;
 }
+
+/* --- CUSTOM UI FIXES pentru topbar --- */
+@media (max-width: 600px) {
+  .topbar-sticky {
+    margin: 0 !important;
+  }
+  .topbar-sticky .fab {
+    font-size: 1.7rem !important;
+    /* iconițe social media mai mari */
+  }
+  .topbar-sticky a[href^="mailto"] {
+    max-width: 120px;
+    display: inline-block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    vertical-align: middle;
+  }
+}
