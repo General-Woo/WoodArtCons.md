@@ -211,13 +211,7 @@ body {
   }
 }
 
-/* Fix NavMenuMobile margin top in drawer */
-.mud-navmenu, .mud-navmenu > *:first-child {
-  margin-top: 0 !important;
-  padding-top: 0 !important;
-}
-
-.mud-drawer .mud-navmenu {
+.custom-mobile-header {
   margin-top: 0 !important;
   padding-top: 0 !important;
 }
