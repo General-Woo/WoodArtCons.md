@@ -187,3 +187,17 @@ custom-nonscrolable-vertical {
     width: 100%;
     object-fit:fill;
 }
+
+@media (max-width: 520px) {
+    .topbar-sticky a[href^="mailto"] {
+      max-width: 60px;
+    }
+    .topbar-sticky a[href^="tel"] {
+      max-width: 60px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      vertical-align: middle;
+      display: inline-block;
+    }
+  }

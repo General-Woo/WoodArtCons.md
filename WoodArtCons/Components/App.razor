@@ -14,7 +14,6 @@
     <base href="/" />
     <link rel="stylesheet" href="bootstrap/bootstrap.min.css" />
     <link rel="stylesheet" href="app.css" />
-    <link rel="stylesheet" href="css/app.css" />
     <link rel="icon" type="image/png" href="/Images/WoodArtCons_Logo.png" />
     <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
@@ -40,7 +39,7 @@
         .mr-3 { margin-right: 1rem; }
         .mr-4 { margin-right: 1.5rem; }   
         .pt-content-offset {
-            padding-top: 101px; /* ex: 40px topbar + 56px MudAppBar */
+            padding-top: 121px; /* ex: 40px topbar + 56px MudAppBar */
         }
         .appbar-below-topbar {
             top: 37px !important; /* exact cât are topbar-ul */
@@ -58,7 +57,16 @@
             display: flex;
             align-items: center;
             padding: 0 1rem;
-        }                     
+        }     
+        .topbar-sticky .fab {
+            font-size: 1.7rem !important;
+        }
+        .topbar-sticky a[href^="mailto"] {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            vertical-align: middle;
+        }                
     </style>
     <HeadOutlet />
 </head>
