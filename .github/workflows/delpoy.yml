@@ -46,7 +46,7 @@ jobs:
             docker rm temp_backend
 
             echo "==> Pornire containere cu baza restaurată..."
-            docker-compose -f docker-compose.yml up -d
+            docker-compose -f docker-compose.yml up -d --no-cache
 
             echo "==> Aștept ca serviciile să pornească..."
             timeout=60  
