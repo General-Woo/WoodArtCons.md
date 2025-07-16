@@ -205,4 +205,5 @@ custom-nonscrolable-vertical {
   .mud-drawer.mud-drawer-fixed.mud-drawer-pos-left.mud-drawer--open.mud-drawer-md.mud-drawer-clipped-always.mud-elevation-2.mud-drawer-temporary {
     top: 0px !important;
     bottom: 0px !important;
+    height: 100%;
   }
