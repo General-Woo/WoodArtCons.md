@@ -7,7 +7,7 @@
 <EditForm Model="offerModel" OnValidSubmit="HandleValidSubmit">
     <DataAnnotationsValidator />
     <MudTextField T="string" Label="@nameLabel" @bind-Value="offerModel.Name" Required="true" Variant="Variant.Outlined" Class="mb-3" FullWidth="true" />
-    <MudTextField T="string" Label="@contactLabel" @bind-Value="offerModel.Contact" Required="true" Variant="Variant.Outlined" Class="mb-3" FullWidth="true" />
+    <MudTextField T="string" Label="@phoneLabel" @bind-Value="offerModel.Phone" Required="true" Variant="Variant.Outlined" Class="mb-3" FullWidth="true" Placeholder="@phonePlaceholder" Pattern="^[0-9 ]+$" HelperText="@phoneHelperText" />
     <MudTextField T="string" Label="@requestLabel" @bind-Value="offerModel.Request" Required="true" Variant="Variant.Outlined" Lines="3" Class="mb-4" FullWidth="true" />
     <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" Style="background-color: #553214; color: white; padding: 12px 24px; font-weight: 600; text-transform: none; border-radius: 8px;" FullWidth="true">
         @buttonLabel
@@ -26,11 +26,23 @@
         "en-US" => "Full Name",
         _ => "Nume Prenume"
     };
-    private string contactLabel => Culture switch
+    private string phoneLabel => Culture switch
     {
-        "ru-RU" => "Телефон или Email",
-        "en-US" => "Phone or Email",
-        _ => "Telefon sau Email"
+        "ru-RU" => "Телефон",
+        "en-US" => "Phone number",
+        _ => "Telefon"
+    };
+    private string phonePlaceholder => Culture switch
+    {
+        "ru-RU" => "Введите номер телефона",
+        "en-US" => "Enter phone number",
+        _ => "Introduceți numărul de telefon"
+    };
+    private string phoneHelperText => Culture switch
+    {
+        "ru-RU" => "Только цифры",
+        "en-US" => "Numbers only",
+        _ => "Doar cifre"
     };
     private string requestLabel => Culture switch
     {
@@ -76,7 +88,8 @@
         [Required]
         public string Name { get; set; }
         [Required]
-        public string Contact { get; set; }
+        [RegularExpression("^[0-9 ]+$", ErrorMessage = "Numai cifre!")]
+        public string Phone { get; set; }
         [Required]
         public string Request { get; set; }
     }

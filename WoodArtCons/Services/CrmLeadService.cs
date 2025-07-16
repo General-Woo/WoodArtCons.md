@@ -22,7 +22,7 @@ namespace WoodArtCons.Services
         {
             // Expecting offerModel to have Name, Contact, Request
             var nameProp = offerModel.GetType().GetProperty("Name")?.GetValue(offerModel)?.ToString();
-            var contactProp = offerModel.GetType().GetProperty("Contact")?.GetValue(offerModel)?.ToString();
+            var contactProp = offerModel.GetType().GetProperty("Phone")?.GetValue(offerModel)?.ToString();
             var requestProp = offerModel.GetType().GetProperty("Request")?.GetValue(offerModel)?.ToString();
             var concatenated = $"{nameProp} | {requestProp} | {contactProp}";
             var payload = new[] {
